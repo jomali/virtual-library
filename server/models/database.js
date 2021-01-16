@@ -1,7 +1,7 @@
-const sqlite3 = require("sqlite3").verbose();
-const DB_SOURCE = "virtual-library.db";
+const sqlite3 = require('sqlite3').verbose();
+const DB_SOURCE = 'virtual-library.db';
 
-const dbName = `${__dirname}/data/${DB_SOURCE}`;
+const dbName = `${__dirname}/${DB_SOURCE}`;
 
 const db = new sqlite3.Database(dbName, (error) => {
   if (error) {
@@ -37,7 +37,7 @@ db.run(sqlCreatePlatforms, (error) => {
     if (error) {
       console.error(error.message);
     }
-    console.log("Successful creation of test data.");
+    console.log('Successful creation of test data.');
   });
 });
 
