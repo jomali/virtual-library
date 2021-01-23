@@ -1,8 +1,8 @@
 import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles } from '@material-ui/core/styles';
-import { Router } from '@reach/router';
 import Div100vh from 'react-div-100vh';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import AppBar from 'components/_custom/AppBar';
 import ThemeProvider from 'components/_custom/ThemeProvider';
 import Videogames from 'components/Videogames';
@@ -18,7 +18,11 @@ export default function App() {
         <CssBaseline />
         <AppBar title={translate('applicationTitle')} />
         <Router basepath={process.env.PUBLIC_URL}>
-          <Videogames default path="/videogames" />
+          <Switch>
+            <Route path="/videogames">
+              <Videogames />
+            </Route>
+          </Switch>
         </Router>
       </ThemeProvider>
     </Div100vh>

@@ -1,7 +1,9 @@
 import React from 'react';
 import Container from '@material-ui/core/Container';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { Switch, Route, useRouteMatch, useParams } from 'react-router-dom';
 import Collection from 'components/_custom/Collection';
+import VideogameDetails from './VideogameDetails';
 import { columns } from './VideogamesColumns';
 
 const generateTestData = (num) => {
@@ -71,7 +73,30 @@ const generateTestData = (num) => {
   return result;
 };
 
-export default function Videogames(props) {
+export default function VideogamesRouter(props) {
+  const match = useRouteMatch();
+  const classes = useStyles();
+  return (
+    <Container className={classes.container} maxWidth="xl">
+      <Switch>
+        <Route path={`${match.path}/:id`}>
+          <VideogameDetails />
+        </Route>
+        <Route path={`${match.path}`}>
+          <Videogames />
+        </Route>
+      </Switch>
+    </Container>
+  );
+}
+
+function Videogames(props) {
+  // const location = useLocation();
+  // const params = useParams();
+
+  // console.log('location', location);
+  // console.log('params', params);
+
   const classes = useStyles();
   const theme = useTheme();
 
@@ -94,11 +119,7 @@ export default function Videogames(props) {
     ...columns,
   ];
 
-  return (
-    <Container className={classes.container} maxWidth="xl">
-      <Collection columns={videogameColumns} data={videogames} />
-    </Container>
-  );
+  return <Collection columns={videogameColumns} data={videogames} />;
 }
 
 const useStyles = makeStyles((theme) => ({
