@@ -1,4 +1,7 @@
 const defaultTheme = {
+  mixins: {
+    coverSmall: 80,
+  },
   palette: {
     primary: {
       main: '#ca3e47',

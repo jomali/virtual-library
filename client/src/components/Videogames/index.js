@@ -1,1 +1,1 @@
-export { Videogame } from './Videogames';
+export { default } from './Videogames';

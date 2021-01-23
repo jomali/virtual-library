@@ -57,6 +57,7 @@ module.exports = {
     ],
     'no-debugger': 'error',
     'prefer-const': 'error',
+    'react/display-name': 0,
     'react/jsx-fragments': 'error',
     'react/jsx-no-useless-fragment': 'error',
     'react/prop-types': 'off',
