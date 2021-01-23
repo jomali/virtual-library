@@ -10,23 +10,21 @@ const getAllDirs = (dir) => {
 module.exports = {
   env: {
     browser: true,
-    es2021: true
+    es2021: true,
   },
   extends: [
     'plugin:react/recommended',
     'plugin:prettier/recommended',
-    'react-app'
+    'react-app',
   ],
   parserOptions: {
     ecmaFeatures: {
-      jsx: true
+      jsx: true,
     },
     ecmaVersion: 12,
-    sourceType: 'module'
+    sourceType: 'module',
   },
-  plugins: [
-    'react'
-  ],
+  plugins: ['react'],
   rules: {
     'import/order': [
       'warn',
@@ -61,5 +59,6 @@ module.exports = {
     'prefer-const': 'error',
     'react/jsx-fragments': 'error',
     'react/jsx-no-useless-fragment': 'error',
+    'react/prop-types': 'off',
   },
-}
+};
