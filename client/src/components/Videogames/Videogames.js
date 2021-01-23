@@ -9,6 +9,7 @@ const generateTestData = (num) => {
 
   for (let i = 0; i < num; i++) {
     result.push({
+      id: i + 1,
       coverSmall: `${process.env.PUBLIC_URL}/assets/mass-effect-cover_small.jpg`,
       title: 'Mass Effect',
       developer: [

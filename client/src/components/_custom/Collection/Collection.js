@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   paperBorder: {
-    borderRadius: theme.shape.borderRadius * PAPER_RADIUS_MULTIPLIER,
+    borderRadius: theme.shape.borderRadius,
     [theme.breakpoints.down('xs')]: {
       borderBottomLeftRadius: 0,
       borderBottomRightRadius: 0,
