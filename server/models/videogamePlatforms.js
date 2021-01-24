@@ -1,5 +1,5 @@
-const db = require('./database');
-const table = 'videogamePlatforms';
+const db = require('../database');
+const table = 'videogame_platforms';
 
 const create = (req, res, next) => {
   const errors = [];
