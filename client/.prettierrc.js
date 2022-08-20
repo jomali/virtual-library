@@ -16,7 +16,7 @@ module.exports = {
   // @see: https://prettier.io/docs/en/options.html#bracket-spacing
   bracketSpacing: true,
   // @see: https://prettier.io/docs/en/options.html#end-of-line
-  endOfLine: "lf",
+  endOfLine: 'lf',
   // For readability we recommend against using more than `80` characters
   // @see: https://prettier.io/docs/en/options.html#print-width
   printWidth: 80,
