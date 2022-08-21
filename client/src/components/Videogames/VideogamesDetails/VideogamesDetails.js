@@ -1,7 +1,7 @@
 import React from 'react';
-// import ForumRoundedIcon from '@mui/icons-material/ForumRounded';
-// import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
-// import ViewListRoundedIcon from '@mui/icons-material/ViewListRounded';
+import ForumRoundedIcon from '@mui/icons-material/ForumRounded';
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+import ViewListRoundedIcon from '@mui/icons-material/ViewListRounded';
 import AppBar from '@mui/material/AppBar';
 import Divider from '@mui/material/Divider';
 import { styled, useTheme } from '@mui/material/styles';
@@ -17,9 +17,19 @@ const ImagePlaceholder = styled('div')(({ theme }) => ({
   width: '100%',
 }));
 
-const VideogamesDetails = (props) => {
-  const { onClose, onDelete, onSubmit, value, ...otherProps } = props;
+const PanelContent = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  flexGrow: 1,
+}));
 
+export default function VideogamesDetails({
+  onClose,
+  onDelete,
+  onSubmit,
+  value,
+  ...otherProps
+}) {
   const theme = useTheme();
 
   const initialFields = React.useMemo(
@@ -71,9 +81,75 @@ const VideogamesDetails = (props) => {
     }
   }, [initialFields, value]);
 
+  const noTabs = true;
+
   return (
     <>
-      <AppBar position="sticky">
+      <AppBar elevation={0} position="sticky">
+        <PanelHeader
+          editMode={editMode || !value}
+          label={value ? value.title : 'New'}
+          onClose={onClose}
+          onDelete={value ? () => onDelete(value.id) : null}
+          onSubmit={() => onSubmit(fields)}
+          onToggleEditMode={(newValue) => toggleEditMode(newValue)}
+          toggable={Boolean(value)}
+        />
+      </AppBar>
+      <ImagePlaceholder height={200} width={375} />
+      {!noTabs ? (
+        <Tabs
+          aria-label="full width tabs example"
+          indicatorColor="primary"
+          onChange={handleChange}
+          textColor="inherit"
+          value={currentTab}
+          variant="fullWidth"
+        >
+          <Tab
+            disabled={false}
+            icon={<ViewListRoundedIcon />}
+            // label="General"
+            {...a11yProps(0)}
+          />
+          <Tab
+            disabled={false}
+            icon={<PersonRoundedIcon />}
+            // label="Personal"
+            {...a11yProps(1)}
+          />
+          <Tab
+            disabled={false}
+            icon={<ForumRoundedIcon />}
+            // label="Reviews"
+            {...a11yProps(2)}
+          />
+        </Tabs>
+      ) : null}
+      <Divider />
+      <PanelContent>
+        <SwipeableViews
+          axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+          index={currentTab}
+          onChangeIndex={handleChangeIndex}
+        >
+          <TabPanel value={currentTab} index={0} dir={theme.direction}>
+            <InfoForm
+              fields={fields}
+              onChange={(newValue) => setFields(newValue)}
+              {...otherProps}
+            />
+          </TabPanel>
+          <TabPanel value={currentTab} index={1} dir={theme.direction}>
+            Item Two
+          </TabPanel>
+          <TabPanel value={currentTab} index={2} dir={theme.direction}>
+            Item three
+          </TabPanel>
+        </SwipeableViews>
+      </PanelContent>
+      <Divider />
+      <AppBar elevation={0} position="relative">
         <PanelHeader
           editMode={editMode || !value}
           label={value ? value.title : 'New'}
@@ -84,56 +160,6 @@ const VideogamesDetails = (props) => {
           toggable={Boolean(value)}
         />
       </AppBar>
-      <ImagePlaceholder height={200} width={375} />
-      <Tabs
-        aria-label="full width tabs example"
-        indicatorColor="primary"
-        onChange={handleChange}
-        textColor="inherit"
-        value={currentTab}
-        variant="fullWidth"
-      >
-        <Tab
-          disabled={false}
-          // icon={<ViewListRoundedIcon />}
-          label="General"
-          {...a11yProps(0)}
-        />
-        {/* <Tab
-          disabled={false}
-          // icon={<PersonRoundedIcon />}
-          label="Personal"
-          {...a11yProps(1)}
-        />
-        <Tab
-          disabled={false}
-          // icon={<ForumRoundedIcon />}
-          label="Reviews"
-          {...a11yProps(2)}
-        /> */}
-      </Tabs>
-      <Divider />
-      <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-        index={currentTab}
-        onChangeIndex={handleChangeIndex}
-      >
-        <TabPanel value={currentTab} index={0} dir={theme.direction}>
-          <InfoForm
-            fields={fields}
-            onChange={(newValue) => setFields(newValue)}
-            {...otherProps}
-          />
-        </TabPanel>
-        <TabPanel value={currentTab} index={1} dir={theme.direction}>
-          Item Two
-        </TabPanel>
-        <TabPanel value={currentTab} index={2} dir={theme.direction}>
-          Item three
-        </TabPanel>
-      </SwipeableViews>
     </>
   );
-};
-
-export default VideogamesDetails;
+}

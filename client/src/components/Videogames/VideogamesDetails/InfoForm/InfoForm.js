@@ -1,16 +1,16 @@
 import React from 'react';
-import Autocomplete from '@mui/material/Autocomplete';
+// import Autocomplete from '@mui/material/Autocomplete';
 import Grid from '@mui/material/Grid';
 // import Stack from '@mui/material/Stack';
 import { TextField } from 'components/shared/FormFields';
 
 const InfoForm = (props) => {
   const {
-    developers = [],
+    // developers = [],
     fields,
     onChange,
-    platforms = [],
-    publishers = [],
+    // platforms = [],
+    // publishers = [],
   } = props;
 
   return (
@@ -29,7 +29,7 @@ const InfoForm = (props) => {
         />
       </Grid>
 
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <Autocomplete
           // Developer
           filterSelectedOptions
@@ -52,9 +52,9 @@ const InfoForm = (props) => {
           renderInput={(params) => <TextField {...params} label="Developer" />}
           value={fields.developers}
         />
-      </Grid>
+      </Grid> */}
 
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <Autocomplete
           // Publisher
           filterSelectedOptions
@@ -75,7 +75,7 @@ const InfoForm = (props) => {
           renderInput={(params) => <TextField {...params} label="Publisher" />}
           value={fields.publishers}
         />
-      </Grid>
+      </Grid> */}
 
       {/* <Grid item xs={12}>
         <Stack alignItems="center" direction="row" spacing={1}>
@@ -92,7 +92,7 @@ const InfoForm = (props) => {
         </Stack>
       </Grid> */}
 
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <Autocomplete
           // Platforms
           filterSelectedOptions
@@ -103,16 +103,16 @@ const InfoForm = (props) => {
           options={platforms}
           renderInput={(params) => <TextField {...params} label="Platforms" />}
         />
-      </Grid>
+      </Grid> */}
 
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <TextField
           // Synopsis
           label="Synopsis"
           multiline
           rows={4}
         />
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 };

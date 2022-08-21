@@ -2,8 +2,9 @@ import React from 'react';
 // import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+// import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import EditOffRoundedIcon from '@mui/icons-material/EditOffRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
 import Box from '@mui/material/Box';
@@ -26,17 +27,15 @@ const Container = styled('div')(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
-const PanelHeader = (props) => {
-  const {
-    editMode,
-    label,
-    onClose,
-    onDelete,
-    onSubmit,
-    onToggleEditMode,
-    toggable,
-  } = props;
-
+export default function PanelHeader({
+  editMode,
+  label,
+  onClose,
+  onDelete,
+  onSubmit,
+  onToggleEditMode,
+  toggable,
+}) {
   const theme = useTheme();
 
   return (
@@ -61,7 +60,8 @@ const PanelHeader = (props) => {
               onClick={() => onToggleEditMode(false)}
               sx={{ color: (theme) => theme.palette.grey[500] }}
             >
-              <CloseRoundedIcon />
+              {/* <CloseRoundedIcon /> */}
+              <EditOffRoundedIcon />
             </IconButton>
           </Tooltip>
         </Fade>
@@ -76,7 +76,7 @@ const PanelHeader = (props) => {
           zIndex: (theme) => theme.zIndex.appBar - 1,
         }}
       >
-        {Boolean(onDelete) ? (
+        {onDelete ? (
           <Fade in={editMode} {...(editMode ? { timeout: 1000 } : {})}>
             <Button
               color="inherit"
@@ -94,7 +94,7 @@ const PanelHeader = (props) => {
             </Button>
           </Fade>
         ) : null}
-        {Boolean(onSubmit) ? (
+        {onSubmit ? (
           <Fade in={editMode} {...(editMode ? { timeout: 1000 } : {})}>
             <Button
               form={null} // FIXME
@@ -135,7 +135,7 @@ const PanelHeader = (props) => {
           </IconButton>
         </Tooltip>
       </Fade>
-      {Boolean(label) ? (
+      {label ? (
         <Fade
           in={!toggable || !editMode}
           {...(!editMode ? { timeout: 1000 } : {})}
@@ -177,7 +177,7 @@ const PanelHeader = (props) => {
       </Fade>
     </Container>
   );
-};
+}
 
 PanelHeader.propTypes = {
   editMode: PropTypes.bool,
@@ -188,5 +188,3 @@ PanelHeader.propTypes = {
   onToggleEditMode: PropTypes.func,
   toggable: PropTypes.bool,
 };
-
-export default PanelHeader;

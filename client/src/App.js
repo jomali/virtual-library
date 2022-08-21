@@ -7,6 +7,7 @@ import { IntlProvider } from 'react-intl';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { messages, routes } from 'components/Main';
 import { ApiProvider } from 'components/shared/ApiProvider';
+import { ConfirmProvider } from 'components/shared/ConfirmProvider_';
 import ThemeProvider from 'components/shared/ThemeProvider';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -26,13 +27,15 @@ export default function App() {
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <ApiProvider host="http://localhost:9000/api">
               <QueryClientProvider client={queryClient}>
-                <BrowserRouter>
-                  <Routes>
-                    {routes.map((route) => (
-                      <Route key={route.path} {...route} />
-                    ))}
-                  </Routes>
-                </BrowserRouter>
+                <ConfirmProvider>
+                  <BrowserRouter>
+                    <Routes>
+                      {routes.map((route) => (
+                        <Route key={route.path} {...route} />
+                      ))}
+                    </Routes>
+                  </BrowserRouter>
+                </ConfirmProvider>
               </QueryClientProvider>
             </ApiProvider>
           </LocalizationProvider>

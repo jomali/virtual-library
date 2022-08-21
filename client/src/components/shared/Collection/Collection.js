@@ -1,8 +1,10 @@
 import React from 'react';
 import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import PropTypes from 'prop-types';
+import { Transition } from 'react-transition-group';
 
 const SIDE_PANEL_WIDTH = 450;
 
@@ -17,19 +19,21 @@ const Container = styled('main', {
 const Panel = styled(Paper, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ open, theme }) => ({
-  overflow: 'auto',
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
+  display: 'flex',
+  flexDirection: 'column',
+  flexGrow: 1,
+  maxWidth: SIDE_PANEL_WIDTH,
+  minWidth: 0,
+  transition: `${theme.transitions.create('min-width', {
+    easing: theme.transitions.easing.easeOut,
     duration: theme.transitions.duration.leavingScreen,
-  }),
-  width: 0,
+  })}`,
   ...(open && {
-    minWidth: SIDE_PANEL_WIDTH,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.easeOut,
+    transition: `${theme.transitions.create('min-width', {
+      easing: theme.transitions.easing.easeIn,
       duration: theme.transitions.duration.enteringScreen,
-    }),
-    width: SIDE_PANEL_WIDTH,
+    })}`,
+    minWidth: SIDE_PANEL_WIDTH,
   }),
 }));
 
@@ -40,12 +44,30 @@ export default function Collection({
   sideContent,
   ...otherProps
 }) {
+  const theme = useTheme();
+
   return (
     <Box sx={{ display: 'flex', height: ' 100%', overflow: 'hidden' }}>
       <Container open={open}>{children}</Container>
-      <Panel elevation={3} open={open} square>
-        {sideContent({ onClose, ...otherProps })}
-      </Panel>
+      <div style={{ display: 'flex', height: ' 100%', overflow: 'hidden' }}>
+        <Transition
+          in={open}
+          timeout={theme.transitions.duration.enteringScreen}
+        >
+          {(state) => (
+            <>
+              <Divider orientation="vertical" />
+              <Panel elevation={0} open={open} square>
+                {state === 'entered' ? (
+                  sideContent({ onClose, ...otherProps })
+                ) : (
+                  <span />
+                )}
+              </Panel>
+            </>
+          )}
+        </Transition>
+      </div>
     </Box>
   );
 }

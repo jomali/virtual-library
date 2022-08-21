@@ -50,18 +50,16 @@ import Typography from '@mui/material/Typography';
 //   },
 // }));
 
-const TableToolbar = (props) => {
-  const {
-    addOptions = {
-      buttonReference: null,
-      disabled: false,
-      hidden: false,
-      label: null,
-      onClick: () => null,
-    },
-    title,
-  } = props;
-
+const TableToolbar = ({
+  addOptions = {
+    buttonReference: null,
+    disabled: false,
+    hidden: false,
+    label: null,
+    onClick: () => null,
+  },
+  title,
+}) => {
   const {
     buttonReference: addOptionButtonReference,
     hidden: addOptionHidden,
