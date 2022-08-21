@@ -2,9 +2,10 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Div100vh from 'react-div-100vh';
 import { IntlProvider } from 'react-intl';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { messages, routes } from 'components/sections';
+import { messages, routes } from 'components/Main';
 import { ApiProvider } from 'components/shared/ApiProvider';
 import ThemeProvider from 'components/shared/ThemeProvider';
 import '@fontsource/roboto/300.css';
@@ -21,19 +22,21 @@ export default function App() {
     <IntlProvider locale={language} messages={messages[language]}>
       <ThemeProvider>
         <CssBaseline />
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <ApiProvider host="http://localhost:9000/api">
-            <QueryClientProvider client={queryClient}>
-              <BrowserRouter>
-                <Routes>
-                  {routes.map((route) => (
-                    <Route key={route.path} {...route} />
-                  ))}
-                </Routes>
-              </BrowserRouter>
-            </QueryClientProvider>
-          </ApiProvider>
-        </LocalizationProvider>
+        <Div100vh style={{ display: 'flex', flexDirection: 'column' }}>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <ApiProvider host="http://localhost:9000/api">
+              <QueryClientProvider client={queryClient}>
+                <BrowserRouter>
+                  <Routes>
+                    {routes.map((route) => (
+                      <Route key={route.path} {...route} />
+                    ))}
+                  </Routes>
+                </BrowserRouter>
+              </QueryClientProvider>
+            </ApiProvider>
+          </LocalizationProvider>
+        </Div100vh>
       </ThemeProvider>
     </IntlProvider>
   );

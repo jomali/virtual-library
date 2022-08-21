@@ -33,9 +33,13 @@ const Panel = styled(Paper, {
   }),
 }));
 
-const Collection = (props) => {
-  const { children, onClose, open, sideContent, ...otherProps } = props;
-
+export default function Collection({
+  children,
+  onClose,
+  open,
+  sideContent,
+  ...otherProps
+}) {
   return (
     <Box sx={{ display: 'flex', height: ' 100%', overflow: 'hidden' }}>
       <Container open={open}>{children}</Container>
@@ -44,7 +48,7 @@ const Collection = (props) => {
       </Panel>
     </Box>
   );
-};
+}
 
 Collection.propTypes = {
   children: PropTypes.node,
@@ -52,5 +56,3 @@ Collection.propTypes = {
   open: PropTypes.bool,
   sideContent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
 };
-
-export default Collection;

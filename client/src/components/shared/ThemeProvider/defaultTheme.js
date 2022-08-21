@@ -11,6 +11,9 @@ const defaultTheme = {
       main: '#ca3e47',
     },
   },
+  shape: {
+    borderRadius: 8,
+  },
 };
 
 export default defaultTheme;
