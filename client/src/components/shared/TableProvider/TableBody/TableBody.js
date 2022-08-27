@@ -1,42 +1,111 @@
 import React from 'react';
+import Checkbox from '@mui/material/Checkbox';
 import Skeleton from '@mui/material/Skeleton';
+import { styled } from '@mui/material/styles';
 import MuiTableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import PropTypes from 'prop-types';
-import useTable from '../useTable';
+import useTableState from '../useTableState';
 
-const TableBody = (props) => {
-  const { loadingRowsNumber = 4, setRowProps = () => ({}) } = props;
+const SelectableTableRow = styled(TableRow, {
+  shouldForwardProp: (prop) => prop !== 'selectable',
+})(({ selectable, theme }) => ({
+  ...(selectable && {
+    cursor: 'pointer',
+  }),
+}));
 
-  const table = useTable();
+export default function TableBody({
+  color = 'default', // TODO - use color
+  loadingRowsNumber = 4,
+  setRowProps = () => ({}),
+}) {
+  const tableState = useTableState();
+  const [lastClickedRowIndex, setLastClickedRowIndex] = React.useState();
 
   const comparator = React.useCallback(
-    (a, b) => a === table.selector(b),
-    [table]
+    (a, b) => a === tableState.selector(b),
+    [tableState]
   );
 
-  const visibleColumns = table.includedColumns.filter(
-    (column) => column.options.display
-  );
+  const handleSelect = (event, row, rowIndex) => {
+    if (tableState.selectable) {
+      let selectedRows = [...tableState.selected];
+      let selectingSubset = [tableState.selector(row)];
 
-  return table.loading ? (
+      const isUnselecting = Boolean(
+        selectedRows.find((element) => element === tableState.selector(row))
+      );
+
+      if (tableState.selectable === 'multiple') {
+        const shiftKey =
+          event && event.nativeEvent ? event.nativeEvent.shiftKey : false;
+
+        if (shiftKey && lastClickedRowIndex !== null) {
+          const minIndex = Math.min(lastClickedRowIndex, rowIndex);
+          const maxIndex = Math.max(lastClickedRowIndex, rowIndex);
+          selectingSubset = tableState.rows
+            .map((element, index) =>
+              index >= minIndex && index <= maxIndex
+                ? tableState.selector(element)
+                : null
+            )
+            .filter((element) => Boolean(element));
+        }
+      }
+
+      if (isUnselecting) {
+        selectedRows = selectedRows.reduce((previousValue, currentValue) => {
+          if (!selectingSubset.find((element) => element === currentValue)) {
+            previousValue.push(currentValue);
+          }
+          return previousValue;
+        }, []);
+      } else {
+        const filteredSelectingSubset = selectingSubset.reduce(
+          (previousValue, currentValue) => {
+            if (selectedRows.find((element) => element === currentValue)) {
+              return previousValue;
+            } else {
+              previousValue.push(currentValue);
+              return previousValue;
+            }
+          },
+          []
+        );
+        selectedRows.push(...filteredSelectingSubset);
+      }
+
+      setLastClickedRowIndex(rowIndex);
+      return tableState.onSelect(selectedRows);
+    }
+  };
+
+  return tableState.loading ? (
     <MuiTableBody>
       {Array.from({ length: loadingRowsNumber }).map((row, rowIndex) => (
         <TableRow key={`row-${rowIndex}`}>
-          {visibleColumns.map((column, columnIndex) => (
-            <TableCell key={`cell-${columnIndex}`}>
+          {tableState.selectable === 'multiple' ? (
+            <TableCell>
               <Skeleton />
             </TableCell>
-          ))}
+          ) : null}
+          {tableState.includedColumns
+            .filter((column) => column.options.display)
+            .map((column, columnIndex) => (
+              <TableCell key={`cell-${columnIndex}`}>
+                <Skeleton />
+              </TableCell>
+            ))}
         </TableRow>
       ))}
     </MuiTableBody>
   ) : (
     <MuiTableBody>
-      {table.rows.map((row, rowIndex) => {
-        // Determines if the current row is part of the table selection:
-        const rowIsSelected = table.selected.find((element) =>
+      {tableState.rows.map((row, rowIndex) => {
+        // Determines if the current row is part of the tableState selection:
+        const rowIsSelected = tableState.selected.find((element) =>
           comparator(element, row)
         );
         // Get additional row props:
@@ -47,45 +116,60 @@ const TableBody = (props) => {
           ...additionalRowProps
         } = rowProps;
         return (
-          <TableRow
-            hover={Boolean(table.selectable) && !rowDisabled}
-            key={`page-${table.filter.page}-row-${rowIndex}`}
+          <SelectableTableRow
+            hover={Boolean(tableState.selectable) && !rowDisabled}
+            key={`page-${tableState.state.paging.page}-row-${rowIndex}`}
+            selectable={Boolean(tableState.selectable)}
             selected={Boolean(rowIsSelected)}
             {...additionalRowProps}
           >
-            {visibleColumns.map((column, columnIndex) => {
-              // Get align and format options of the current column:
-              const align = column.options.align || 'left';
-              const formatter = column.options.format;
-              // Get additional cell props:
-              const setCellProps = column.options.setCellProps;
-              const cellProps = Boolean(setCellProps)
-                ? setCellProps(row[column.attribute])
-                : {};
-              const { className: cellClassName, ...additionalCellProps } =
-                cellProps;
+            {tableState.selectable === 'multiple' ? (
+              <TableCell padding="checkbox">
+                <Checkbox
+                  color="primary" // TODO - variable color
+                  checked={Boolean(rowIsSelected)}
+                  inputProps={{
+                    'aria-labelledby': `row-checkbox-${rowIndex}`,
+                  }}
+                  onChange={(event) => handleSelect(event, row, rowIndex)}
+                />
+              </TableCell>
+            ) : null}
+            {tableState.includedColumns
+              .filter((column) => column.options.display)
+              .map((column, columnIndex) => {
+                // Get align and format options of the current column:
+                const align = column.options.align || 'left';
+                const formatter = column.options.format;
+                // Get additional cell props:
+                const setCellProps = column.options.setCellProps;
+                const cellProps = setCellProps
+                  ? setCellProps(row[column.attribute])
+                  : {};
+                const { className: cellClassName, ...additionalCellProps } =
+                  cellProps;
 
-              return (
-                <TableCell
-                  align={align}
-                  key={`cell-${columnIndex}`}
-                  onClick={
-                    rowDisabled ? undefined : () => table.handleClick(row)
-                  }
-                  {...additionalCellProps}
-                >
-                  {Boolean(formatter)
-                    ? formatter(row[column.attribute])
-                    : row[column.attribute]}
-                </TableCell>
-              );
-            })}
-          </TableRow>
+                return (
+                  <TableCell
+                    align={align}
+                    key={`cell-${columnIndex}`}
+                    onClick={
+                      rowDisabled ? undefined : () => tableState.onClick(row)
+                    }
+                    {...additionalCellProps}
+                  >
+                    {formatter
+                      ? formatter(row[column.attribute])
+                      : row[column.attribute]}
+                  </TableCell>
+                );
+              })}
+          </SelectableTableRow>
         );
       })}
     </MuiTableBody>
   );
-};
+}
 
 TableBody.propTypes = {
   /**
@@ -106,5 +190,3 @@ TableBody.propTypes = {
    */
   setRowProps: PropTypes.func,
 };
-
-export default TableBody;

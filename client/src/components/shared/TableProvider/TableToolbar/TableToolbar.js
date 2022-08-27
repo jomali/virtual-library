@@ -50,7 +50,7 @@ import Typography from '@mui/material/Typography';
 //   },
 // }));
 
-const TableToolbar = ({
+export default function TableToolbar({
   addOptions = {
     buttonReference: null,
     disabled: false,
@@ -59,7 +59,7 @@ const TableToolbar = ({
     onClick: () => null,
   },
   title,
-}) => {
+}) {
   const {
     buttonReference: addOptionButtonReference,
     hidden: addOptionHidden,
@@ -106,6 +106,4 @@ const TableToolbar = ({
       </Stack> */}
     </Toolbar>
   );
-};
-
-export default TableToolbar;
+}

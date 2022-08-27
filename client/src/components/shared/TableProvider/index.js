@@ -6,5 +6,5 @@ export { default as TableContent } from './TableContent';
 export { default as TableHead } from './TableHead';
 export { default as TablePagination } from './TablePagination';
 export { default as TableToolbar } from './TableToolbar';
-export { default as useTableState } from './useTableState';
+export { default as useTable } from './useTable';
 export default TableProvider;

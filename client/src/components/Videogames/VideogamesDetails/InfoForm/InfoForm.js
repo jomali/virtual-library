@@ -4,20 +4,20 @@ import Grid from '@mui/material/Grid';
 // import Stack from '@mui/material/Stack';
 import { TextField } from 'components/shared/FormFields';
 
-const InfoForm = (props) => {
-  const {
-    // developers = [],
-    fields,
-    onChange,
-    // platforms = [],
-    // publishers = [],
-  } = props;
-
+const InfoForm = ({
+  // developers = [],
+  fields,
+  onChange,
+  // platforms = [],
+  // publishers = [],
+  readOnly,
+}) => {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
         <TextField
           // Title
+          autofocus
           label={'Title'}
           onChange={(event) =>
             onChange({
@@ -25,6 +25,7 @@ const InfoForm = (props) => {
               title: event.target.value,
             })
           }
+          readOnly={readOnly}
           value={fields.title}
         />
       </Grid>

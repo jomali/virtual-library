@@ -43,6 +43,7 @@ module.exports = {
     ],
     'no-debugger': 'error',
     'no-unused-expressions': 'off',
+    'no-unused-vars': 'warn',
     'prefer-const': 'error',
   },
 };

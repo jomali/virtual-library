@@ -5,10 +5,10 @@ const defaultTheme = {
   palette: {
     mode: 'dark',
     primary: {
-      main: '#2bb24c',
+      main: '#4caf50',
     },
     secondary: {
-      main: '#ab47bc',
+      main: '#ec407a',
     },
     background: {
       default: '#09090d',

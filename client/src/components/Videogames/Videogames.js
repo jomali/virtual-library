@@ -1,15 +1,15 @@
 import React from 'react';
 import Paper from '@mui/material/Paper';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useSnackbar } from 'notistack';
 import { useApi } from 'components/shared/ApiProvider';
 import Collection from 'components/shared/Collection';
-import { useConfirm } from 'components/shared/ConfirmProvider_';
+import { useConfirm } from 'components/shared/ConfirmProvider';
 import TableProvider, {
   TableContainer,
   TableContent,
   TableToolbar,
-  TablePagination,
-  useTableState,
+  useTable,
 } from 'components/shared/TableProvider';
 import VideogamesDetails from './VideogamesDetails';
 
@@ -17,7 +17,10 @@ export default function Videogames() {
   const api = useApi();
   const confirm = useConfirm();
   const queryClient = useQueryClient();
-  const tableState = useTableState(50);
+  const { enqueueSnackbar } = useSnackbar();
+  const table = useTable();
+
+  console.log('table', table);
 
   const developersQuery = useQuery(['developers'], async () => {
     const result = await api.GET('videogameDevelopers');
@@ -44,10 +47,15 @@ export default function Videogames() {
     {
       onError: (error) => {
         console.error(error.message);
+        enqueueSnackbar('Error creating new element.', {
+          variant: 'error',
+        });
       },
       onSuccess: (value) => {
         queryClient.resetQueries('videogames');
-        console.log('New element successfully created');
+        enqueueSnackbar('New element successfully created.', {
+          variant: 'success',
+        });
       },
     }
   );
@@ -57,10 +65,15 @@ export default function Videogames() {
     {
       onError: (error) => {
         console.error(error.message);
+        enqueueSnackbar('Error deleting element.', {
+          variant: 'error',
+        });
       },
       onSuccess: (value) => {
         queryClient.resetQueries('videogames');
-        console.log('New element successfully deleted.');
+        enqueueSnackbar('New element successfully deleted.', {
+          variant: 'success',
+        });
       },
     }
   );
@@ -116,9 +129,9 @@ export default function Videogames() {
     <Collection
       onClose={() => {
         toggleNewItem(false);
-        tableState.setLastClicked();
+        table.setLastClicked();
       }}
-      open={newItem || Boolean(tableState.lastClicked)}
+      open={newItem || Boolean(table.lastClicked)}
       sideContent={(params) => (
         <VideogamesDetails
           developers={developersQuery.data}
@@ -130,7 +143,7 @@ export default function Videogames() {
           onSubmit={(newValue) => videogamesCreateMutation.mutate(newValue)}
           platforms={platformsQuery.data}
           publishers={publishersQuery.data}
-          value={tableState.lastClicked}
+          value={table.lastClicked}
           {...params}
         />
       )}
@@ -147,12 +160,19 @@ export default function Videogames() {
         <TableProvider
           columns={columns}
           count={videogamesQuery.data?.length}
-          filter={tableState.filter}
           loading={videogamesQuery.isFetching}
-          onChange={tableState.setFilter}
-          onClick={tableState.setLastClicked}
+          onChange={table.update}
+          onClick={(value) =>
+            table.setLastClicked(
+              table.lastClicked?.id === value.id ? undefined : value
+            )
+          }
+          onSelect={table.setSelected}
           rows={videogamesQuery.data}
           selectable
+          selected={table.selected}
+          selector={(value) => value.id}
+          state={table.state}
         >
           <TableContainer>
             <TableToolbar
@@ -162,7 +182,7 @@ export default function Videogames() {
               }}
             />
             <TableContent />
-            <TablePagination />
+            {/* <TablePagination /> */}
           </TableContainer>
         </TableProvider>
       </Paper>

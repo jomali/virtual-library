@@ -5,9 +5,11 @@ import PropTypes from 'prop-types';
 import TableBody from '../TableBody';
 import TableHead from '../TableHead';
 
-const TableContents = (props) => {
-  const { headProps = {}, bodyProps = {}, ...otherProps } = props;
-
+export default function TableContents({
+  headProps = {},
+  bodyProps = {},
+  ...otherProps
+}) {
   return (
     <MuiTableContainer sx={{ height: '100%' }}>
       <MuiTable stickyHeader>
@@ -16,7 +18,7 @@ const TableContents = (props) => {
       </MuiTable>
     </MuiTableContainer>
   );
-};
+}
 
 TableContents.propTypes = {
   headProps: PropTypes.object,
@@ -42,5 +44,3 @@ TableContents.propTypes = {
    */
   setRowProps: PropTypes.func,
 };
-
-export default TableContents;

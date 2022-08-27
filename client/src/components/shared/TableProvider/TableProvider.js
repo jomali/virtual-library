@@ -4,49 +4,66 @@ import * as objectUtils from 'components/shared/objectUtils';
 
 export const TableContext = React.createContext();
 
-export const TableProvider = (props) => {
-  const {
-    children,
-    columns,
-    filter,
-    count = -1,
-    loading = false,
-    onChange = () => null,
-    onClick = () => null,
-    onSelect = () => null,
-    rows = [],
-    selectable = false,
-    selected = [],
-    selector = (value) => value,
-  } = props;
-
+export const TableProvider = ({
+  children,
+  columns,
+  count = -1,
+  initialState = {},
+  loading = false,
+  onChange = () => null,
+  onClick = () => null,
+  onSelect = () => null,
+  rows = [],
+  selectable = false,
+  selected = [],
+  selector = (value) => value,
+  state,
+}) => {
   const [includedColumns, setIncludedColumns] = React.useState([]);
 
   const handleChangeFilter = (newValue) => {
     onChange({
-      ...filter,
-      content: objectUtils.clearObject(newValue),
-      page: 0,
+      ...state,
+      filters: objectUtils.clearObject(newValue),
+      paging: {
+        ...state.paging,
+        page: 0,
+      },
     });
   };
 
   const handleChangePage = (event, newPage) => {
     onChange({
-      ...filter,
-      page: newPage,
+      ...state,
+      paging: {
+        ...state.paging,
+        page: newPage,
+      },
     });
   };
 
   const handleChangeRowsPerPage = (event) => {
     onChange({
-      ...filter,
-      page: 0,
-      rowsPerPage: parseInt(event.target.value, 10),
+      ...state,
+      paging: {
+        ...state.paging,
+        page: 0,
+        rowsPerPage: parseInt(event.target.value, 10),
+      },
     });
   };
 
+  const handleChangeSorting = (newValue) => {
+    if (newValue) {
+      onChange({
+        ...state,
+        sorting: newValue,
+      });
+    }
+  };
+
   const handleClick = (value) => {
-    if (Boolean(selectable)) {
+    if (selectable) {
       onClick(value);
       if (selectable !== 'multiple') {
         onSelect(
@@ -59,9 +76,9 @@ export const TableProvider = (props) => {
   };
 
   const handleQuickSearch = (newValue) => {
-    if (Boolean(newValue) || Boolean(filter?.quickSearch)) {
+    if (Boolean(newValue) || Boolean(state?.quickSearch)) {
       onChange({
-        ...filter,
+        ...state,
         quickSearch: newValue === '' ? undefined : newValue,
       });
     }
@@ -126,20 +143,22 @@ export const TableProvider = (props) => {
       value={{
         columns,
         count,
-        filter,
-        handleChangeFilter,
-        handleChangePage,
-        handleChangeRowsPerPage,
-        handleClick,
-        handleQuickSearch,
-        handleSelect,
-        includedColumns: includedColumns,
+        includedColumns,
+        initialState,
         loading,
+        onChangeFilter: handleChangeFilter,
+        onChangePage: handleChangePage,
+        onChangeRowsPerPage: handleChangeRowsPerPage,
+        onChangeSorting: handleChangeSorting,
+        onClick: handleClick,
+        onQuickSearch: handleQuickSearch,
+        onSelect: handleSelect,
         rows: rows || [],
         selectable,
         selected,
         selector,
         setIncludedColumns,
+        state,
       }}
     >
       {children}
@@ -174,14 +193,23 @@ TableProvider.propTypes = {
    */
   count: PropTypes.number,
   /**
-   * Table data related to filter and pagination params.
+   * Initial state (used in reset actions).
    */
-  filter: PropTypes.exact({
-    content: PropTypes.object,
-    page: PropTypes.number,
+  initialState: PropTypes.exact({
+    filters: PropTypes.object,
+    paging: PropTypes.shape({
+      lastValue: PropTypes.object,
+      page: PropTypes.number,
+      rowsPerPage: PropTypes.number,
+    }),
     quickSearch: PropTypes.string,
-    rowsPerPage: PropTypes.number,
-  }).isRequired,
+    sorting: PropTypes.arrayOf(
+      PropTypes.exact({
+        field: PropTypes.string,
+        sort: PropTypes.oneOf(['asc', 'desc']),
+      })
+    ),
+  }),
   /**
    * If `true`, the table behaves as if an API request is being made.
    */
@@ -217,7 +245,8 @@ TableProvider.propTypes = {
    */
   selectable: PropTypes.oneOf([false, true, 'multiple']),
   /**
-   * Selected data.
+   * Array with the references of all the elements currently selected in the
+   * table.
    */
   selected: PropTypes.array,
   /**
@@ -226,4 +255,28 @@ TableProvider.propTypes = {
    * @returns The identifier for the given value
    */
   selector: PropTypes.func,
+  /**
+   * Internal table state. It registers the following information:
+   * - `filters`. Active query filters.
+   * - `lastClickedValued`. Last value clicked by the user.
+   * - `paging`. Pagination options.
+   * - `quickSearch`. Value of the quick search field.
+   * - `selected`. Array with ids of the values selected by the user.
+   * - `sorting`. Sort options.
+   */
+  state: PropTypes.exact({
+    filters: PropTypes.object,
+    paging: PropTypes.shape({
+      lastValue: PropTypes.object,
+      page: PropTypes.number,
+      rowsPerPage: PropTypes.number,
+    }),
+    quickSearch: PropTypes.string,
+    sorting: PropTypes.arrayOf(
+      PropTypes.exact({
+        attribute: PropTypes.string,
+        order: PropTypes.oneOf(['asc', 'desc']),
+      })
+    ),
+  }).isRequired,
 };

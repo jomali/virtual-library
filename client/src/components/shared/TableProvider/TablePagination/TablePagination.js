@@ -2,7 +2,7 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import MuiTablePagination from '@mui/material/TablePagination';
 import PropTypes from 'prop-types';
-import useTable from '../useTable';
+import useTableState from '../useTableState';
 
 const StyledTablePagination = styled(MuiTablePagination)(({ theme }) => ({
   ...theme.mixins.toolbar,
@@ -10,22 +10,23 @@ const StyledTablePagination = styled(MuiTablePagination)(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
-const TablePagination = (props) => {
-  const { rowsPerPageOptions = [50, 100, 250, 500] } = props;
-  const table = useTable();
+export default function TablePagination({
+  rowsPerPageOptions = [50, 100, 250, 500],
+}) {
+  const tableState = useTableState();
 
   return (
     <StyledTablePagination
       component="div"
-      count={table.count}
-      onPageChange={table.handleChangePage}
-      onRowsPerPageChange={table.handleChangeRowsPerPage}
-      page={table.filter.page}
-      rowsPerPage={table.filter.rowsPerPage}
+      count={tableState.count}
+      onPageChange={tableState.handleChangePage}
+      onRowsPerPageChange={tableState.handleChangeRowsPerPage}
+      page={tableState.filter.page}
+      rowsPerPage={tableState.filter.rowsPerPage}
       rowsPerPageOptions={rowsPerPageOptions}
     />
   );
-};
+}
 
 TablePagination.propTypes = {
   /**
@@ -33,5 +34,3 @@ TablePagination.propTypes = {
    */
   rowsPerPageOptions: PropTypes.arrayOf(PropTypes.number),
 };
-
-export default TablePagination;

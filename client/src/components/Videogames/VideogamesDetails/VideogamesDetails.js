@@ -1,20 +1,30 @@
 import React from 'react';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ForumRoundedIcon from '@mui/icons-material/ForumRounded';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import ViewListRoundedIcon from '@mui/icons-material/ViewListRounded';
 import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
+import Fade from '@mui/material/Fade';
+import IconButton from '@mui/material/IconButton';
 import { styled, useTheme } from '@mui/material/styles';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import SwipeableViews from 'react-swipeable-views';
-import PanelHeader from 'components/shared/PanelHeader';
+import EditionToolbar from 'components/shared/EditionToolbar';
 import TabPanel from 'components/shared/TabPanel';
 import InfoForm from './InfoForm';
 
-const ImagePlaceholder = styled('div')(({ theme }) => ({
-  display: 'flex',
-  width: '100%',
+const ImagePlaceholder = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'height',
+})(({ height, theme }) => ({
+  backgroundColor: 'darkgray',
+  // height: height,
+  height: 0,
 }));
 
 const PanelContent = styled('div')(({ theme }) => ({
@@ -46,7 +56,7 @@ export default function VideogamesDetails({
   );
 
   const [currentTab, setCurrentTab] = React.useState(0);
-  const [editMode, toggleEditMode] = React.useState(false);
+  const [editMode, toggleEditMode] = React.useState(!value);
   const [fields, setFields] = React.useState(initialFields);
 
   const handleChange = (event, newValue) => {
@@ -86,15 +96,26 @@ export default function VideogamesDetails({
   return (
     <>
       <AppBar elevation={0} position="sticky">
-        <PanelHeader
-          editMode={editMode || !value}
-          label={value ? value.title : 'New'}
-          onClose={onClose}
-          onDelete={value ? () => onDelete(value.id) : null}
-          onSubmit={() => onSubmit(fields)}
-          onToggleEditMode={(newValue) => toggleEditMode(newValue)}
-          toggable={Boolean(value)}
-        />
+        <Toolbar>
+          <Fade in timeout={theme.transitions.duration.enteringScreen * 1.5}>
+            <Typography>{value ? value.title : 'New'}</Typography>
+          </Fade>
+          <Box sx={{ flexGrow: 1 }} />
+          <Fade in timeout={theme.transitions.duration.enteringScreen * 1.5}>
+            <Tooltip title="Close panel">
+              <IconButton
+                edge="end"
+                onClick={onClose}
+                sx={{
+                  color: (theme) => theme.palette.grey[500],
+                  zIndex: (theme) => theme.zIndex.appBar,
+                }}
+              >
+                <CloseRoundedIcon />
+              </IconButton>
+            </Tooltip>
+          </Fade>
+        </Toolbar>
       </AppBar>
       <ImagePlaceholder height={200} width={375} />
       {!noTabs ? (
@@ -137,6 +158,7 @@ export default function VideogamesDetails({
             <InfoForm
               fields={fields}
               onChange={(newValue) => setFields(newValue)}
+              readOnly={!editMode}
               {...otherProps}
             />
           </TabPanel>
@@ -149,17 +171,13 @@ export default function VideogamesDetails({
         </SwipeableViews>
       </PanelContent>
       <Divider />
-      <AppBar elevation={0} position="relative">
-        <PanelHeader
-          editMode={editMode || !value}
-          label={value ? value.title : 'New'}
-          onClose={onClose}
-          onDelete={value ? onDelete : null}
-          onSubmit={() => onSubmit(fields)}
-          onToggleEditMode={(newValue) => toggleEditMode(newValue)}
-          toggable={Boolean(value)}
-        />
-      </AppBar>
+      <EditionToolbar
+        editMode={editMode}
+        onDelete={onDelete}
+        onSubmit={onSubmit}
+        onToggleEditMode={() => toggleEditMode(!editMode)}
+        toggable={Boolean(value)}
+      />
     </>
   );
 }
