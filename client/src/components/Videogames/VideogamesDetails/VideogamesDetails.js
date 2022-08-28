@@ -12,10 +12,10 @@ import { styled, useTheme } from '@mui/material/styles';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Toolbar from '@mui/material/Toolbar';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import SwipeableViews from 'react-swipeable-views';
 import EditionToolbar from 'components/shared/EditionToolbar';
+import { Tooltip } from 'components/shared/MuiCustomizations';
 import TabPanel from 'components/shared/TabPanel';
 import InfoForm from './InfoForm';
 
@@ -89,7 +89,7 @@ export default function VideogamesDetails({
     } else {
       setFields(initialFields);
     }
-  }, [initialFields, value]);
+  }, [fields, initialFields, value]);
 
   const noTabs = true;
 

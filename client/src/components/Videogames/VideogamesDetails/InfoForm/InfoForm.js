@@ -2,7 +2,7 @@ import React from 'react';
 // import Autocomplete from '@mui/material/Autocomplete';
 import Grid from '@mui/material/Grid';
 // import Stack from '@mui/material/Stack';
-import { TextField } from 'components/shared/FormFields';
+import { TextField } from 'components/shared/MuiCustomizations';
 
 const InfoForm = ({
   // developers = [],
@@ -17,7 +17,7 @@ const InfoForm = ({
       <Grid item xs={12}>
         <TextField
           // Title
-          autofocus
+          autoFocus
           label={'Title'}
           onChange={(event) =>
             onChange({

@@ -1,4 +1,17 @@
 const defaultTheme = {
+  components: {
+    MuiTooltip: {
+      styleOverrides: {
+        arrow: ({ theme }) => ({
+          color: theme.palette.common.black,
+        }),
+        tooltip: ({ theme }) => ({
+          backgroundColor: theme.palette.common.black,
+          fontSize: theme.typography.pxToRem(12),
+        }),
+      },
+    },
+  },
   mixins: {
     coverSmall: 80,
   },

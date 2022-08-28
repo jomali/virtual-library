@@ -20,8 +20,6 @@ export default function Videogames() {
   const { enqueueSnackbar } = useSnackbar();
   const table = useTable();
 
-  console.log('table', table);
-
   const developersQuery = useQuery(['developers'], async () => {
     const result = await api.GET('videogameDevelopers');
     return result.data;

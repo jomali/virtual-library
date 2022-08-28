@@ -10,8 +10,8 @@ import Fade from '@mui/material/Fade';
 import IconButton from '@mui/material/IconButton';
 import { useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
-import Tooltip from '@mui/material/Tooltip';
 import PropTypes from 'prop-types';
+import { Tooltip } from 'components/shared/MuiCustomizations';
 
 export default function EditionToolbar({
   editMode,
@@ -21,6 +21,7 @@ export default function EditionToolbar({
   toggable,
 }) {
   const theme = useTheme();
+
   return (
     <AppBar elevation={0} position="relative">
       <Toolbar>
