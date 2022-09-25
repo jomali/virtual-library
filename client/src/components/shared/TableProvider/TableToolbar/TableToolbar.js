@@ -1,13 +1,12 @@
 import React from 'react';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import SearchIcon from '@mui/icons-material/Search';
-import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';
 import Stack from '@mui/material/Stack';
 import { alpha, styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { Tooltip } from 'components/shared/MuiCustomizations';
+import { IconButton, Tooltip } from 'components/shared/MuiCustomizations';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',

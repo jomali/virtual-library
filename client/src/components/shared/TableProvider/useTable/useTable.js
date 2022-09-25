@@ -1,21 +1,21 @@
 import React from 'react';
 
 const ACTION_RESET_STATE = 'ACTION_RESET_STATE';
+const ACTION_SET_LAST_CLICKED = 'ACTION_SET_LAST_CLICKED';
+const ACTION_SET_SELECTED = 'ACTION_SET_SELECTED';
 const ACTION_SET_STATE = 'ACTION_SET_STATE';
 const DEFAULT_ROWS_PER_PAGE = 25;
 const STORAGE_MAIN_KEY = 'tableFilters';
 
 /**
  * @typedef {Object} TableState
- * @property {Object} lastClicked - Reference to the element in the last row
- * clicked by the user.
- * @property {Array} selected - Array with the references of all the elements
- * currently selected in the table.
  * @property {Object} state - Object with the current filter, paging and
- * sorting options active in the table.
- * @property {Function} setLastClicked - Sets the last clicked row object.
- * @property {Function} setSelected - Sets the selected rows array.
+ * sorting options active in the table, a reference to the last clicked element
+ * and an array with all the selected elements of the table.
  * @property {Function} reset - Resets the state to its initial values.
+ * @property {Function} select - Sets the selected rows array and the last
+ * clicked element.
+ * @property {Function} setLastClickedValue - Sets the last clicked row object.
  * @property {Function} update - Updates the filter, pagination and sorting
  * table state.
  */
@@ -31,11 +31,13 @@ export default function useTable(options = {}) {
   const initialState = React.useMemo(
     () => ({
       filters: options.initialFilters || {},
+      lastClickedValue: null,
       paging: {
         lastValue: {},
         page: 0,
         rowsPerPage: options.initialRowsPerPage || DEFAULT_ROWS_PER_PAGE,
       },
+      selected: [],
       sorting: [],
     }),
     [options.initialFilters, options.initialRowsPerPage]
@@ -45,6 +47,12 @@ export default function useTable(options = {}) {
     switch (action.type) {
       case ACTION_RESET_STATE:
         return action.payload;
+      case ACTION_SET_SELECTED:
+        return {
+          ...state,
+          lastClickedValue: action.payload.lastClickedValue,
+          selected: action.payload.selected,
+        };
       case ACTION_SET_STATE:
         return {
           ...state,
@@ -58,9 +66,6 @@ export default function useTable(options = {}) {
         throw new Error();
     }
   }, initialState);
-
-  const [lastClicked, setLastClicked] = React.useState();
-  const [selected, setSelected] = React.useState([]);
 
   const storeValue = React.useCallback(
     (value) => {
@@ -85,6 +90,20 @@ export default function useTable(options = {}) {
     });
   }, [initialState]);
 
+  const handleSelect = React.useCallback((selected, lastClickedValue) => {
+    dispatch({
+      type: ACTION_SET_SELECTED,
+      payload: { lastClickedValue, selected },
+    });
+  }, []);
+
+  const handleSetLastClickedValue = React.useCallback((lastClickedValue) => {
+    dispatch({
+      type: ACTION_SET_LAST_CLICKED,
+      payload: lastClickedValue,
+    });
+  }, []);
+
   const handleUpdate = React.useCallback(
     (data, cancelStorage) => {
       if (!cancelStorage) {
@@ -99,12 +118,10 @@ export default function useTable(options = {}) {
   );
 
   return {
-    lastClicked,
-    selected,
     state,
-    setLastClicked,
-    setSelected,
     reset: handleReset,
+    select: handleSelect,
+    setLastClickedValue: handleSetLastClickedValue,
     update: handleUpdate,
   };
 }

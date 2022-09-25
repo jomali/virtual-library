@@ -12,7 +12,7 @@ export default function TableHead({
   const tableState = useTable();
 
   const handleSelectAll = () => {
-    if (tableState.selected.length === 0) {
+    if (tableState.state.selected.length === 0) {
       const updatedValues = tableState.rows
         .filter((element, index) => {
           const disabledRow = setRowProps(element, index).disabled;
@@ -34,7 +34,7 @@ export default function TableHead({
               checked={
                 tableState.rows.filter(
                   (element, index) => !setRowProps(element, index).disabled
-                ).length === tableState.selected.length &&
+                ).length === tableState.state.selected.length &&
                 tableState.rows.filter(
                   (element, index) => !setRowProps(element, index).disabled
                 ).length > 0
@@ -48,11 +48,11 @@ export default function TableHead({
               indeterminate={
                 tableState.rows.filter(
                   (element, index) => !setRowProps(element, index).disabled
-                ).length !== tableState.selected.length &&
+                ).length !== tableState.state.selected.length &&
                 tableState.rows.filter(
                   (element, index) => !setRowProps(element, index).disabled
                 ).length > 0 &&
-                tableState.selected.length > 0
+                tableState.state.selected.length > 0
               }
               inputProps={{ 'aria-label': 'select all' }} // TODO - i18n
               onChange={handleSelectAll}

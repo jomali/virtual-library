@@ -127,9 +127,9 @@ export default function Videogames() {
     <Collection
       onClose={() => {
         toggleNewItem(false);
-        table.setLastClicked();
+        table.select([]);
       }}
-      open={newItem || Boolean(table.lastClicked)}
+      open={newItem || Boolean(table.state.selected.length)}
       sideContent={(params) => (
         <VideogamesDetails
           developers={developersQuery.data}
@@ -141,7 +141,7 @@ export default function Videogames() {
           onSubmit={(newValue) => videogamesCreateMutation.mutate(newValue)}
           platforms={platformsQuery.data}
           publishers={publishersQuery.data}
-          value={table.lastClicked}
+          value={table.state.lastClickedValue}
           {...params}
         />
       )}
@@ -160,15 +160,9 @@ export default function Videogames() {
           count={videogamesQuery.data?.length}
           loading={videogamesQuery.isFetching}
           onChange={table.update}
-          onClick={(value) =>
-            table.setLastClicked(
-              table.lastClicked?.id === value.id ? undefined : value
-            )
-          }
-          onSelect={table.setSelected}
+          onSelect={table.select}
           rows={videogamesQuery.data}
           selectable
-          selected={table.selected}
           selector={(value) => value.id}
           state={table.state}
         >
@@ -180,7 +174,6 @@ export default function Videogames() {
               }}
             />
             <TableContent />
-            {/* <TablePagination /> */}
           </TableContainer>
         </TableProvider>
       </Paper>

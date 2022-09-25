@@ -15,7 +15,7 @@ export const TableProvider = ({
   onSelect = () => null,
   rows = [],
   selectable = false,
-  selected = [],
+  // selected = [],
   selector = (value) => value,
   state,
 }) => {
@@ -67,9 +67,10 @@ export const TableProvider = ({
       onClick(value);
       if (selectable !== 'multiple') {
         onSelect(
-          selected.find((element) => element === selector(value))
+          state.selected.find((element) => element === selector(value))
             ? []
-            : [selector(value)]
+            : [selector(value)],
+          value
         );
       }
     }
@@ -84,8 +85,8 @@ export const TableProvider = ({
     }
   };
 
-  const handleSelect = (newValue) => {
-    onSelect(newValue);
+  const handleSelect = (selected, lastClickedValue) => {
+    onSelect(selected, lastClickedValue);
   };
 
   /**
@@ -155,7 +156,6 @@ export const TableProvider = ({
         onSelect: handleSelect,
         rows: rows || [],
         selectable,
-        selected,
         selector,
         setIncludedColumns,
         state,
@@ -248,7 +248,7 @@ TableProvider.propTypes = {
    * Array with the references of all the elements currently selected in the
    * table.
    */
-  selected: PropTypes.array,
+  selected: PropTypes.array, // FIXME
   /**
    * Function used to identify a table value.
    * @param {Object} value - A row in the data array
@@ -258,20 +258,22 @@ TableProvider.propTypes = {
   /**
    * Internal table state. It registers the following information:
    * - `filters`. Active query filters.
-   * - `lastClickedValued`. Last value clicked by the user.
+   * - `lastClickedValue`. Last value clicked by the user.
    * - `paging`. Pagination options.
    * - `quickSearch`. Value of the quick search field.
-   * - `selected`. Array with ids of the values selected by the user.
+   * - `selected`. Array with references to the values selected by the user.
    * - `sorting`. Sort options.
    */
   state: PropTypes.exact({
     filters: PropTypes.object,
+    lastClickedValue: PropTypes.object,
     paging: PropTypes.shape({
       lastValue: PropTypes.object,
       page: PropTypes.number,
       rowsPerPage: PropTypes.number,
     }),
     quickSearch: PropTypes.string,
+    selected: PropTypes.array,
     sorting: PropTypes.arrayOf(
       PropTypes.exact({
         attribute: PropTypes.string,

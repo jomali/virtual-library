@@ -7,7 +7,6 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Fade from '@mui/material/Fade';
-import IconButton from '@mui/material/IconButton';
 import { styled, useTheme } from '@mui/material/styles';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -15,7 +14,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import SwipeableViews from 'react-swipeable-views';
 import EditionToolbar from 'components/shared/EditionToolbar';
-import { Tooltip } from 'components/shared/MuiCustomizations';
+import { IconButton, Tooltip } from 'components/shared/MuiCustomizations';
 import TabPanel from 'components/shared/TabPanel';
 import InfoForm from './InfoForm';
 
