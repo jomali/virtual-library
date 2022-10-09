@@ -1,6 +1,8 @@
 import React from 'react';
 
 const ACTION_RESET_STATE = 'ACTION_RESET_STATE';
+const ACTION_SET_LAST_CLICKED = 'ACTION_SET_LAST_CLICKED';
+const ACTION_SET_SELECTED = 'ACTION_SET_SELECTED';
 const ACTION_SET_STATE = 'ACTION_SET_STATE';
 const DEFAULT_ROWS_PER_PAGE = 100;
 const STORAGE_MAIN_KEY = 'tableFilters';
@@ -36,6 +38,7 @@ export default function useTable(options = {}) {
         page: 0,
         rowsPerPage: options.initialRowsPerPage || DEFAULT_ROWS_PER_PAGE,
       },
+      selected: [],
       sorting: [],
     }),
     [options.initialFilters, options.initialRowsPerPage]
@@ -45,6 +48,12 @@ export default function useTable(options = {}) {
     switch (action.type) {
       case ACTION_RESET_STATE:
         return action.payload;
+      case ACTION_SET_SELECTED:
+        return {
+          ...state,
+          lastClickedValue: action.payload.lastClickedValue,
+          selected: action.payload.selected,
+        };
       case ACTION_SET_STATE:
         return {
           ...state,
@@ -58,9 +67,6 @@ export default function useTable(options = {}) {
         throw new Error();
     }
   }, initialState);
-
-  const [lastClicked, setLastClicked] = React.useState();
-  const [selected, setSelected] = React.useState([]);
 
   const storeValue = React.useCallback(
     (value) => {
@@ -84,6 +90,20 @@ export default function useTable(options = {}) {
       payload: initialState,
     });
   }, [initialState]);
+
+  const handleSelect = React.useCallback((selected, lastClickedValue) => {
+    dispatch({
+      type: ACTION_SET_SELECTED,
+      payload: { lastClickedValue, selected },
+    });
+  }, []);
+
+  const handleSetLastClickedValue = React.useCallback((lastClickedValue) => {
+    dispatch({
+      type: ACTION_SET_LAST_CLICKED,
+      payload: lastClickedValue,
+    });
+  }, []);
 
   const handleUpdate = React.useCallback(
     (data, cancelStorage) => {

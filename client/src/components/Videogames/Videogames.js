@@ -103,7 +103,6 @@ export default function Videogames() {
           }}
           rows={videogamesQuery.data}
           selectable
-          selected={table.selected}
           selector={(value) => value.id}
         >
           <TableContainer>

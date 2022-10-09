@@ -5,8 +5,6 @@ const Tooltip = React.forwardRef(({ arrow = true, ...otherProps }, ref) => {
   return <MuiTooltip arrow={arrow} ref={ref} {...otherProps} />;
 });
 
-Tooltip.propTypes = {
-  ...MuiTooltip.propTypes,
-};
+Tooltip.propTypes = MuiTooltip.propTypes;
 
 export default Tooltip;
