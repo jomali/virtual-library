@@ -2,14 +2,14 @@ import React from 'react';
 // import Autocomplete from '@mui/material/Autocomplete';
 import Grid from '@mui/material/Grid';
 // import Stack from '@mui/material/Stack';
+import PropTypes from 'prop-types';
 import { TextField } from 'components/shared/MuiCustomizations';
 
-const InfoForm = ({
-  // developers = [],
-  fields,
+const BibliographicInformationLayout = ({
+  developers = [],
   onChange,
-  // platforms = [],
-  // publishers = [],
+  platforms = [],
+  publishers = [],
   readOnly,
 }) => {
   return (
@@ -19,14 +19,7 @@ const InfoForm = ({
           // Title
           autoFocus
           label={'Title'}
-          onChange={(event) =>
-            onChange({
-              ...fields,
-              title: event.target.value,
-            })
-          }
           readOnly={readOnly}
-          value={fields.title}
         />
       </Grid>
 
@@ -118,4 +111,11 @@ const InfoForm = ({
   );
 };
 
-export default InfoForm;
+BibliographicInformationLayout.propTypes = {
+  developers: PropTypes.array,
+  platforms: PropTypes.array,
+  publishers: PropTypes.array,
+  readOnly: PropTypes.bool,
+};
+
+export default BibliographicInformationLayout;

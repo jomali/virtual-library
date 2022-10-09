@@ -7,46 +7,45 @@ export const TableContext = React.createContext();
 export const TableProvider = ({
   children,
   columns,
+  controls = {},
   count = -1,
-  initialState = {},
   loading = false,
-  onChange = () => null,
+  onChangeControls = () => null,
   onClick = () => null,
   onSelect = () => null,
   rows = [],
   selectable = false,
   selected = [],
   selector = (value) => value,
-  state,
 }) => {
   const [includedColumns, setIncludedColumns] = React.useState([]);
 
   const handleChangeFilter = (newValue) => {
-    onChange({
-      ...state,
+    onChangeControls({
+      ...controls,
       filters: objectUtils.clearObject(newValue),
-      paging: {
-        ...state.paging,
+      pagination: {
+        ...controls.pagination,
         page: 0,
       },
     });
   };
 
   const handleChangePage = (event, newPage) => {
-    onChange({
-      ...state,
-      paging: {
-        ...state.paging,
+    onChangeControls({
+      ...controls,
+      pagination: {
+        ...controls.pagination,
         page: newPage,
       },
     });
   };
 
   const handleChangeRowsPerPage = (event) => {
-    onChange({
-      ...state,
-      paging: {
-        ...state.paging,
+    onChangeControls({
+      ...controls,
+      pagination: {
+        ...controls.pagination,
         page: 0,
         rowsPerPage: parseInt(event.target.value, 10),
       },
@@ -55,8 +54,8 @@ export const TableProvider = ({
 
   const handleChangeSorting = (newValue) => {
     if (newValue) {
-      onChange({
-        ...state,
+      onChangeControls({
+        ...controls,
         sorting: newValue,
       });
     }
@@ -76,9 +75,9 @@ export const TableProvider = ({
   };
 
   const handleQuickSearch = (newValue) => {
-    if (Boolean(newValue) || Boolean(state?.quickSearch)) {
-      onChange({
-        ...state,
+    if (Boolean(newValue) || Boolean(controls?.quickSearch)) {
+      onChangeControls({
+        ...controls,
         quickSearch: newValue === '' ? undefined : newValue,
       });
     }
@@ -142,9 +141,15 @@ export const TableProvider = ({
     <TableContext.Provider
       value={{
         columns,
+        controls,
         count,
         includedColumns,
-        initialState,
+        initialState: {
+          filters: controls?.initialFilters,
+          pagination: controls?.initialPagination,
+          quickSearch: controls?.initialQuickSearch,
+          sorting: controls?.initialSorting,
+        },
         loading,
         onChangeFilter: handleChangeFilter,
         onChangePage: handleChangePage,
@@ -158,7 +163,6 @@ export const TableProvider = ({
         selected,
         selector,
         setIncludedColumns,
-        state,
       }}
     >
       {children}
@@ -188,16 +192,15 @@ TableProvider.propTypes = {
     })
   ).isRequired,
   /**
-   * The total number of rows. To enable server side pagination for an unknown
-   * number of items, provide `-1`.
+   * Pagination, filtering and sorting controls.
    */
-  count: PropTypes.number,
-  /**
-   * Initial state (used in reset actions).
-   */
-  initialState: PropTypes.exact({
+  controls: PropTypes.exact({
     filters: PropTypes.object,
-    paging: PropTypes.shape({
+    initialFilters: PropTypes.object,
+    initialPagination: PropTypes.object,
+    initialQuickSearch: PropTypes.string,
+    initialSorting: PropTypes.array,
+    pagination: PropTypes.shape({
       lastValue: PropTypes.object,
       page: PropTypes.number,
       rowsPerPage: PropTypes.number,
@@ -205,23 +208,25 @@ TableProvider.propTypes = {
     quickSearch: PropTypes.string,
     sorting: PropTypes.arrayOf(
       PropTypes.exact({
-        field: PropTypes.string,
-        sort: PropTypes.oneOf(['asc', 'desc']),
+        attribute: PropTypes.string,
+        order: PropTypes.oneOf(['asc', 'desc']),
       })
     ),
   }),
   /**
-   * If `true`, the table behaves as if an API request is being made.
+   * The total number of rows. To enable server side pagination for an unknown
+   * number of items, provide `-1`.
+   */
+  count: PropTypes.number,
+  /**
+   * If `true`, the table displays a loading indicator.
    */
   loading: PropTypes.bool,
   /**
-   * Callback fired when the user causes a change on the table state.
-   * @param {Object} value - object with the new table state
-   * @param {Object} value.pagination - object with the pagination state
-   * @param {Number} value.pagination.page - new table page
-   * @param {Number} value.pagination.rowsPerPage - new table rows per page
+   * Callback fired when the user causes a change on the table controls.
+   * @param {Object} value - object with the new controls
    */
-  onChange: PropTypes.func,
+  onChangeControls: PropTypes.func,
   /**
    * Callback fired when the user clicks on a table row.
    * @param {Object} value - the row data
@@ -255,28 +260,4 @@ TableProvider.propTypes = {
    * @returns The identifier for the given value
    */
   selector: PropTypes.func,
-  /**
-   * Internal table state. It registers the following information:
-   * - `filters`. Active query filters.
-   * - `lastClickedValued`. Last value clicked by the user.
-   * - `paging`. Pagination options.
-   * - `quickSearch`. Value of the quick search field.
-   * - `selected`. Array with ids of the values selected by the user.
-   * - `sorting`. Sort options.
-   */
-  state: PropTypes.exact({
-    filters: PropTypes.object,
-    paging: PropTypes.shape({
-      lastValue: PropTypes.object,
-      page: PropTypes.number,
-      rowsPerPage: PropTypes.number,
-    }),
-    quickSearch: PropTypes.string,
-    sorting: PropTypes.arrayOf(
-      PropTypes.exact({
-        attribute: PropTypes.string,
-        order: PropTypes.oneOf(['asc', 'desc']),
-      })
-    ),
-  }).isRequired,
 };

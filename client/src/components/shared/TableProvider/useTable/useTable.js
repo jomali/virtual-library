@@ -2,22 +2,22 @@ import React from 'react';
 
 const ACTION_RESET_STATE = 'ACTION_RESET_STATE';
 const ACTION_SET_STATE = 'ACTION_SET_STATE';
-const DEFAULT_ROWS_PER_PAGE = 25;
+const DEFAULT_ROWS_PER_PAGE = 100;
 const STORAGE_MAIN_KEY = 'tableFilters';
 
 /**
  * @typedef {Object} TableState
+ * @property {Object} controls - Object with the current filter, paging and
+ * sorting options active in the table.
  * @property {Object} lastClicked - Reference to the element in the last row
  * clicked by the user.
  * @property {Array} selected - Array with the references of all the elements
  * currently selected in the table.
- * @property {Object} state - Object with the current filter, paging and
- * sorting options active in the table.
  * @property {Function} setLastClicked - Sets the last clicked row object.
  * @property {Function} setSelected - Sets the selected rows array.
  * @property {Function} reset - Resets the state to its initial values.
- * @property {Function} update - Updates the filter, pagination and sorting
- * table state.
+ * @property {Function} updateControls - Updates the filter, pagination and
+ * sorting table state.
  */
 
 /**
@@ -31,7 +31,7 @@ export default function useTable(options = {}) {
   const initialState = React.useMemo(
     () => ({
       filters: options.initialFilters || {},
-      paging: {
+      pagination: {
         lastValue: {},
         page: 0,
         rowsPerPage: options.initialRowsPerPage || DEFAULT_ROWS_PER_PAGE,
@@ -99,12 +99,26 @@ export default function useTable(options = {}) {
   );
 
   return {
-    lastClicked,
+    controls: {
+      filters: {},
+      initialFilters: {},
+      initialPagination: {},
+      initialQuickSearch: {},
+      initialSorting: {},
+      pagination: { lastValue: null, page: 0, rowsPerPage: 100 },
+      quickSearch: null,
+      sorting: [],
+    },
     selected,
-    state,
-    setLastClicked,
     setSelected,
-    reset: handleReset,
-    update: handleUpdate,
+    updateControls: () => null,
+
+    // lastClicked,
+    // selected,
+    // state,
+    // setLastClicked,
+    // setSelected,
+    // reset: handleReset,
+    // update: handleUpdate,
   };
 }

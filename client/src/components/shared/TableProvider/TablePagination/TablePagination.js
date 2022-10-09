@@ -19,10 +19,11 @@ export default function TablePagination({
     <StyledTablePagination
       component="div"
       count={tableState.count}
-      onPageChange={tableState.handleChangePage}
-      onRowsPerPageChange={tableState.handleChangeRowsPerPage}
-      page={tableState.filter.page}
-      rowsPerPage={tableState.filter.rowsPerPage}
+      data-testid="table-pagination"
+      onPageChange={tableState.onChangePage}
+      onRowsPerPageChange={tableState.onChangeRowsPerPage}
+      page={tableState.controls.pagination.page}
+      rowsPerPage={tableState.controls.pagination.rowsPerPage}
       rowsPerPageOptions={rowsPerPageOptions}
     />
   );

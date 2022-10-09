@@ -118,7 +118,7 @@ export default function TableBody({
         return (
           <SelectableTableRow
             hover={Boolean(tableState.selectable) && !rowDisabled}
-            key={`page-${tableState.state.paging.page}-row-${rowIndex}`}
+            key={`page-${tableState.controls.pagination.page}-row-${rowIndex}`}
             selectable={Boolean(tableState.selectable)}
             selected={Boolean(rowIsSelected)}
             {...additionalRowProps}

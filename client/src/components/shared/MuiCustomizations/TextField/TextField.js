@@ -26,14 +26,16 @@ const StyledTextField = styled(MuiTextField, {
   }),
 }));
 
-export default function TextField({
-  color = 'primary',
-  fullWidth = true,
-  label,
-  readOnly = true,
-  variant = 'filled',
-  ...otherProps
-}) {
+export default function TextField(props) {
+  const {
+    color = 'primary',
+    fullWidth = true,
+    label,
+    readOnly = true,
+    variant = 'filled',
+    ...otherProps
+  } = props;
+
   return (
     <StyledTextField
       color={color}

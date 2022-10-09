@@ -13,11 +13,17 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useSnackbar } from 'notistack';
+import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
+import { useApi } from 'components/shared/ApiProvider';
+import { useConfirm } from 'components/shared/ConfirmProvider';
 import EditionToolbar from 'components/shared/EditionToolbar';
 import { Tooltip } from 'components/shared/MuiCustomizations';
 import TabPanel from 'components/shared/TabPanel';
-import InfoForm from './InfoForm';
+import BibliographicInformation from './BibliographicInformation';
+import Credits from './Credits';
 
 const ImagePlaceholder = styled('div', {
   shouldForwardProp: (prop) => prop !== 'height',
@@ -34,30 +40,70 @@ const PanelContent = styled('div')(({ theme }) => ({
 }));
 
 export default function VideogamesDetails({
-  onClose,
-  onDelete,
-  onSubmit,
-  value,
+  onChange = () => null,
+  onClose = () => null,
+  videogameId,
   ...otherProps
 }) {
   const theme = useTheme();
 
-  const initialFields = React.useMemo(
-    () => ({
-      developers: [],
-      id: null,
-      platforms: [],
-      publishers: [],
-      releaseDates: [],
-      synopsis: '',
-      title: '',
-    }),
-    []
-  );
+  const api = useApi();
+  const confirm = useConfirm();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [currentTab, setCurrentTab] = React.useState(0);
-  const [editMode, toggleEditMode] = React.useState(!value);
-  const [fields, setFields] = React.useState(initialFields);
+  const [editMode, toggleEditMode] = React.useState(!videogameId);
+
+  const bibliographicInformationRef = React.useRef();
+
+  const videogamesCreateMutation = useMutation(
+    (value) => api.POST('videogames', value),
+    {
+      onError: (error) => {
+        console.error(error.message);
+        enqueueSnackbar('Error creating new element.', {
+          variant: 'error',
+        });
+      },
+      onSuccess: (value) => {
+        enqueueSnackbar('New element successfully created.', {
+          variant: 'success',
+        });
+        onChange();
+      },
+    }
+  );
+
+  const videogamesDeleteMutation = useMutation(
+    (id) => api.DELETE(`videogames/${id}`),
+    {
+      onError: (error) => {
+        console.error(error.message);
+        enqueueSnackbar('Error deleting element.', {
+          variant: 'error',
+        });
+      },
+      onSuccess: (value) => {
+        enqueueSnackbar('New element successfully deleted.', {
+          variant: 'success',
+        });
+        onChange();
+      },
+    }
+  );
+
+  const videogamesUpdateMutation = useMutation(
+    (value) => api.PUT(`videogames/${value.id}`, value),
+    {
+      onError: (error) => {
+        console.log(error.message);
+      },
+      onSuccess: (value) => {
+        console.log('Element successfully updated');
+        onChange();
+      },
+    }
+  );
 
   const handleChange = (event, newValue) => {
     setCurrentTab(newValue);
@@ -74,31 +120,12 @@ export default function VideogamesDetails({
     };
   };
 
-  React.useEffect(() => {
-    if (value) {
-      setFields({
-        ...fields,
-        developers: value.developers,
-        id: value.id,
-        platforms: value.platforms,
-        publishers: value.publishers,
-        // releaseDates: value.releaseDate,
-        synopsis: value.synopsis,
-        title: value.title,
-      });
-    } else {
-      setFields(initialFields);
-    }
-  }, [fields, initialFields, value]);
-
-  const noTabs = true;
-
   return (
     <>
       <AppBar elevation={0} position="sticky">
         <Toolbar>
           <Fade in timeout={theme.transitions.duration.enteringScreen * 1.5}>
-            <Typography>{value ? value.title : 'New'}</Typography>
+            <Typography>{'New'}</Typography>
           </Fade>
           <Box sx={{ flexGrow: 1 }} />
           <Fade in timeout={theme.transitions.duration.enteringScreen * 1.5}>
@@ -118,7 +145,7 @@ export default function VideogamesDetails({
         </Toolbar>
       </AppBar>
       <ImagePlaceholder height={200} width={375} />
-      {!noTabs ? (
+      {false ? (
         <Tabs
           aria-label="full width tabs example"
           indicatorColor="primary"
@@ -155,11 +182,9 @@ export default function VideogamesDetails({
           onChangeIndex={handleChangeIndex}
         >
           <TabPanel value={currentTab} index={0} dir={theme.direction}>
-            <InfoForm
-              fields={fields}
-              onChange={(newValue) => setFields(newValue)}
+            <Credits
+              formRef={bibliographicInformationRef}
               readOnly={!editMode}
-              {...otherProps}
             />
           </TabPanel>
           <TabPanel value={currentTab} index={1} dir={theme.direction}>
@@ -173,11 +198,30 @@ export default function VideogamesDetails({
       <Divider />
       <EditionToolbar
         editMode={editMode}
-        onDelete={onDelete}
-        onSubmit={onSubmit}
+        onDelete={
+          videogameId
+            ? (id) => {
+                confirm('Esta operación no se puede deshacer.', {
+                  onSuccess: () => videogamesDeleteMutation.mutate(id),
+                });
+              }
+            : undefined
+        }
+        onSubmit={() => {
+          switch (currentTab) {
+            default:
+              bibliographicInformationRef.current?.onSubmit();
+          }
+        }}
         onToggleEditMode={() => toggleEditMode(!editMode)}
-        toggable={Boolean(value)}
+        toggable={Boolean(videogameId)}
       />
     </>
   );
 }
+
+VideogamesDetails.propTypes = {
+  onChange: PropTypes.func,
+  onClose: PropTypes.func,
+  value: PropTypes.object,
+};
