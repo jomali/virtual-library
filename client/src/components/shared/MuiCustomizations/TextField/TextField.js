@@ -26,13 +26,13 @@ const StyledTextField = styled(MuiTextField, {
   }),
 }));
 
-export default function TextField(props) {
+const TextField = React.forwardRef((props, ref) => {
   const {
     color = 'primary',
     fullWidth = true,
     label,
     readOnly = true,
-    variant = 'filled',
+    variant = 'outlined',
     ...otherProps
   } = props;
 
@@ -46,13 +46,16 @@ export default function TextField(props) {
       }}
       label={label}
       readOnly={readOnly}
+      ref={ref}
       variant={readOnly ? 'outlined' : variant}
       {...otherProps}
     />
   );
-}
+});
 
 TextField.propTypes = {
   ...MuiTextField.propTypes,
   readOnly: PropTypes.bool,
 };
+
+export default TextField;

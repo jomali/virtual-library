@@ -21,8 +21,7 @@ import { useConfirm } from 'components/shared/ConfirmProvider';
 import EditionToolbar from 'components/shared/EditionToolbar';
 import { IconButton, Tooltip } from 'components/shared/MuiCustomizations';
 import TabPanel from 'components/shared/TabPanel';
-import BibliographicInformation from './BibliographicInformation';
-import Credits from './Credits';
+import VideogameProfile from './VideogameProfile';
 
 const ImagePlaceholder = styled('div', {
   shouldForwardProp: (prop) => prop !== 'height',
@@ -38,12 +37,11 @@ const PanelContent = styled('div')(({ theme }) => ({
   flexGrow: 1,
 }));
 
-export default function VideogamesDetails({
-  onChange = () => null,
-  onClose = () => null,
-  videogameId,
-  ...otherProps
-}) {
+const VideogameDetails = (props) => {
+  const { onClose, value } = props;
+
+  console.log('->', value);
+
   const theme = useTheme();
 
   const api = useApi();
@@ -51,7 +49,7 @@ export default function VideogamesDetails({
   const { enqueueSnackbar } = useSnackbar();
 
   const [currentTab, setCurrentTab] = React.useState(0);
-  const [editMode, toggleEditMode] = React.useState(!videogameId);
+  const [editMode, toggleEditMode] = React.useState(!value);
 
   const bibliographicInformationRef = React.useRef();
 
@@ -68,7 +66,7 @@ export default function VideogamesDetails({
         enqueueSnackbar('New element successfully created.', {
           variant: 'success',
         });
-        onChange();
+        // onChange();
       },
     }
   );
@@ -86,7 +84,7 @@ export default function VideogamesDetails({
         enqueueSnackbar('New element successfully deleted.', {
           variant: 'success',
         });
-        onChange();
+        // onChange();
       },
     }
   );
@@ -99,7 +97,7 @@ export default function VideogamesDetails({
       },
       onSuccess: (value) => {
         console.log('Element successfully updated');
-        onChange();
+        // onChange();
       },
     }
   );
@@ -181,7 +179,7 @@ export default function VideogamesDetails({
           onChangeIndex={handleChangeIndex}
         >
           <TabPanel value={currentTab} index={0} dir={theme.direction}>
-            <Credits
+            <VideogameProfile
               formRef={bibliographicInformationRef}
               readOnly={!editMode}
             />
@@ -198,7 +196,7 @@ export default function VideogamesDetails({
       <EditionToolbar
         editMode={editMode}
         onDelete={
-          videogameId
+          value
             ? (id) => {
                 confirm('Esta operación no se puede deshacer.', {
                   onSuccess: () => videogamesDeleteMutation.mutate(id),
@@ -213,14 +211,16 @@ export default function VideogamesDetails({
           }
         }}
         onToggleEditMode={() => toggleEditMode(!editMode)}
-        toggable={Boolean(videogameId)}
+        toggable={Boolean(value)}
       />
     </>
   );
-}
+};
 
-VideogamesDetails.propTypes = {
+VideogameDetails.propTypes = {
   onChange: PropTypes.func,
   onClose: PropTypes.func,
   value: PropTypes.object,
 };
+
+export default VideogameDetails;

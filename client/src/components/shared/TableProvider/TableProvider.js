@@ -15,7 +15,7 @@ export const TableProvider = ({
   onSelect = () => null,
   rows = [],
   selectable = false,
-  // selected = [],
+  selected = [],
   selector = (value) => value,
 }) => {
   const [includedColumns, setIncludedColumns] = React.useState([]);
@@ -66,10 +66,9 @@ export const TableProvider = ({
       onClick(value);
       if (selectable !== 'multiple') {
         onSelect(
-          state.selected.find((element) => element === selector(value))
+          selected.find((element) => element === selector(value))
             ? []
-            : [selector(value)],
-          value
+            : [selector(value)]
         );
       }
     }
@@ -84,8 +83,8 @@ export const TableProvider = ({
     }
   };
 
-  const handleSelect = (selected, lastClickedValue) => {
-    onSelect(selected, lastClickedValue);
+  const handleSelect = (newValue) => {
+    onSelect(newValue);
   };
 
   /**
@@ -161,6 +160,7 @@ export const TableProvider = ({
         onSelect: handleSelect,
         rows: rows || [],
         selectable,
+        selected,
         selector,
         setIncludedColumns,
       }}
@@ -253,7 +253,7 @@ TableProvider.propTypes = {
    * Array with the references of all the elements currently selected in the
    * table.
    */
-  selected: PropTypes.array, // FIXME
+  selected: PropTypes.array,
   /**
    * Function used to identify a table value.
    * @param {Object} value - A row in the data array

@@ -1,24 +1,26 @@
 import React from 'react';
-import { Field } from 'formik';
+import { Field, getIn } from 'formik';
 
 const FormField = (props) => {
   const { children, ...otherProps } = props;
-  return (
+
+  return React.Children.toArray(children).length ? (
     <Field {...otherProps}>
       {({ field, form, meta }) => {
-        console.log('field', field);
-        console.log('form', form);
-        console.log('meta', meta);
+        const fieldError = getIn(form.errors, field.name);
+        const showError = getIn(form.touched, field.name) && !!fieldError;
+
         return React.cloneElement(children, {
-          onChange: (newValue) => {
-            console.log('->', newValue);
-            field.onChange(newValue);
-          },
+          // disabled: children.disabled || form.isSubmitting,
+          error: showError,
+          // helperText: showError ? fieldError : children.helperText,
+          onChange: (event, newValue) =>
+            form.setFieldValue(field.name, newValue),
           value: field.value,
         });
       }}
     </Field>
-  );
+  ) : null;
 };
 
 FormField.propTypes = Field.propTypes;

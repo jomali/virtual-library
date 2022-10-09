@@ -31,7 +31,7 @@ export default function TableBody({
 
   const handleSelect = (event, row, rowIndex) => {
     if (tableState.selectable) {
-      let selectedRows = [...tableState.state.selected];
+      let selectedRows = [...tableState.selected];
       let selectingSubset = [tableState.selector(row)];
 
       const isUnselecting = Boolean(
@@ -105,7 +105,7 @@ export default function TableBody({
     <MuiTableBody>
       {tableState.rows.map((row, rowIndex) => {
         // Determines if the current row is part of the tableState selection:
-        const rowIsSelected = tableState.state.selected.find((element) =>
+        const rowIsSelected = tableState.selected.find((element) =>
           comparator(element, row)
         );
         // Get additional row props:

@@ -11,7 +11,7 @@ import TableProvider, {
   TableToolbar,
   useTable,
 } from 'components/shared/TableProvider';
-import VideogamesDetails from './VideogamesDetails';
+import VideogameDetails from './VideogameDetails';
 
 export default function Videogames() {
   const api = useApi();
@@ -23,11 +23,14 @@ export default function Videogames() {
   const videogameQuery = useQuery(
     ['videogame', params.id],
     async () => {
-      const result = await api.GET(`videogames/${params.id}`);
-      return result.data;
+      console.log('->', params.id);
+      const response = await api.GET(`videogames/${params.id}`);
+      console.log('xxx', response);
+      return response.data;
     },
     {
-      enabled: Number.isInteger(params.id),
+      // enabled: Number.isInteger(params.id),
+      enabled: true,
     }
   );
 
@@ -76,7 +79,7 @@ export default function Videogames() {
       }}
       open={params.id}
       sideContent={(params) => (
-        <VideogamesDetails
+        <VideogameDetails
           onChange={() => queryClient.resetQueries('videogames')}
           value={videogameQuery.data}
           {...params}
@@ -103,6 +106,7 @@ export default function Videogames() {
           }}
           rows={videogamesQuery.data}
           selectable
+          selected={table.selected}
           selector={(value) => value.id}
         >
           <TableContainer>
