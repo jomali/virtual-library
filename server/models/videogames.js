@@ -145,15 +145,54 @@ module.exports = {
    */
   read: async (id) => {
     try {
-      const result = await db.run(
+      const videogames = await db.all(
         `SELECT ${table}.*
         FROM ${table} 
-        WHERE id = ?`,
+        WHERE id = ?;`,
         [id]
+      );      
+
+      // Developers:
+      const developers = await db.all(
+        `SELECT developers.*, vidDev.tag
+        FROM videogames_developers_relationships AS vidDev
+        INNER JOIN videogames 
+          ON videogames.id = vidDev.videogame_id
+        INNER JOIN videogame_developers AS developers
+          ON developers.id = vidDev.videogame_developer_id
+        WHERE videogames.id = ${videogames[0].id};`,
       );
-      return result;
+
+      // Platforms:
+      const platforms = await db.all(
+        `SELECT platforms.name
+        FROM videogames_platforms_relationships AS vidPla
+        INNER JOIN videogames
+          ON videogames.id = vidPla.videogame_id
+        INNER JOIN videogame_platforms AS platforms
+          ON platforms.id = vidPla.videogame_platform_id
+        WHERE videogames.id = ${videogames[0].id};`
+      );
+
+      // Publishers:
+      const publishers = await db.all(
+        `SELECT publishers.*, vidPub.tag
+        FROM videogames_publishers_relationships AS vidPub
+        INNER JOIN videogames
+          ON videogames.id = vidPub.videogame_id
+        INNER JOIN videogame_publishers AS publishers
+          ON publishers.id = vidPub.videogame_publisher_id
+        WHERE videogames.id = ${videogames[0].id};`
+      );
+
+      return {
+        ...videogames[0],
+        developers,
+        platforms,
+        publishers,
+      };
     } catch (error) {
-      console.error('[ERROR] videogame.read: ', error.message);
+      console.error('[ERROR] videogame.read: ', error);
       throw error;
     }
   },

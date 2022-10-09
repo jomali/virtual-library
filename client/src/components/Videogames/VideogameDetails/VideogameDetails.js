@@ -40,7 +40,7 @@ const PanelContent = styled('div')(({ theme }) => ({
 const VideogameDetails = (props) => {
   const { onClose, value } = props;
 
-  console.log('->', value);
+  console.log('X', value);
 
   const theme = useTheme();
 

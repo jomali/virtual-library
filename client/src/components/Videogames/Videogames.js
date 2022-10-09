@@ -23,14 +23,11 @@ export default function Videogames() {
   const videogameQuery = useQuery(
     ['videogame', params.id],
     async () => {
-      console.log('->', params.id);
       const response = await api.GET(`videogames/${params.id}`);
-      console.log('xxx', response);
       return response.data;
     },
     {
-      // enabled: Number.isInteger(params.id),
-      enabled: true,
+      enabled: Number.isInteger(Number.parseInt(params.id)),
     }
   );
 
