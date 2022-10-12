@@ -1,79 +1,110 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Formik, Form } from 'formik';
-import { useSnackbar } from 'notistack';
+import Grid from '@mui/material/Grid';
 import PropTypes from 'prop-types';
-import * as Yup from 'yup';
-import { useApi } from 'components/shared/ApiProvider';
+import FormField, {
+  AutocompleteField,
+  TextField,
+} from 'components/shared/FormFields';
+import CustomTextField from 'components/shared/MuiCustomizations/TextField';
 import { PROPERTIES } from './videogameProfileConstants';
-import VideogameProfileLayout from './VideogameProfileLayout';
 
 const VideogameProfile = (props) => {
-  const { formikRef, onSubmit, ...otherProps } = props;
-
-  const api = useApi();
-  const snackbar = useSnackbar();
-
-  const initialValues = {};
-
-  const validationSchema = Yup.object({
-    [PROPERTIES.developers]: Yup.array(),
-    [PROPERTIES.platforms]: Yup.array(),
-    [PROPERTIES.publishers]: Yup.array(),
-    [PROPERTIES.title]: Yup.string().required(),
-  });
-
-  const profileMasterDataQuery = useQuery(
-    ['profileMasterData'],
-    async () => {
-      const developersResponse = await api.GET('videogameDevelopers');
-      const platformsResponse = await api.GET('videogamePlatforms');
-      const publishersResponse = await api.GET('videogamePublishers');
-
-      return {
-        developers: developersResponse.data,
-        platforms: platformsResponse.data,
-        publishers: publishersResponse.data,
-      };
-    },
-    {
-      initialData: {
-        developers: [],
-        platforms: [],
-        publishers: [],
-      },
-      onError: (error) => {
-        console.error(error.message);
-        snackbar.enqueueSnackbar('Unexpected error.');
-      },
-    }
-  );
+  const { developers = [], platforms = [], publishers = [], readOnly } = props;
 
   return (
-    <Formik
-      initialValues={initialValues}
-      innerRef={formikRef}
-      onSubmit={async (values, actions) => {
-        await onSubmit(values);
-        actions.setSubmitting(false);
-      }}
-      validationSchema={validationSchema}
-    >
-      <Form>
-        <VideogameProfileLayout
-          developers={profileMasterDataQuery.data.developers}
-          platforms={profileMasterDataQuery.data.platforms}
-          publishers={profileMasterDataQuery.data.publishers}
-          {...otherProps}
-        />
-      </Form>
-    </Formik>
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <FormField max={150} name={PROPERTIES.title} required type="string">
+          <TextField
+            // Title
+            autoFocus
+            label={'Title'}
+            readOnly={readOnly}
+            required={!readOnly}
+          />
+        </FormField>
+      </Grid>
+
+      {/* <Grid item xs={12}>
+        <FormField name={PROPERTIES.developers}>
+          <AutocompleteField
+            // Developers
+            freeSolo
+            multiple
+            options={developers.map((element) => element.name)}
+            renderInput={(params) => (
+              <CustomTextField
+                {...params}
+                label={'Developer'}
+                readOnly={false} // TODO - why?
+              />
+            )}
+          />
+        </FormField>
+      </Grid> */}
+
+      {/* <Grid item xs={12}>
+        <FormField name={PROPERTIES.publishers}>
+          <AutocompleteField
+            // Publishers
+            freeSolo
+            multiple
+            options={publishers.map((element) => element.name)}
+            renderInput={(params) => (
+              <CustomTextField
+                {...params}
+                label={'Publisher'}
+                readOnly={false} // TODO - why?
+              />
+            )}
+          />
+        </FormField>
+      </Grid> */}
+
+      {/* <Grid item xs={12}>
+        <FormField name={PROPERTIES.releaseDates}></FormField>
+      </Grid> */}
+
+      {/* <Grid item xs={12}>
+        <FormField name={PROPERTIES.platforms}>
+          <AutocompleteField
+            // Platforms
+            freeSolo
+            multiple
+            options={platforms.map((element) => element.name)}
+            renderInput={(params) => (
+              <CustomTextField
+                {...params}
+                label={'Platforms'}
+                readOnly={false} // TODO - why?
+              />
+            )}
+          />
+        </FormField>
+      </Grid> */}
+
+      {!readOnly ? (
+        <Grid item xs={12}>
+          <FormField max={500} name={PROPERTIES.synopsis} type="string">
+            <TextField
+              // Synopsis
+              label={'Synopsis'}
+              multiline
+              readOnly={readOnly}
+              rows={4}
+            />
+          </FormField>
+        </Grid>
+      ) : null}
+    </Grid>
   );
 };
 
 VideogameProfile.propTypes = {
-  formikRef: PropTypes.any,
-  onSubmit: PropTypes.func.isRequired,
+  developers: PropTypes.array,
+  platforms: PropTypes.array,
+  publishers: PropTypes.array,
+  readOnly: PropTypes.bool,
 };
 
 export default VideogameProfile;

@@ -20,17 +20,6 @@ export default function Videogames() {
   const queryClient = useQueryClient();
   const table = useTable();
 
-  const videogameQuery = useQuery(
-    ['videogame', params.id],
-    async () => {
-      const response = await api.GET(`videogames/${params.id}`);
-      return response.data;
-    },
-    {
-      enabled: Number.isInteger(Number.parseInt(params.id)),
-    }
-  );
-
   const videogamesQuery = useQuery(['videogames'], async () => {
     const result = await api.GET('videogames');
     return result.data;
@@ -70,16 +59,21 @@ export default function Videogames() {
 
   return (
     <Collection
-      onClose={() => {
+      onClose={(refresh) => {
         table.setSelected();
         navigate(`/videogames`);
+        if (refresh) {
+          queryClient.invalidateQueries('videogames');
+        }
       }}
-      open={params.id}
-      sideContent={(params) => (
+      open={Boolean(params.id)}
+      sideContent={(otherParams) => (
         <VideogameDetails
-          onChange={() => queryClient.resetQueries('videogames')}
-          value={videogameQuery.data}
-          {...params}
+          value={{
+            id: Number.parseInt(params.id) || null,
+            // TODO: load other values to display them while fetching the API
+          }}
+          {...otherParams}
         />
       )}
     >

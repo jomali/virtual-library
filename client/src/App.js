@@ -26,7 +26,12 @@ export default function App() {
         <CssBaseline />
         <Div100vh style={{ display: 'flex', flexDirection: 'column' }}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <SnackbarProvider>
+            <SnackbarProvider
+              anchorOrigin={{
+                horizontal: 'left',
+                vertical: 'bottom',
+              }}
+            >
               <ConfirmProvider>
                 <ApiProvider host="http://localhost:9000/api">
                   <QueryClientProvider client={queryClient}>
