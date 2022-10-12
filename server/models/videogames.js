@@ -24,7 +24,7 @@ module.exports = {
 
       // Developer and videogame-developer relationship entities:
       const developers = [];
-      for (let i = 0; i < data.developers.length; i++) {
+      for (let i = 0; i < data.developers?.length; i++) {
         const developer = data.developers[i]; 
         if (!Boolean(developer.id)) {
           const developerQuery = await db.run(
@@ -52,7 +52,7 @@ module.exports = {
       }
 
       // Videogame-platform relationship entities:
-      for (let i = 0; i < data.platforms.length; i++) {
+      for (let i = 0; i < data.platforms?.length; i++) {
         const platform = data.platforms[i];
         await db.run(
           `INSERT INTO videogames_platforms_relationships
@@ -67,7 +67,7 @@ module.exports = {
 
       // Publisher and videogame-publisher relationship entities:
       const publishers = [];
-      for (let i = 0; i < data.publishers.length; i++) {
+      for (let i = 0; i < data.publishers?.length; i++) {
         const publisher = data.publishers[i]; 
         if (!Boolean(publisher.id)) {
           const publisherQuery = await db.run(
@@ -95,7 +95,7 @@ module.exports = {
       }
 
       // Release date entities:
-      for (let i = 0; i < data.releaseDates.length; i++) {
+      for (let i = 0; i < data.releaseDates?.length; i++) {
         const releaseDate = data.releaseDates[i];
         await db.run(
           `INSERT INTO videogame_releases
