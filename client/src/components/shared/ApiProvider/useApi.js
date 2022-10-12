@@ -31,7 +31,7 @@ export default () => {
     return fetch(resource.join('/'), options)
       .then((response) => {
         if (response.ok) {
-          return response.json();
+          return response.status === 200 ? response.json() : true;
         } else {
           let errorcode;
           for (var pair of response.headers.entries()) {

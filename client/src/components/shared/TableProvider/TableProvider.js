@@ -4,49 +4,65 @@ import * as objectUtils from 'components/shared/objectUtils';
 
 export const TableContext = React.createContext();
 
-export const TableProvider = (props) => {
-  const {
-    children,
-    columns,
-    filter,
-    count = -1,
-    loading = false,
-    onChange = () => null,
-    onClick = () => null,
-    onSelect = () => null,
-    rows = [],
-    selectable = false,
-    selected = [],
-    selector = (value) => value,
-  } = props;
-
+export const TableProvider = ({
+  children,
+  columns,
+  controls = {},
+  count = -1,
+  loading = false,
+  onChangeControls = () => null,
+  onClick = () => null,
+  onSelect = () => null,
+  rows = [],
+  selectable = false,
+  selected = [],
+  selector = (value) => value,
+}) => {
   const [includedColumns, setIncludedColumns] = React.useState([]);
 
   const handleChangeFilter = (newValue) => {
-    onChange({
-      ...filter,
-      content: objectUtils.clearObject(newValue),
-      page: 0,
+    onChangeControls({
+      ...controls,
+      filters: objectUtils.clearObject(newValue),
+      pagination: {
+        ...controls.pagination,
+        page: 0,
+      },
     });
   };
 
   const handleChangePage = (event, newPage) => {
-    onChange({
-      ...filter,
-      page: newPage,
+    onChangeControls({
+      ...controls,
+      pagination: {
+        ...controls.pagination,
+        page: newPage,
+      },
     });
   };
 
   const handleChangeRowsPerPage = (event) => {
-    onChange({
-      ...filter,
-      page: 0,
-      rowsPerPage: parseInt(event.target.value, 10),
+    onChangeControls({
+      ...controls,
+      pagination: {
+        ...controls.pagination,
+        page: 0,
+        rowsPerPage: parseInt(event.target.value, 10),
+      },
     });
   };
 
+  const handleChangeSorting = (newValue) => {
+    if (newValue) {
+      onChangeControls({
+        ...controls,
+        sorting: newValue,
+      });
+    }
+  };
+
   const handleClick = (value) => {
-    if (Boolean(selectable)) {
+    if (selectable) {
       onClick(value);
       if (selectable !== 'multiple') {
         onSelect(
@@ -59,9 +75,9 @@ export const TableProvider = (props) => {
   };
 
   const handleQuickSearch = (newValue) => {
-    if (Boolean(newValue) || Boolean(filter?.quickSearch)) {
-      onChange({
-        ...filter,
+    if (Boolean(newValue) || Boolean(controls?.quickSearch)) {
+      onChangeControls({
+        ...controls,
         quickSearch: newValue === '' ? undefined : newValue,
       });
     }
@@ -125,16 +141,23 @@ export const TableProvider = (props) => {
     <TableContext.Provider
       value={{
         columns,
+        controls,
         count,
-        filter,
-        handleChangeFilter,
-        handleChangePage,
-        handleChangeRowsPerPage,
-        handleClick,
-        handleQuickSearch,
-        handleSelect,
-        includedColumns: includedColumns,
+        includedColumns,
+        initialState: {
+          filters: controls?.initialFilters,
+          pagination: controls?.initialPagination,
+          quickSearch: controls?.initialQuickSearch,
+          sorting: controls?.initialSorting,
+        },
         loading,
+        onChangeFilter: handleChangeFilter,
+        onChangePage: handleChangePage,
+        onChangeRowsPerPage: handleChangeRowsPerPage,
+        onChangeSorting: handleChangeSorting,
+        onClick: handleClick,
+        onQuickSearch: handleQuickSearch,
+        onSelect: handleSelect,
         rows: rows || [],
         selectable,
         selected,
@@ -169,31 +192,41 @@ TableProvider.propTypes = {
     })
   ).isRequired,
   /**
+   * Pagination, filtering and sorting controls.
+   */
+  controls: PropTypes.exact({
+    filters: PropTypes.object,
+    initialFilters: PropTypes.object,
+    initialPagination: PropTypes.object,
+    initialQuickSearch: PropTypes.string,
+    initialSorting: PropTypes.array,
+    pagination: PropTypes.shape({
+      lastValue: PropTypes.object,
+      page: PropTypes.number,
+      rowsPerPage: PropTypes.number,
+    }),
+    quickSearch: PropTypes.string,
+    sorting: PropTypes.arrayOf(
+      PropTypes.exact({
+        attribute: PropTypes.string,
+        order: PropTypes.oneOf(['asc', 'desc']),
+      })
+    ),
+  }),
+  /**
    * The total number of rows. To enable server side pagination for an unknown
    * number of items, provide `-1`.
    */
   count: PropTypes.number,
   /**
-   * Table data related to filter and pagination params.
-   */
-  filter: PropTypes.exact({
-    content: PropTypes.object,
-    page: PropTypes.number,
-    quickSearch: PropTypes.string,
-    rowsPerPage: PropTypes.number,
-  }).isRequired,
-  /**
-   * If `true`, the table behaves as if an API request is being made.
+   * If `true`, the table displays a loading indicator.
    */
   loading: PropTypes.bool,
   /**
-   * Callback fired when the user causes a change on the table state.
-   * @param {Object} value - object with the new table state
-   * @param {Object} value.pagination - object with the pagination state
-   * @param {Number} value.pagination.page - new table page
-   * @param {Number} value.pagination.rowsPerPage - new table rows per page
+   * Callback fired when the user causes a change on the table controls.
+   * @param {Object} value - object with the new controls
    */
-  onChange: PropTypes.func,
+  onChangeControls: PropTypes.func,
   /**
    * Callback fired when the user clicks on a table row.
    * @param {Object} value - the row data
@@ -217,7 +250,8 @@ TableProvider.propTypes = {
    */
   selectable: PropTypes.oneOf([false, true, 'multiple']),
   /**
-   * Selected data.
+   * Array with the references of all the elements currently selected in the
+   * table.
    */
   selected: PropTypes.array,
   /**

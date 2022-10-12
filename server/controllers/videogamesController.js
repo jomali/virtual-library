@@ -15,6 +15,7 @@ module.exports = {
 
       // Creation:
       const data = await videogames.create(req.body);
+      console.log("data", data);
 
       // 201 Created
       res.status(201).json({

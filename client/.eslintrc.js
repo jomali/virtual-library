@@ -41,8 +41,12 @@ module.exports = {
         pathGroupsExcludedImportTypes: ['react'],
       },
     ],
+    // Disallow constant expressions in conditions.
+    // @see: https://eslint.org/docs/latest/rules/no-constant-condition
+    'no-constant-condition': 'warn',
     'no-debugger': 'error',
     'no-unused-expressions': 'off',
+    'no-unused-vars': 'warn',
     'prefer-const': 'error',
   },
 };

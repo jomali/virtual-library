@@ -1,15 +1,35 @@
 const defaultTheme = {
+  components: {
+    MuiTooltip: {
+      styleOverrides: {
+        arrow: ({ theme }) => ({
+          color: theme.palette.common.black,
+        }),
+        tooltip: ({ theme }) => ({
+          backgroundColor: theme.palette.common.black,
+          fontSize: theme.typography.pxToRem(12),
+        }),
+      },
+    },
+  },
   mixins: {
     coverSmall: 80,
   },
   palette: {
     mode: 'dark',
     primary: {
-      main: '#3ecac1',
+      main: '#4caf50',
     },
     secondary: {
-      main: '#ca3e47',
+      main: '#ec407a',
     },
+    background: {
+      default: '#09090d',
+      paper: '#131418',
+    },
+  },
+  shape: {
+    borderRadius: 8,
   },
 };
 

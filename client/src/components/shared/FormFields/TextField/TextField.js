@@ -1,24 +1,18 @@
 import React from 'react';
-import MuiTextField from '@mui/material/TextField';
-import PropTypes from 'prop-types';
+import { TextField as CustomTextField } from 'components/shared/MuiCustomizations';
 
-const TextField = (props) => {
-  const { color = 'primary', fullWidth = true, label, ...otherProps } = props;
+const TextField = React.forwardRef((props, ref) => {
+  const { onChange, ...otherProps } = props;
 
   return (
-    <MuiTextField
-      color={color}
-      fullWidth={fullWidth}
-      id={label.toLocaleLowerCase()}
-      label={label}
+    <CustomTextField
+      onChange={(event) => onChange(event, event.target.value)}
+      ref={ref}
       {...otherProps}
     />
   );
-};
+});
 
-TextField.propTypes = {
-  fullWidth: PropTypes.bool,
-  label: PropTypes.string.isRequired,
-};
+TextField.propTypes = CustomTextField.propTypes;
 
 export default TextField;
