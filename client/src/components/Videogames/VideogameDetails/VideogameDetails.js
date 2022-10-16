@@ -14,13 +14,13 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Formik, Form } from 'formik';
-import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
 import { useApi } from 'components/shared/ApiProvider';
 import { useConfirm } from 'components/shared/ConfirmProvider';
 import EditionToolbar from 'components/shared/EditionToolbar';
 import { IconButton, Tooltip } from 'components/shared/MuiCustomizations';
+import { useSnackbar } from 'components/shared/SnackbarProvider';
 import TabPanel from 'components/shared/TabPanel';
 import VideogameNotes from './VideogameNotes';
 import VideogameProfile from './VideogameProfile';
@@ -86,22 +86,26 @@ const VideogameDetails = (props) => {
       },
       onError: (error) => {
         console.error(error.message);
-        snackbar.enqueueSnackbar('Unexpected error.');
+        snackbar.open('Unexpected error.');
       },
     }
   );
 
   const videogameCreateUpdateMutation = useMutation(
-    (newValues) => api.POST(`videogames`, newValues),
+    // (newValues) => api.POST(`videogames`, newValues),
+    () => {
+      throw new Error();
+    },
     {
       onError: (error) => {
         console.error(error);
-        snackbar.enqueueSnackbar('Error creating element.', {
-          variant: 'error',
+        snackbar.open('Error creating element.', {
+          persistent: true,
+          variant: 'reportComplete',
         });
       },
       onSuccess: (value) => {
-        snackbar.enqueueSnackbar('New element successfully created.', {
+        snackbar.open('New element successfully created.', {
           variant: 'success',
         });
         const refresh = true;
@@ -115,12 +119,12 @@ const VideogameDetails = (props) => {
     {
       onError: (error) => {
         console.error(error);
-        snackbar.enqueueSnackbar('Error deleting element.', {
+        snackbar.open('Error deleting element.', {
           variant: 'error',
         });
       },
       onSuccess: (value) => {
-        snackbar.enqueueSnackbar('New element successfully deleted.', {
+        snackbar.open('New element successfully deleted.', {
           variant: 'success',
         });
         const refresh = true;
