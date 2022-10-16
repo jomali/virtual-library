@@ -183,6 +183,7 @@ const VideogameDetails = (props) => {
           </Fade>
         </Toolbar>
       </AppBar>
+      <Divider />
       <ImagePlaceholder height={400} width={375} />
       <Tabs
         aria-label="full width tabs example"
