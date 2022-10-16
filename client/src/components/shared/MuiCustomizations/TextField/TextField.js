@@ -7,9 +7,11 @@ const StyledTextField = styled(MuiTextField, {
   shouldForwardProp: (prop) => prop !== 'readOnly',
 })(({ readOnly, theme }) => ({
   ...(readOnly && {
+    '& label': {
+      transform: `translate(0px, -9px) scale(0.75)`,
+    },
     '& label.Mui-focused': {
       color: theme.palette.text.secondary,
-      transform: `translate(0px, -9px) scale(0.75)`,
     },
     // variant: outlined
     '& .MuiOutlinedInput-root': {

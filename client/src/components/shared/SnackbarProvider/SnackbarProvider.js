@@ -11,7 +11,7 @@ export const SnackbarProvider = ({ children }) => {
     () => ({
       message: '',
       open: false,
-      variant: 'default',
+      variant: 'success',
     }),
     []
   );
@@ -28,9 +28,9 @@ export const SnackbarProvider = ({ children }) => {
         return {
           ...state,
           ...otherAttributes,
-          message: message || '',
+          message: message || initialState.message,
           open: true,
-          variant: variant || 'default',
+          variant: variant || initialState.variant,
         };
       default:
         return state;
@@ -45,10 +45,12 @@ export const SnackbarProvider = ({ children }) => {
   };
 
   const handleOpen = (message, options = {}) => {
-    dispatch({
-      payload: { ...options, message: message },
-      type: ACTION_OPEN,
-    });
+    if (!state.open) {
+      dispatch({
+        payload: { ...options, message: message },
+        type: ACTION_OPEN,
+      });
+    }
   };
 
   return (
@@ -60,7 +62,13 @@ export const SnackbarProvider = ({ children }) => {
       >
         {children}
       </SnackbarContext.Provider>
-      <Snackbar open={state.open} onClose={handleClose} />
+      <Snackbar
+        open={state.open}
+        onClose={handleClose}
+        severity={state.variant}
+      >
+        {state.message}
+      </Snackbar>
     </>
   );
 };

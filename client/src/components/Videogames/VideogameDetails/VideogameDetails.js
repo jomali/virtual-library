@@ -57,7 +57,11 @@ const VideogameDetails = (props) => {
     ['videogame', value.id],
     async () => {
       const response = await api.GET(`videogames/${value.id}`);
-      return response.data;
+      return {
+        ...response.data,
+        developers: response.data.developers?.[0] || null,
+        publishers: response.data.publishers?.[0] || null,
+      };
     },
     {
       enabled: Boolean(value.id),
@@ -92,16 +96,21 @@ const VideogameDetails = (props) => {
   );
 
   const videogameCreateUpdateMutation = useMutation(
-    // (newValues) => api.POST(`videogames`, newValues),
-    () => {
+    (newValues) => {
+      const body = {
+        ...newValues,
+        developers: [{ id: newValues.developers.id, tag: 'default' }],
+        publishers: [{ id: newValues.publishers.id, tag: 'default' }],
+      };
+      console.log('->', body);
       throw new Error();
+      // return api.POST(`videogames`, body);
     },
     {
       onError: (error) => {
         console.error(error);
         snackbar.open('Error creating element.', {
-          persistent: true,
-          variant: 'reportComplete',
+          variant: 'error',
         });
       },
       onSuccess: (value) => {
