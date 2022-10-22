@@ -80,9 +80,13 @@ export default function TableToolbar({
       }}
     >
       <Stack direction="row" spacing={2} sx={{ flex: '1 1 100%' }}>
-        <Typography component="div" id="tableTitle" variant="h6">
-          {title}
-        </Typography>
+        {typeof title === 'function' ? (
+          title()
+        ) : (
+          <Typography component="div" id="tableTitle" variant="h6">
+            {title}
+          </Typography>
+        )}
       </Stack>
       <Stack direction="row" spacing={2}>
         {searchOptions ? (

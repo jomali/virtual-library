@@ -34,6 +34,7 @@ const StyledAutocomplete = styled(MuiAutocomplete, {
 const Autocomplete = React.forwardRef((props, ref) => {
   const { helperText, label, readOnly, required, withTags, ...otherProps } =
     props;
+
   const [open, setOpen] = React.useState(false);
 
   return (

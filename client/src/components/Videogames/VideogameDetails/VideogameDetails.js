@@ -97,18 +97,29 @@ const VideogameDetails = (props) => {
 
   const videogameCreateUpdateMutation = useMutation(
     (newValues) => {
+      const developer =
+        typeof newValues.developers === 'string'
+          ? { id: null, name: newValues.developers }
+          : newValues.developers;
+      const publisher =
+        typeof newValues.publishers === 'string'
+          ? { id: null, name: newValues.publishers }
+          : newValues.publishers;
+
       const body = {
         ...newValues,
-        developers: [{ id: newValues.developers.id, tag: 'default' }],
-        publishers: [{ id: newValues.publishers.id, tag: 'default' }],
+        developers: [{ ...developer, tag: 'main' }],
+        platforms: [newValues.platforms],
+        publishers: [{ ...publisher, tag: 'main' }],
       };
-      console.log('->', body);
+
+      console.log('body', body);
       throw new Error();
       // return api.POST(`videogames`, body);
     },
     {
       onError: (error) => {
-        console.error(error);
+        // console.error(error);
         snackbar.open('Error creating element.', {
           variant: 'error',
         });
@@ -141,14 +152,6 @@ const VideogameDetails = (props) => {
       },
     }
   );
-
-  const handleChange = (event, newValue) => {
-    setCurrentTab(newValue);
-  };
-
-  const handleChangeIndex = (index) => {
-    setCurrentTab(index);
-  };
 
   const a11yProps = (index) => {
     return {
@@ -183,12 +186,11 @@ const VideogameDetails = (props) => {
           </Fade>
         </Toolbar>
       </AppBar>
-      <Divider />
       <ImagePlaceholder height={400} width={375} />
       <Tabs
         aria-label="full width tabs example"
         indicatorColor="primary"
-        onChange={handleChange}
+        onChange={(event, newValue) => setCurrentTab(newValue)}
         textColor="inherit"
         value={currentTab}
         variant="fullWidth"
@@ -200,20 +202,20 @@ const VideogameDetails = (props) => {
             {...a11yProps(0)}
           />
         </Tooltip>
-        <Tooltip title="Notes">
+        {/* <Tooltip title="Notes">
           <Tab
             disabled={videogameCreateUpdateMutation.isLoading}
             icon={<PersonRoundedIcon />}
             {...a11yProps(1)}
           />
-        </Tooltip>
-        <Tooltip title="Reviews">
+        </Tooltip> */}
+        {/* <Tooltip title="Reviews">
           <Tab
             disabled={videogameCreateUpdateMutation.isLoading}
             icon={<ForumRoundedIcon />}
             {...a11yProps(2)}
           />
-        </Tooltip>
+        </Tooltip> */}
       </Tabs>
       <Divider />
       <Formik
@@ -229,7 +231,7 @@ const VideogameDetails = (props) => {
           <SwipeableViews
             axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
             index={currentTab}
-            onChangeIndex={handleChangeIndex}
+            onChangeIndex={(index) => setCurrentTab(index)}
           >
             <TabPanel value={currentTab} index={0} dir={theme.direction}>
               <VideogameProfile
@@ -239,12 +241,12 @@ const VideogameDetails = (props) => {
                 readOnly={!editMode}
               />
             </TabPanel>
-            <TabPanel value={currentTab} index={1} dir={theme.direction}>
+            {/* <TabPanel value={currentTab} index={1} dir={theme.direction}>
               <VideogameNotes readOnly={!editMode} />
-            </TabPanel>
-            <TabPanel value={currentTab} index={2} dir={theme.direction}>
+            </TabPanel> */}
+            {/* <TabPanel value={currentTab} index={2} dir={theme.direction}>
               <VideogameReviews readOnly={!editMode} />
-            </TabPanel>
+            </TabPanel> */}
           </SwipeableViews>
         </StyledForm>
       </Formik>

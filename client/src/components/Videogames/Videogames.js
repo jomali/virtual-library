@@ -1,16 +1,18 @@
 import React from 'react';
-import Box from '@mui/material/Box';
+import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
+import AutoStoriesRoundedIcon from '@mui/icons-material/AutoStoriesRounded';
+import LocalMoviesRoundedIcon from '@mui/icons-material/LocalMoviesRounded';
+import VideogameAssetRoundedIcon from '@mui/icons-material/VideogameAssetRounded';
+import ButtonBase from '@mui/material/ButtonBase';
 import Divider from '@mui/material/Divider';
-import Drawer from '@mui/material/Drawer';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
-import Select from '@mui/material/Select';
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useApi } from 'components/shared/ApiProvider';
@@ -19,9 +21,9 @@ import TableProvider, {
   TableContainer,
   TableContent,
   TableSummary,
+  TableToolbar,
   useTable,
 } from 'components/shared/TableProvider';
-
 import VideogameDetails from './VideogameDetails';
 
 export default function Videogames() {
@@ -31,6 +33,7 @@ export default function Videogames() {
   const queryClient = useQueryClient();
   const table = useTable();
 
+  const [anchorEl, setAnchorEl] = React.useState();
   const [openMenu, setOpenMenu] = React.useState(false);
 
   const videogamesQuery = useQuery(['videogames'], async () => {
@@ -79,7 +82,6 @@ export default function Videogames() {
           queryClient.invalidateQueries('videogames');
         }
       }}
-      onOpenMenu={() => setOpenMenu(true)}
       open={Boolean(params.id)}
       sideContent={(otherParams) => (
         <VideogameDetails
@@ -116,68 +118,129 @@ export default function Videogames() {
           selector={(value) => value.id}
         >
           <TableContainer>
-            {/* <TableToolbar
-              title="Videogames"
+            <TableToolbar
+              title={'Videogames'}
+              title_={() => (
+                <ButtonBase
+                  onClick={(event) => setAnchorEl(event.currentTarget)}
+                  sx={{
+                    borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+                    padding: 1,
+                    '&:hover': {
+                      backgroundColor: (theme) => theme.palette.action.hover,
+                    },
+                  }}
+                >
+                  <Typography component="div" id="tableTitle" variant="h6">
+                    Videogames
+                  </Typography>
+                  <ArrowDropDownRoundedIcon
+                    sx={{
+                      marginLeft: 0.5,
+                      marginRight: -0.5,
+                      transition: (theme) =>
+                        theme.transitions.create('transform', {
+                          duration: (theme) => theme.transitions.duration.short,
+                        }),
+                      ...(Boolean(anchorEl) && { transform: 'rotate(180deg)' }),
+                    }}
+                  />
+                </ButtonBase>
+              )}
               addOptions={{
                 onClick: () => {
                   table.setSelected();
                   navigate('/videogames/new');
                 },
               }}
-            /> */}
-            <TableContent headProps={{ topRadius: true }} />
+            />
+            <TableContent />
             <TableSummary />
           </TableContainer>
         </TableProvider>
       </Paper>
 
-      <Drawer onClose={() => setOpenMenu(false)} open={openMenu}>
-        <Box
-          sx={{ width: 250 }}
-          role="presentation"
-          onClick={() => setOpenMenu(false)}
-          onKeyDown={() => setOpenMenu(false)}
-        >
-          <Box sx={{ margin: '32px 16px' }}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Collection</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={'videogames'}
-                label="Collection"
-                onChange={(value) => console.log('value', value)}
-              >
-                <MenuItem value={'books'}>Books</MenuItem>
-                <MenuItem value={'movies'}>Movies</MenuItem>
-                <MenuItem value={'videogames'}>Videogames</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-          <Divider />
-          <List>
-            <ListItem disablePadding>
-              <ListItemButton
-                onClick={() => navigate(`/videogames/developers`)}
-              >
-                <ListItemText primary={'Developers'} />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton
-                onClick={() => navigate(`/videogames/publishers`)}
-              >
-                <ListItemText primary={'Publishers'} />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton onClick={() => navigate(`/videogames/platforms`)}>
-                <ListItemText primary={'Platforms'} />
-              </ListItemButton>
-            </ListItem>
-          </List>
-        </Box>
-      </Drawer>
+      <Popover
+        anchorEl={anchorEl}
+        id="account-menu"
+        open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl()}
+        onClick={() => setAnchorEl()}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            backgroundColor: (theme) => theme.palette.common.black,
+            overflow: 'visible',
+            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+            mt: 1.5,
+            '&:before': {
+              content: '""',
+              display: 'block',
+              position: 'absolute',
+              top: 0,
+              left: 14,
+              width: 10,
+              height: 10,
+              backgroundColor: (theme) => theme.palette.common.black,
+              transform: 'translateY(-50%) rotate(45deg)',
+              zIndex: 0,
+            },
+          },
+        }}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+      >
+        <List>
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => navigate(`/videogames`)} selected>
+              <ListItemIcon>
+                <VideogameAssetRoundedIcon fontSize="medium" />
+              </ListItemIcon>
+              <ListItemText primary="Videogames" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => navigate(`/movies`)}>
+              <ListItemIcon>
+                <LocalMoviesRoundedIcon fontSize="medium" />
+              </ListItemIcon>
+              <ListItemText primary={'Movies'} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => navigate(`/books`)}>
+              <ListItemIcon>
+                <AutoStoriesRoundedIcon fontSize="medium" />
+              </ListItemIcon>
+              <ListItemText primary={'Books'} />
+            </ListItemButton>
+          </ListItem>
+        </List>
+        <Divider />
+        <List>
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => navigate(`/videogames/developers`)}>
+              <ListItemText primary={'Developers'} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => navigate(`/videogames/publishers`)}>
+              <ListItemText primary={'Publishers'} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => navigate(`/videogames/platforms`)}>
+              <ListItemText primary={'Platforms'} />
+            </ListItemButton>
+          </ListItem>
+        </List>
+      </Popover>
     </Collection>
   );
 }

@@ -31,7 +31,7 @@ const FormField = (props) => {
       }
     }
     if (required) {
-      if (!value?.trim()) {
+      if (!value || (typeof value === 'string' && !value.trim)) {
         return `Required field.`;
       }
     }
@@ -51,7 +51,7 @@ const FormField = (props) => {
           disabled: children.props.disabled || form.isSubmitting,
           error: showError,
           helperText: showError ? fieldError : children.props.helperText,
-          onChange: (event, newValue) =>
+          onChange: (newValue, event) =>
             form.setFieldValue(field.name, newValue),
           value: field.value,
         });

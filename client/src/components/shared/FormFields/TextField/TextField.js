@@ -6,7 +6,7 @@ const TextField = React.forwardRef((props, ref) => {
 
   return (
     <CustomTextField
-      onChange={(event) => onChange(event, event.target.value)}
+      onChange={(event) => onChange(event.target.value, event)}
       ref={ref}
       value={value || ''}
       {...otherProps}
