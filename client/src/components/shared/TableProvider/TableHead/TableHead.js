@@ -1,13 +1,28 @@
 import React from 'react';
 import Checkbox from '@mui/material/Checkbox';
-import TableCell from '@mui/material/TableCell';
+import { styled } from '@mui/material/styles';
+import MuiTableCell from '@mui/material/TableCell';
 import MuiTableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import MuiTableRow from '@mui/material/TableRow';
 import useTable from '../useTableState';
+
+const StyledTableRow = styled(MuiTableRow, {
+  shouldForwardProp: (prop) => prop !== 'topRadius',
+})(({ theme, topRadius }) => ({
+  ...(topRadius && {
+    '& th:first-child': {
+      borderTopLeftRadius: theme.shape.borderRadius,
+    },
+    '& th:last-child': {
+      borderTopRightRadius: theme.shape.borderRadius,
+    },
+  }),
+}));
 
 export default function TableHead({
   color = 'default',
   setRowProps = () => ({}),
+  topRadius,
 }) {
   const tableState = useTable();
 
@@ -27,9 +42,9 @@ export default function TableHead({
 
   return (
     <MuiTableHead>
-      <TableRow>
+      <StyledTableRow topRadius={topRadius}>
         {tableState.selectable === 'multiple' ? (
-          <TableCell padding="checkbox">
+          <MuiTableCell padding="checkbox">
             <Checkbox
               checked={
                 tableState.rows.filter(
@@ -57,21 +72,21 @@ export default function TableHead({
               inputProps={{ 'aria-label': 'select all' }} // TODO - i18n
               onChange={handleSelectAll}
             />
-          </TableCell>
+          </MuiTableCell>
         ) : null}
         {tableState.includedColumns
           .filter((column) => column.options.display)
           .map((column, index) => (
-            <TableCell
+            <MuiTableCell
               align={column.options.align || 'left'}
               key={index}
               padding={'normal'} // TODO
               sortDirection={false} // TODO
             >
               {column.options.displayLabel ? column.label : null}
-            </TableCell>
+            </MuiTableCell>
           ))}
-      </TableRow>
+      </StyledTableRow>
     </MuiTableHead>
   );
 }

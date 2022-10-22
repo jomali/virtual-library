@@ -14,13 +14,13 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Formik, Form } from 'formik';
-import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
 import { useApi } from 'components/shared/ApiProvider';
 import { useConfirm } from 'components/shared/ConfirmProvider';
 import EditionToolbar from 'components/shared/EditionToolbar';
 import { IconButton, Tooltip } from 'components/shared/MuiCustomizations';
+import { useSnackbar } from 'components/shared/SnackbarProvider';
 import TabPanel from 'components/shared/TabPanel';
 import VideogameNotes from './VideogameNotes';
 import VideogameProfile from './VideogameProfile';
@@ -57,7 +57,11 @@ const VideogameDetails = (props) => {
     ['videogame', value.id],
     async () => {
       const response = await api.GET(`videogames/${value.id}`);
-      return response.data;
+      return {
+        ...response.data,
+        developers: response.data.developers?.[0] || null,
+        publishers: response.data.publishers?.[0] || null,
+      };
     },
     {
       enabled: Boolean(value.id),
@@ -86,22 +90,42 @@ const VideogameDetails = (props) => {
       },
       onError: (error) => {
         console.error(error.message);
-        snackbar.enqueueSnackbar('Unexpected error.');
+        snackbar.open('Unexpected error.');
       },
     }
   );
 
   const videogameCreateUpdateMutation = useMutation(
-    (newValues) => api.POST(`videogames`, newValues),
+    (newValues) => {
+      const developer =
+        typeof newValues.developers === 'string'
+          ? { id: null, name: newValues.developers }
+          : newValues.developers;
+      const publisher =
+        typeof newValues.publishers === 'string'
+          ? { id: null, name: newValues.publishers }
+          : newValues.publishers;
+
+      const body = {
+        ...newValues,
+        developers: [{ ...developer, tag: 'main' }],
+        platforms: [newValues.platforms],
+        publishers: [{ ...publisher, tag: 'main' }],
+      };
+
+      console.log('body', body);
+      throw new Error();
+      // return api.POST(`videogames`, body);
+    },
     {
       onError: (error) => {
-        console.error(error);
-        snackbar.enqueueSnackbar('Error creating element.', {
+        // console.error(error);
+        snackbar.open('Error creating element.', {
           variant: 'error',
         });
       },
       onSuccess: (value) => {
-        snackbar.enqueueSnackbar('New element successfully created.', {
+        snackbar.open('New element successfully created.', {
           variant: 'success',
         });
         const refresh = true;
@@ -115,12 +139,12 @@ const VideogameDetails = (props) => {
     {
       onError: (error) => {
         console.error(error);
-        snackbar.enqueueSnackbar('Error deleting element.', {
+        snackbar.open('Error deleting element.', {
           variant: 'error',
         });
       },
       onSuccess: (value) => {
-        snackbar.enqueueSnackbar('New element successfully deleted.', {
+        snackbar.open('New element successfully deleted.', {
           variant: 'success',
         });
         const refresh = true;
@@ -128,14 +152,6 @@ const VideogameDetails = (props) => {
       },
     }
   );
-
-  const handleChange = (event, newValue) => {
-    setCurrentTab(newValue);
-  };
-
-  const handleChangeIndex = (index) => {
-    setCurrentTab(index);
-  };
 
   const a11yProps = (index) => {
     return {
@@ -174,7 +190,7 @@ const VideogameDetails = (props) => {
       <Tabs
         aria-label="full width tabs example"
         indicatorColor="primary"
-        onChange={handleChange}
+        onChange={(event, newValue) => setCurrentTab(newValue)}
         textColor="inherit"
         value={currentTab}
         variant="fullWidth"
@@ -186,20 +202,20 @@ const VideogameDetails = (props) => {
             {...a11yProps(0)}
           />
         </Tooltip>
-        <Tooltip title="Notes">
+        {/* <Tooltip title="Notes">
           <Tab
             disabled={videogameCreateUpdateMutation.isLoading}
             icon={<PersonRoundedIcon />}
             {...a11yProps(1)}
           />
-        </Tooltip>
-        <Tooltip title="Reviews">
+        </Tooltip> */}
+        {/* <Tooltip title="Reviews">
           <Tab
             disabled={videogameCreateUpdateMutation.isLoading}
             icon={<ForumRoundedIcon />}
             {...a11yProps(2)}
           />
-        </Tooltip>
+        </Tooltip> */}
       </Tabs>
       <Divider />
       <Formik
@@ -215,7 +231,7 @@ const VideogameDetails = (props) => {
           <SwipeableViews
             axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
             index={currentTab}
-            onChangeIndex={handleChangeIndex}
+            onChangeIndex={(index) => setCurrentTab(index)}
           >
             <TabPanel value={currentTab} index={0} dir={theme.direction}>
               <VideogameProfile
@@ -225,12 +241,12 @@ const VideogameDetails = (props) => {
                 readOnly={!editMode}
               />
             </TabPanel>
-            <TabPanel value={currentTab} index={1} dir={theme.direction}>
+            {/* <TabPanel value={currentTab} index={1} dir={theme.direction}>
               <VideogameNotes readOnly={!editMode} />
-            </TabPanel>
-            <TabPanel value={currentTab} index={2} dir={theme.direction}>
+            </TabPanel> */}
+            {/* <TabPanel value={currentTab} index={2} dir={theme.direction}>
               <VideogameReviews readOnly={!editMode} />
-            </TabPanel>
+            </TabPanel> */}
           </SwipeableViews>
         </StyledForm>
       </Formik>

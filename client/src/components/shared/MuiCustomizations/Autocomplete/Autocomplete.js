@@ -8,6 +8,19 @@ import TextField from '../TextField';
 const StyledAutocomplete = styled(MuiAutocomplete, {
   shouldForwardProp: (prop) => prop !== 'readOnly' || prop !== 'withTags',
 })(({ readOnly, theme, withTags }) => ({
+  ...(readOnly && {
+    '& .MuiInputBase-root': {
+      paddingLeft: '0px !important',
+      paddingRight: '0px !important',
+    },
+    '& .MuiAutocomplete-endAdornment': {
+      display: 'none',
+    },
+    // variant: outlined
+    '& .MuiOutlinedInput-root .MuiAutocomplete-input': {
+      paddingLeft: 0,
+    },
+  }),
   ...(!withTags && {
     '& .MuiFilledInput-root': {
       paddingLeft: theme.spacing(1.5),
@@ -19,7 +32,9 @@ const StyledAutocomplete = styled(MuiAutocomplete, {
 }));
 
 const Autocomplete = React.forwardRef((props, ref) => {
-  const { readOnly, withTags, ...otherProps } = props;
+  const { helperText, label, readOnly, required, withTags, ...otherProps } =
+    props;
+
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -27,8 +42,17 @@ const Autocomplete = React.forwardRef((props, ref) => {
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
       open={open}
+      readOnly={readOnly}
       ref={ref}
-      renderInput={(params) => <TextField {...params} readOnly={readOnly} />}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          helperText={helperText}
+          label={label}
+          readOnly={readOnly}
+          required={required}
+        />
+      )}
       renderTags={(value, getTagProps) =>
         value.map((option, index) =>
           withTags ? (
@@ -57,7 +81,9 @@ const Autocomplete = React.forwardRef((props, ref) => {
 
 Autocomplete.propTypes = {
   ...MuiAutocomplete.propTypes,
+  label: PropTypes.string,
   readOnly: PropTypes.bool,
+  required: PropTypes.bool,
   withTags: PropTypes.bool,
 };
 

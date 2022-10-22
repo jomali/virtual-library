@@ -3,9 +3,9 @@ import Grid from '@mui/material/Grid';
 import PropTypes from 'prop-types';
 import FormField, {
   AutocompleteField,
+  DateField,
   TextField,
 } from 'components/shared/FormFields';
-import CustomTextField from 'components/shared/MuiCustomizations/TextField';
 import { PROPERTIES } from './videogameProfileConstants';
 
 const VideogameProfile = (props) => {
@@ -25,60 +25,57 @@ const VideogameProfile = (props) => {
         </FormField>
       </Grid>
 
-      {/* <Grid item xs={12}>
+      <Grid item xs={12}>
         <FormField name={PROPERTIES.developers}>
           <AutocompleteField
             // Developers
             freeSolo
-            multiple
-            options={developers.map((element) => element.name)}
-            renderInput={(params) => (
-              <CustomTextField
-                {...params}
-                label={'Developer'}
-                readOnly={false} // TODO - why?
-              />
-            )}
+            getOptionLabel={(option) => option.name}
+            isOptionEqualToValue={(option, value) => option.id === value?.id}
+            label={'Developer'}
+            options={developers}
+            readOnly={readOnly}
+            required={!readOnly}
           />
         </FormField>
-      </Grid> */}
+      </Grid>
 
-      {/* <Grid item xs={12}>
+      <Grid item xs={12}>
         <FormField name={PROPERTIES.publishers}>
           <AutocompleteField
             // Publishers
             freeSolo
-            multiple
-            options={publishers.map((element) => element.name)}
-            renderInput={(params) => (
-              <CustomTextField
-                {...params}
-                label={'Publisher'}
-                readOnly={false} // TODO - why?
-              />
-            )}
+            getOptionLabel={(option) => option.name}
+            isOptionEqualToValue={(option, value) => option.id === value?.id}
+            label={'Publisher'}
+            options={publishers}
+            readOnly={readOnly}
+            required={!readOnly}
           />
         </FormField>
-      </Grid> */}
+      </Grid>
 
-      {/* <Grid item xs={12}>
-        <FormField name={PROPERTIES.releaseDates}></FormField>
-      </Grid> */}
+      <Grid item xs={12}>
+        <FormField name={PROPERTIES.releaseDates}>
+          <DateField
+            // Release dates
+            label={'Release date'}
+            readOnly={readOnly}
+            required={!readOnly}
+          />
+        </FormField>
+      </Grid>
 
       {/* <Grid item xs={12}>
         <FormField name={PROPERTIES.platforms}>
           <AutocompleteField
             // Platforms
-            freeSolo
-            multiple
-            options={platforms.map((element) => element.name)}
-            renderInput={(params) => (
-              <CustomTextField
-                {...params}
-                label={'Platforms'}
-                readOnly={false} // TODO - why?
-              />
-            )}
+            getOptionLabel={(option) => option.name}
+            isOptionEqualToValue={(option, value) => option.id === value?.id}
+            label={'Platforms'}
+            options={platforms}
+            readOnly={readOnly}
+            required={!readOnly}
           />
         </FormField>
       </Grid> */}
