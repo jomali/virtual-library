@@ -15,34 +15,36 @@ module.exports = {
         (title, synopsis) 
         VALUES (?, ?)`,
         [
-          data.title || null,
-          data.synopsis || null,
+          data.title,
+          data.synopsis,
         ]
       );
+
       const videogame = {
         ...data,
         id: videogameQuery.lastID,
       };
 
-      // Videogame-developer relationship entities:
-      await Promise.all(data.developers?.forEach(async (developer) => {
+      // Videogame-developer relation entities:
+      for (let i = 0; i < videogame.developers.length; i++) {
+        const developer = videogame.developers[i]; 
         await db.run(
-          `INSERT INTO videogames_developers_relationships
+          `INSERT INTO videogames_developers_relations
           (videogame_id, videogame_developer_id, tag)
           VALUES (?, ?, ?)`,
           [
             videogame.id,
             developer.id,
-            developer.tag || null, 
+            developer.tag,
           ]
         );
-      }));
+      }
 
-      // Videogame-platform relationship entities:
-      for (let i = 0; i < data.platforms?.length; i++) {
+      // Videogame-platform relation entities:
+      for (let i = 0; i < data.platforms.length; i++) {
         const platform = data.platforms[i];
         await db.run(
-          `INSERT INTO videogames_platforms_relationships
+          `INSERT INTO videogames_platforms_relations
           (videogame_id, videogame_platform_id)
           VALUES (?, ?)`,
           [
@@ -52,35 +54,39 @@ module.exports = {
         );
       }
 
-      // Videogame-publisher relationship entities:
-      await Promise.all(data.publishers?.forEach(async (publisher) => {
+      // Videogame-publisher relation entities:
+      for (let i = 0; i < videogame.publishers.length; i++) {
+        const publisher = videogame.publishers[i];
         await db.run(
-          `INSERT INTO videogames_publishers_relationships
+          `INSERT INTO videogames_publishers_relations
           (videogame_id, videogame_publisher_id, tag)
           VALUES (?, ?, ?)`,
           [
             videogame.id,
             publisher.id,
-            publisher.tag || null,
+            publisher.tag,
           ]
         );
-      }));
+      }
 
       // Release date entities:
-      // for (let i = 0; i < data.releaseDates?.length; i++) {
-      //   const releaseDate = data.releaseDates[i];
-      //   await db.run(
-      //     `INSERT INTO videogame_releases
-      //     (videogame_id, date, tag)
-      //     VALUES (?, ?, ?)`,
-      //     [
-      //       videogame.id,
-      //       releaseDate.date || null,
-      //       releaseDate.tag || null,
-      //     ]
-      //   )
-      // }
-
+      for (let i = 0; i < data.releaseDates.length; i++) {
+        const releaseDate = data.releaseDates[i];
+        await db.run(
+          `INSERT INTO videogame_releases
+          (videogame_id, date, tag)
+          VALUES (?, ?, ?)`,
+          [
+            videogame.id,
+            releaseDate.date,
+            releaseDate.tag,
+          ]
+        )
+      }
+      
+      console.log(`[SUCCESS] videogames.create: New element created with id "${
+        videogame.id
+      }"`);
       return videogame;
     } catch (error) {
       console.error('[ERROR] videogames.create: ', error.message);
@@ -95,11 +101,69 @@ module.exports = {
    */
   delete: async (id) => {
     try {
+      // Videogame-developer relation entities:
+      const videogamesDevelopersRelations = await db.all(
+        `SELECT vidDev.*
+        FROM videogames_developers_relations as vidDev
+        WHERE videogame_developer_id IN (
+          SELECT videogame_developer_id
+          FROM videogames_developers_relations
+          WHERE videogame_id = ${id}
+        );`
+      );
+      const developerCounts = {};
+      videogamesDevelopersRelations.forEach((element) =>
+      developerCounts[element.videogame_developer_id] =
+        (developerCounts[element.videogame_developer_id] || 0) + 1
+      );
+      await db.run(
+        `DELETE FROM videogames_publishers_relations
+        WHERE videogame_id = ?`,
+        [id]
+      );
+      await db.run(
+        `DELETE FROM videogames_publishers_relations
+        WHERE videogame_id IN (${Object.keys(developerCounts)
+          .filter((element) => developerCounts[element] === 1)
+          .join(", ")
+        })`
+      );
+
+      // Videogame-developer relation entities:
+      const videogamesPublishersRelations = await db.all(
+        `SELECT vidPub.*
+        FROM videogames_publishers_relations as vidPub
+        WHERE videogame_publisher_id IN (
+          SELECT videogame_publisher_id
+          FROM videogames_publishers_relations
+          WHERE videogame_id = ${id}
+        );`
+      );
+      const publisherCounts = {};
+      videogamesPublishersRelations.forEach((element) =>
+      publisherCounts[element.videogame_publisher_id] =
+        (publisherCounts[element.videogame_publisher_id] || 0) + 1
+      );
+      await db.run(
+        `DELETE FROM videogames_publishers_relations
+        WHERE videogame_id = ?`,
+        [id]
+      );
+      await db.run(
+        `DELETE FROM videogames_publishers_relations
+        WHERE videogame_id IN (${Object.keys(publisherCounts)
+          .filter((element) => publisherCounts[element] === 1)
+          .join(", ")
+        })`
+      );
+
+      // Videogame entity:
       const result = await db.run(
         `DELETE FROM ${table} 
         WHERE id = ?`,
         [id]
       );
+      
       return result;
     } catch (error) {
       console.error('[ERROR] videogames.delete: ', error.message);
@@ -123,7 +187,7 @@ module.exports = {
       // Developers:
       const developers = await db.all(
         `SELECT developers.*, vidDev.tag
-        FROM videogames_developers_relationships AS vidDev
+        FROM videogames_developers_relations AS vidDev
         INNER JOIN videogames 
           ON videogames.id = vidDev.videogame_id
         INNER JOIN videogame_developers AS developers
@@ -134,7 +198,7 @@ module.exports = {
       // Platforms:
       const platforms = await db.all(
         `SELECT platforms.*
-        FROM videogames_platforms_relationships AS vidPla
+        FROM videogames_platforms_relations AS vidPla
         INNER JOIN videogames
           ON videogames.id = vidPla.videogame_id
         INNER JOIN videogame_platforms AS platforms
@@ -145,7 +209,7 @@ module.exports = {
       // Publishers:
       const publishers = await db.all(
         `SELECT publishers.*, vidPub.tag
-        FROM videogames_publishers_relationships AS vidPub
+        FROM videogames_publishers_relations AS vidPub
         INNER JOIN videogames
           ON videogames.id = vidPub.videogame_id
         INNER JOIN videogame_publishers AS publishers
@@ -182,7 +246,7 @@ module.exports = {
         // Developers:
         const developers = await db.all(
           `SELECT developers.*, vidDev.tag
-          FROM videogames_developers_relationships AS vidDev
+          FROM videogames_developers_relations AS vidDev
           INNER JOIN videogames 
             ON videogames.id = vidDev.videogame_id
           INNER JOIN videogame_developers AS developers
@@ -193,7 +257,7 @@ module.exports = {
         // Platforms:
         const platforms = await db.all(
           `SELECT platforms.*
-          FROM videogames_platforms_relationships AS vidPla
+          FROM videogames_platforms_relations AS vidPla
           INNER JOIN videogames
             ON videogames.id = vidPla.videogame_id
           INNER JOIN videogame_platforms AS platforms
@@ -204,7 +268,7 @@ module.exports = {
         // Publishers:
         const publishers = await db.all(
           `SELECT publishers.*, vidPub.tag
-          FROM videogames_publishers_relationships AS vidPub
+          FROM videogames_publishers_relations AS vidPub
           INNER JOIN videogames
             ON videogames.id = vidPub.videogame_id
           INNER JOIN videogame_publishers AS publishers

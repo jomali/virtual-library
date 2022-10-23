@@ -16,7 +16,13 @@ module.exports = {
       // TODO
 
       // Creation:
-      const { developers, publishers, ...body} = req.body;
+      const {
+        developers = [], 
+        platforms = [], 
+        publishers = [], 
+        releaseDates = [],
+        ...body
+      } = req.body;
 
       const developersData = await Promise.all(developers.map(
         async (element) => {
@@ -24,7 +30,7 @@ module.exports = {
             return element;
           } else {
             const newDeveloper = await videogameDevelopers.create(element);
-            return { ...element, ...newDeveloper };
+            return { ...newDeveloper, ...element };
           }
         }
       ));
@@ -35,7 +41,7 @@ module.exports = {
             return element;
           } else {
             const newPublisher = await videogamePublishers.create(element);
-            return { ...element, ...newPublisher };
+            return { ...newPublisher, ...element };
           }
         }
      ));
@@ -43,13 +49,15 @@ module.exports = {
       const data = await videogames.create({
         ...body,
         developers: developersData,
+        platforms: platforms,
         publishers: publishersData,
+        releaseDates: releaseDates,
       });
 
       // 201 Created
       res.status(201).json({
         data,
-        id: this.lastId,
+        id: data.id,
         message: 'success',
       })
     } catch (error) {
@@ -70,7 +78,7 @@ module.exports = {
     try {
       const { id } = req.params;
       await videogames.delete(id);
-
+      //
       res.status(204).json({
         changes: this.changes,
         message: 'deleted',
