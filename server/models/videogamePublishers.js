@@ -9,12 +9,16 @@ module.exports = {
    */
   create: async (data) => {
     try {
-      const result = await db.run(
-        `INSERT INTO ${table} (name) 
+      const { changes, lastID, ...queryResponse } = await db.run(
+        `INSERT INTO ${table}
+        (name) 
         VALUES (?)`,
         [data.name]
       );
-      return result;
+      return {
+        id: lastID,
+        ...queryResponse,
+      };
     } catch (error) {
       console.error('[ERROR] videogamePublishers.create: ', error.message);
       throw error;

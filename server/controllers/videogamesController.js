@@ -1,3 +1,5 @@
+const videogameDevelopers = require("../models/videogameDevelopers");
+const videogamePublishers = require("../models/videogamePublishers");
 const videogames = require("../models/videogames");
 
 module.exports = {
@@ -14,8 +16,35 @@ module.exports = {
       // TODO
 
       // Creation:
-      const data = await videogames.create(req.body);
-      console.log("data", data);
+      const { developers, publishers, ...body} = req.body;
+
+      const developersData = await Promise.all(developers.map(
+        async (element) => {
+          if (element.id) {
+            return element;
+          } else {
+            const newDeveloper = await videogameDevelopers.create(element);
+            return { ...element, ...newDeveloper };
+          }
+        }
+      ));
+
+      const publishersData = await Promise.all(publishers.map(
+        async (element) => {
+          if (element.id) {
+            return element;
+          } else {
+            const newPublisher = await videogamePublishers.create(element);
+            return { ...element, ...newPublisher };
+          }
+        }
+     ));
+
+      const data = await videogames.create({
+        ...body,
+        developers: developersData,
+        publishers: publishersData,
+      });
 
       // 201 Created
       res.status(201).json({
