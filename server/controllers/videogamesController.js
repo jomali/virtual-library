@@ -24,33 +24,11 @@ module.exports = {
         ...body
       } = req.body;
 
-      const developersData = await Promise.all(developers.map(
-        async (element) => {
-          if (element.id) {
-            return element;
-          } else {
-            const newDeveloper = await videogameDevelopers.create(element);
-            return { ...newDeveloper, ...element };
-          }
-        }
-      ));
-
-      const publishersData = await Promise.all(publishers.map(
-        async (element) => {
-          if (element.id) {
-            return element;
-          } else {
-            const newPublisher = await videogamePublishers.create(element);
-            return { ...newPublisher, ...element };
-          }
-        }
-     ));
-
       const data = await videogames.create({
         ...body,
-        developers: developersData,
+        developers: developers,
         platforms: platforms,
-        publishers: publishersData,
+        publishers: publishers,
         releaseDates: releaseDates,
       });
 
@@ -78,7 +56,7 @@ module.exports = {
     try {
       const { id } = req.params;
       await videogames.delete(id);
-      //
+      
       res.status(204).json({
         changes: this.changes,
         message: 'deleted',
@@ -142,18 +120,38 @@ module.exports = {
    * @param {*} next
    */
   update: async (req, res, next) => {
-    // const id = req.params.id;
-    // const body = { ...req.body };
-    // videogames.update(id, body, (error, data) => {
-    //   if (error) {
-    //     res.status(400).json({ error: error.message });
-    //     return;
-    //   }
-    //   res.json({
-    //     message: "success",
-    //     data: data,
-    //     changes: this.changes,
-    //   });
-    // });
+    try {
+      // Validation step:
+      // TODO
+      const { id } = req.params;
+
+      // Modification:
+      const {
+        developers = [], 
+        platforms = [], 
+        publishers = [], 
+        releaseDates = [],
+        ...body
+      } = req.body;
+
+      const data = await videogames.update(id, {
+        ...body,
+        developers: developers,
+        platforms: platforms,
+        publishers: publishers,
+        releaseDates: releaseDates,
+      });
+
+      // 200 Created
+      res.status(200).json({
+        data,
+        id: data.id,
+        message: 'success',
+      })
+    } catch (error) {
+      res.status(400).json({
+        error: error.message,
+      });
+    }
   },
 };

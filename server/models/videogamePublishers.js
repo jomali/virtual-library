@@ -1,4 +1,5 @@
 const db = require("./database");
+
 const table = "videogame_publishers";
 
 module.exports = {
@@ -28,7 +29,7 @@ module.exports = {
   /**
    * Deletes the `videogamePublisher` element with the given `id`
    *
-   * @param {*} id
+   * @param {number} id
    */
   delete: async (id) => {
     try {
@@ -40,6 +41,30 @@ module.exports = {
       return result;
     } catch (error) {
       console.error('[ERROR] videogamePublishers.delete: ', error.message);
+      throw error;
+    }
+  },
+
+  /**
+   * Deletes all the `videogamePublisher` elements with the given `ids`.
+   * 
+   * @param {*} ids - array of ids
+   */
+  deleteMultiple: async (ids) => {
+    try {
+      const result = await db.run(
+        `DELETE FROM ${table}
+        WHERE id IN (${ids.join(", ")})`
+      );
+
+      console.log(`[SUCCESS] videogamePublishers.deleteMultiple: Deleted "${
+        ids.join(", ")
+      }"`);
+      return result;
+    } catch (error) {
+      console.error(`[ERROR] videogamePublishers.deleteMultiple: "${
+        error.message
+      }"`);
       throw error;
     }
   },

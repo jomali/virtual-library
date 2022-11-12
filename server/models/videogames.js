@@ -1,5 +1,138 @@
 const db = require("./database");
+const videogameDevelopers = require("./videogameDevelopers");
+const videogamePublishers = require("./videogamePublishers");
+
 const table = "videogames";
+
+const createVideogameDevelopersAndRelations = async (videogameId, data = []) => {
+  const developers = await Promise.all(data.map(
+    async (element) => {
+      if (element.id) {
+        return element;
+      } else {
+        const newDeveloper = await videogameDevelopers.create(element);
+        return { ...element, ...newDeveloper };
+      }
+    }
+  ));
+
+  for (let i = 0; i < developers.length; i++) {
+    const developer = developers[i]; 
+    await db.run(
+      `INSERT INTO videogames_developers_relations
+      (videogame_id, videogame_developer_id, tag)
+      VALUES (?, ?, ?)`,
+      [
+        videogameId,
+        developer.id,
+        developer.tag,
+      ]
+    );
+  }
+
+  return developers;
+}
+
+const createVideogamePublishersAndRelations = async (videogameId, data = []) => {
+  const publishers = await Promise.all(data.map(
+    async (element) => {
+      if (element.id) {
+        return element;
+      } else {
+        const newPublisher = await videogamePublishers.create(element);
+        return { ...element, ...newPublisher };
+      }
+    }
+ ));
+
+  for (let i = 0; i < publishers.length; i++) {
+    const publisher = publishers[i];
+    await db.run(
+      `INSERT INTO videogames_publishers_relations
+      (videogame_id, videogame_publisher_id, tag)
+      VALUES (?, ?, ?)`,
+      [
+        videogameId,
+        publisher.id,
+        publisher.tag,
+      ]
+    );
+  }
+
+  return publishers;
+}
+
+const removeDetachedDevelopers = async (videogameId) => {
+  const videogamesDevelopersRelations = await db.all(
+    `SELECT vidDev.*
+    FROM videogames_developers_relations as vidDev
+    WHERE videogame_developer_id IN (
+      SELECT videogame_developer_id
+      FROM videogames_developers_relations
+      WHERE videogame_id = ${videogameId}
+    );`
+  );
+  await db.run(
+    `DELETE FROM videogames_developers_relations
+    WHERE videogame_id = ?`,
+    [videogameId]
+  );
+  const developerCounts = {};
+  videogamesDevelopersRelations.forEach((element) =>
+  developerCounts[element.videogame_developer_id] =
+    (developerCounts[element.videogame_developer_id] || 0) + 1
+  );
+  const developersToDelete = Object.keys(developerCounts)
+    .filter((element) => developerCounts[element] === 1);
+  if (developersToDelete.length) {
+    await videogameDevelopers.deleteMultiple(developersToDelete);
+  }
+  return developersToDelete;
+};
+
+const removeDetachedPublishers = async (videogameId) => {
+  const videogamesPublishersRelations = await db.all(
+    `SELECT vidPub.*
+    FROM videogames_publishers_relations as vidPub
+    WHERE videogame_publisher_id IN (
+      SELECT videogame_publisher_id
+      FROM videogames_publishers_relations
+      WHERE videogame_id = ${videogameId}
+    );`
+  );
+  await db.run(
+    `DELETE FROM videogames_publishers_relations
+    WHERE videogame_id = ?`,
+    [videogameId]
+  );
+  const publisherCounts = {};
+  videogamesPublishersRelations.forEach((element) =>
+  publisherCounts[element.videogame_publisher_id] =
+    (publisherCounts[element.videogame_publisher_id] || 0) + 1
+  );
+  const publishersToDelete = Object.keys(publisherCounts)
+  .filter((element) => publisherCounts[element] === 1);
+  if (publishersToDelete.length) {
+    await videogamePublishers.deleteMultiple(publishersToDelete);
+  }
+  return publishersToDelete;
+};
+
+const removePlatformRelations = async (videogameId) => {
+  await db.run(
+    `DELETE FROM videogames_platforms_relations
+    WHERE videogame_id = ?`,
+    [videogameId]
+  );
+}
+
+const removeReleaseDates = async (videogameId) => {
+  await db.run(
+    `DELETE FROM videogame_releases
+    WHERE videogame_id = ?`,
+    [videogameId]
+  );
+}
 
 module.exports = {
   /**
@@ -20,25 +153,11 @@ module.exports = {
         ]
       );
 
-      const videogame = {
-        ...data,
-        id: videogameQuery.lastID,
-      };
-
-      // Videogame-developer relation entities:
-      for (let i = 0; i < videogame.developers.length; i++) {
-        const developer = videogame.developers[i]; 
-        await db.run(
-          `INSERT INTO videogames_developers_relations
-          (videogame_id, videogame_developer_id, tag)
-          VALUES (?, ?, ?)`,
-          [
-            videogame.id,
-            developer.id,
-            developer.tag,
-          ]
-        );
-      }
+      // Developer and videogame-developer relation entities:
+      const developers = await createVideogameDevelopersAndRelations(
+        videogameQuery.lastID,
+        data.developers
+      );
 
       // Videogame-platform relation entities:
       for (let i = 0; i < data.platforms.length; i++) {
@@ -48,26 +167,17 @@ module.exports = {
           (videogame_id, videogame_platform_id)
           VALUES (?, ?)`,
           [
-            videogame.id,
+            videogameQuery.lastID,
             platform.id
           ]
         );
       }
 
-      // Videogame-publisher relation entities:
-      for (let i = 0; i < videogame.publishers.length; i++) {
-        const publisher = videogame.publishers[i];
-        await db.run(
-          `INSERT INTO videogames_publishers_relations
-          (videogame_id, videogame_publisher_id, tag)
-          VALUES (?, ?, ?)`,
-          [
-            videogame.id,
-            publisher.id,
-            publisher.tag,
-          ]
-        );
-      }
+      // Publisher and videogame-publisher relation entities:
+      const publishers = await createVideogamePublishersAndRelations(
+        videogameQuery.lastID,
+        data.publishers
+      );
 
       // Release date entities:
       for (let i = 0; i < data.releaseDates.length; i++) {
@@ -77,17 +187,23 @@ module.exports = {
           (videogame_id, date, tag)
           VALUES (?, ?, ?)`,
           [
-            videogame.id,
+            videogameQuery.lastID,
             releaseDate.date,
             releaseDate.tag,
           ]
         )
       }
       
+      const result = {
+        ...data,
+        id: videogameQuery.lastID,
+        developers: developers,
+        publishers: publishers,
+      }
       console.log(`[SUCCESS] videogames.create: New element created with id "${
-        videogame.id
+        result.id
       }"`);
-      return videogame;
+      return result;
     } catch (error) {
       console.error('[ERROR] videogames.create: ', error.message);
       throw error;
@@ -101,69 +217,18 @@ module.exports = {
    */
   delete: async (id) => {
     try {
-      // Videogame-developer relation entities:
-      const videogamesDevelopersRelations = await db.all(
-        `SELECT vidDev.*
-        FROM videogames_developers_relations as vidDev
-        WHERE videogame_developer_id IN (
-          SELECT videogame_developer_id
-          FROM videogames_developers_relations
-          WHERE videogame_id = ${id}
-        );`
-      );
-      const developerCounts = {};
-      videogamesDevelopersRelations.forEach((element) =>
-      developerCounts[element.videogame_developer_id] =
-        (developerCounts[element.videogame_developer_id] || 0) + 1
-      );
-      await db.run(
-        `DELETE FROM videogames_publishers_relations
-        WHERE videogame_id = ?`,
-        [id]
-      );
-      await db.run(
-        `DELETE FROM videogames_publishers_relations
-        WHERE videogame_id IN (${Object.keys(developerCounts)
-          .filter((element) => developerCounts[element] === 1)
-          .join(", ")
-        })`
-      );
+      await removeDetachedDevelopers(id);
+      await removeDetachedPublishers(id);
+      await removePlatformRelations(id);
+      await removeReleaseDates(id);
 
-      // Videogame-developer relation entities:
-      const videogamesPublishersRelations = await db.all(
-        `SELECT vidPub.*
-        FROM videogames_publishers_relations as vidPub
-        WHERE videogame_publisher_id IN (
-          SELECT videogame_publisher_id
-          FROM videogames_publishers_relations
-          WHERE videogame_id = ${id}
-        );`
-      );
-      const publisherCounts = {};
-      videogamesPublishersRelations.forEach((element) =>
-      publisherCounts[element.videogame_publisher_id] =
-        (publisherCounts[element.videogame_publisher_id] || 0) + 1
-      );
-      await db.run(
-        `DELETE FROM videogames_publishers_relations
-        WHERE videogame_id = ?`,
-        [id]
-      );
-      await db.run(
-        `DELETE FROM videogames_publishers_relations
-        WHERE videogame_id IN (${Object.keys(publisherCounts)
-          .filter((element) => publisherCounts[element] === 1)
-          .join(", ")
-        })`
-      );
-
-      // Videogame entity:
       const result = await db.run(
         `DELETE FROM ${table} 
         WHERE id = ?`,
         [id]
       );
       
+      console.log(`[SUCCESS] videogames.delete: Deleted "${id}"`);
       return result;
     } catch (error) {
       console.error('[ERROR] videogames.delete: ', error.message);
@@ -303,20 +368,83 @@ module.exports = {
    * @param {*} data
    */
   update: async (id, data) => {
-    try {
-      const result = await db.run(
+    try { 
+      // Videogame entity
+      await db.run(
         `UPDATE ${table}
         SET
-          title = COALESCE(?, title)
-          main_developer_id = COALESCE(?, main_developer_id)
-          main_publisher_id = COALESCE(?, main_publisher_id)
-          release_date = COALESCE(?, release_date)
+          title = COALESCE(?, title),
+          synopsis = COALESCE(?, synopsis)
         WHERE id = ?`,
-        [data.name, id]
+        [
+          data.title,
+          data.synopsis,
+          id
+        ]
       );
+
+      // Videogame-developer relation entities:
+      const removedDevelopers = await removeDetachedDevelopers(id);
+      const developers = await createVideogameDevelopersAndRelations(
+        id,
+        data.developers.map((element) => ({
+          ...element,
+          id: removedDevelopers.includes(`${element.id}`) ? null : element.id
+        }))
+      );
+
+      // Videogame-platform relation entities:
+      await removePlatformRelations(id);
+      for (let i = 0; i < data.platforms.length; i++) {
+        const platform = data.platforms[i];
+        await db.run(
+          `INSERT INTO videogames_platforms_relations
+          (videogame_id, videogame_platform_id)
+          VALUES (?, ?)`,
+          [
+            id,
+            platform.id
+          ]
+        );
+      }
+
+      // Videogame-publisher relation entities:
+      const removedPublishers = await removeDetachedPublishers(id);
+      const publishers = await createVideogamePublishersAndRelations(
+        id,
+        data.publishers.map((element) => ({
+          ...element,
+          id: removedPublishers.includes(`${element.id}`) ? null : element.id
+        }))
+      );
+
+      // Release date entities:
+      await removeReleaseDates(id);
+      for (let i = 0; i < data.releaseDates.length; i++) {
+        const releaseDate = data.releaseDates[i];
+        await db.run(
+          `INSERT INTO videogame_releases
+          (videogame_id, date, tag)
+          VALUES (?, ?, ?)`,
+          [
+            id,
+            releaseDate.date,
+            releaseDate.tag,
+          ]
+        )
+      }
+      
+      const result = {
+        ...data,
+        developers: developers,
+        publishers: publishers
+      };
+      console.log(`[SUCCESS] videogames.update: Updated "${
+        result.id
+      }"`);
       return result;
     } catch (error) {
-      console.error('[ERROR] videogames.update: ', error.message);
+      console.error('[ERROR] videogames.update: ', error);
       throw error;
     }
   },
