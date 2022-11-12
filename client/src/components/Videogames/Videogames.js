@@ -34,7 +34,6 @@ export default function Videogames() {
   const table = useTable();
 
   const [anchorEl, setAnchorEl] = React.useState();
-  const [openMenu, setOpenMenu] = React.useState(false);
 
   const videogamesQuery = useQuery(['videogames'], async () => {
     const result = await api.GET('videogames');
@@ -68,7 +67,7 @@ export default function Videogames() {
       attribute: 'platforms',
       label: 'Platform',
       options: {
-        format: (value) => value.join(', '),
+        format: (value) => value.map((element) => element.name).join(', '),
       },
     },
   ];

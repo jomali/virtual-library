@@ -109,13 +109,13 @@ const VideogameDetails = (props) => {
       const body = {
         ...newValues,
         developers: [{ ...developer, tag: 'main' }],
-        platforms: [newValues.platforms],
+        platforms: [newValues.platforms].filter((element) => Boolean(element)),
         publishers: [{ ...publisher, tag: 'main' }],
       };
 
-      console.log('body', body);
-      throw new Error();
-      // return api.POST(`videogames`, body);
+      return value.id
+        ? api.PUT(`videogames/${value.id}`, body)
+        : api.POST(`videogames`, body);
     },
     {
       onError: (error) => {

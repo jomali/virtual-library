@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS videogames (
 });
 
 db.run(`
-CREATE TABLE IF NOT EXISTS videogames_developers_relationships (
+CREATE TABLE IF NOT EXISTS videogames_developers_relations (
   videogame_id INTEGER NOT NULL,
   videogame_developer_id INTEGER NOT NULL,
   tag VARCHAR(100),
@@ -139,10 +139,10 @@ CREATE TABLE IF NOT EXISTS videogames_developers_relationships (
   if (error) {
     console.error(error.message);
   }
-  console.log('Successful creation of "videogames_developers_relationships" table');
+  console.log('Successful creation of "videogames_developers_relations" table');
   // Database seeding
   db.run(`
-  INSERT INTO videogames_developers_relationships (
+  INSERT INTO videogames_developers_relations (
     videogame_id, videogame_developer_id, tag
   ) VALUES
     (1, 1, 'X360'),
@@ -154,13 +154,13 @@ CREATE TABLE IF NOT EXISTS videogames_developers_relationships (
     if (error) {
       console.error(error.message);
     } else {
-      console.log('Successful seeding of "videogames_developers_relationships" data.');
+      console.log('Successful seeding of "videogames_developers_relations" data.');
     }
   });
 });
 
 db.run(`
-CREATE TABLE IF NOT EXISTS videogames_platforms_relationships (
+CREATE TABLE IF NOT EXISTS videogames_platforms_relations (
   videogame_id INTEGER NOT NULL,
   videogame_platform_id INTEGER NOT NULL,
   PRIMARY KEY (videogame_id, videogame_platform_id),
@@ -171,10 +171,10 @@ CREATE TABLE IF NOT EXISTS videogames_platforms_relationships (
   if (error) {
     console.error(error.message);
   }
-  console.log('Successful creation of "videogames_platforms_relationships" table');
+  console.log('Successful creation of "videogames_platforms_relations" table');
   // Database seeding
   db.run(`
-  INSERT INTO videogames_platforms_relationships (
+  INSERT INTO videogames_platforms_relations (
     videogame_id, videogame_platform_id
   ) VALUES
     (1, 1),
@@ -190,13 +190,13 @@ CREATE TABLE IF NOT EXISTS videogames_platforms_relationships (
     if (error) {
       console.error(error.message);
     } else {
-      console.log('Successful seeding of "videogames_developers_relationships" data.');
+      console.log('Successful seeding of "videogames_developers_relations" data.');
     }
   });
 });
 
 db.run(`
-CREATE TABLE IF NOT EXISTS videogames_publishers_relationships (
+CREATE TABLE IF NOT EXISTS videogames_publishers_relations (
   videogame_id INTEGER NOT NULL,
   videogame_publisher_id INTEGER NOT NULL,
   tag VARCHAR(100),
@@ -208,10 +208,10 @@ CREATE TABLE IF NOT EXISTS videogames_publishers_relationships (
   if (error) {
     console.error(error.message);
   }
-  console.log('Successful creation of "videogames_publishers_relationships" table');
+  console.log('Successful creation of "videogames_publishers_relations" table');
   // Database seeding
   db.run(`
-  INSERT INTO videogames_publishers_relationships (
+  INSERT INTO videogames_publishers_relations (
     videogame_id, videogame_publisher_id, tag
   ) VALUES
     (1, 1, 'X360'),
@@ -222,7 +222,7 @@ CREATE TABLE IF NOT EXISTS videogames_publishers_relationships (
     if (error) {
       console.error(error.message);
     } else {
-      console.log('Successful seeding of "videogames_developers_relationships" data.');
+      console.log('Successful seeding of "videogames_developers_relations" data.');
     }
   });
 });

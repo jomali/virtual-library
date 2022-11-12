@@ -1,3 +1,5 @@
+const videogameDevelopers = require("../models/videogameDevelopers");
+const videogamePublishers = require("../models/videogamePublishers");
 const videogames = require("../models/videogames");
 
 module.exports = {
@@ -14,13 +16,26 @@ module.exports = {
       // TODO
 
       // Creation:
-      const data = await videogames.create(req.body);
-      console.log("data", data);
+      const {
+        developers = [], 
+        platforms = [], 
+        publishers = [], 
+        releaseDates = [],
+        ...body
+      } = req.body;
+
+      const data = await videogames.create({
+        ...body,
+        developers: developers,
+        platforms: platforms,
+        publishers: publishers,
+        releaseDates: releaseDates,
+      });
 
       // 201 Created
       res.status(201).json({
         data,
-        id: this.lastId,
+        id: data.id,
         message: 'success',
       })
     } catch (error) {
@@ -41,7 +56,7 @@ module.exports = {
     try {
       const { id } = req.params;
       await videogames.delete(id);
-
+      
       res.status(204).json({
         changes: this.changes,
         message: 'deleted',
@@ -105,18 +120,38 @@ module.exports = {
    * @param {*} next
    */
   update: async (req, res, next) => {
-    // const id = req.params.id;
-    // const body = { ...req.body };
-    // videogames.update(id, body, (error, data) => {
-    //   if (error) {
-    //     res.status(400).json({ error: error.message });
-    //     return;
-    //   }
-    //   res.json({
-    //     message: "success",
-    //     data: data,
-    //     changes: this.changes,
-    //   });
-    // });
+    try {
+      // Validation step:
+      // TODO
+      const { id } = req.params;
+
+      // Modification:
+      const {
+        developers = [], 
+        platforms = [], 
+        publishers = [], 
+        releaseDates = [],
+        ...body
+      } = req.body;
+
+      const data = await videogames.update(id, {
+        ...body,
+        developers: developers,
+        platforms: platforms,
+        publishers: publishers,
+        releaseDates: releaseDates,
+      });
+
+      // 200 Created
+      res.status(200).json({
+        data,
+        id: data.id,
+        message: 'success',
+      })
+    } catch (error) {
+      res.status(400).json({
+        error: error.message,
+      });
+    }
   },
 };
