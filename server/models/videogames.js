@@ -257,7 +257,7 @@ module.exports = {
           ON videogames.id = vidDev.videogame_id
         INNER JOIN videogame_developers AS developers
           ON developers.id = vidDev.videogame_developer_id
-        WHERE videogames.id = ${videogames[0].id};`,
+        WHERE videogames.id = ${id};`,
       );
 
       // Platforms:
@@ -268,7 +268,7 @@ module.exports = {
           ON videogames.id = vidPla.videogame_id
         INNER JOIN videogame_platforms AS platforms
           ON platforms.id = vidPla.videogame_platform_id
-        WHERE videogames.id = ${videogames[0].id};`
+        WHERE videogames.id = ${id};`
       );
 
       // Publishers:
@@ -279,7 +279,15 @@ module.exports = {
           ON videogames.id = vidPub.videogame_id
         INNER JOIN videogame_publishers AS publishers
           ON publishers.id = vidPub.videogame_publisher_id
-        WHERE videogames.id = ${videogames[0].id};`
+        WHERE videogames.id = ${id};`
+      );
+
+      // Release dates:
+      const releaseDates = await db.all(
+        `SELECT vidRel.date, vidRel.tag
+        FROM videogame_releases AS vidRel
+        WHERE videogame_id = ${id}
+        ORDER BY vidRel.date ASC;`
       );
 
       return {
@@ -287,6 +295,8 @@ module.exports = {
         developers,
         platforms,
         publishers,
+        releaseDates,
+        initialReleaseDate: releaseDates[0],
       };
     } catch (error) {
       console.error('[ERROR] videogame.read: ', error);
@@ -341,11 +351,21 @@ module.exports = {
           WHERE videogames.id = ${videogame.id};`
         );
 
+        // Release dates:
+        const releaseDates = await db.all(
+          `SELECT vidRel.date, vidRel.tag
+          FROM videogame_releases AS vidRel
+          WHERE videogame_id = ${videogame.id}
+          ORDER BY vidRel.date ASC;`
+        );
+
         result.push({
           ...videogame,
           developers,
           platforms,
           publishers,
+          releaseDates,
+          initialReleaseDate: releaseDates[0],
         });
       }
 
