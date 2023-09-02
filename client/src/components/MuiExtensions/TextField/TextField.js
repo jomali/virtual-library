@@ -6,6 +6,15 @@ import PropTypes from "prop-types";
 const StyledTextField = styled(MuiTextField, {
   shouldForwardProp: (prop) => prop !== "readOnly",
 })(({ readOnly, theme }) => ({
+  "& .MuiOutlinedInput-root": {
+    // variant: outlined
+    "& input": {
+      transition: `${theme.transitions.create("padding", {
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.leavingScreen,
+      })}`,
+    },
+  },
   ...(readOnly && {
     "& label": {
       transform: `translate(0px, -9px) scale(0.75)`,
@@ -13,10 +22,14 @@ const StyledTextField = styled(MuiTextField, {
     "& label.Mui-focused": {
       color: theme.palette.text.secondary,
     },
-    // variant: outlined
     "& .MuiOutlinedInput-root": {
+      // variant: outlined
       "& input": {
         padding: "16.5px 0",
+        transition: `${theme.transitions.create("padding", {
+          easing: theme.transitions.easing.easeOut,
+          duration: theme.transitions.duration.leavingScreen,
+        })}`,
       },
       "& fieldset": {
         borderWidth: 0,
@@ -28,6 +41,13 @@ const StyledTextField = styled(MuiTextField, {
   }),
 }));
 
+/**
+ * Customization of Material UI __TextField__ component.
+ *
+ * - Changes default prop values.
+ * - Changes the styles when the `readOnly` prop is _true_ to prevent the
+ * component from being displayed as an input field.
+ */
 const TextField = React.forwardRef((props, ref) => {
   const {
     color = "primary",
@@ -40,6 +60,7 @@ const TextField = React.forwardRef((props, ref) => {
 
   return (
     <StyledTextField
+      ref={ref}
       color={color}
       fullWidth={fullWidth}
       id={label.toLocaleLowerCase()}
@@ -48,7 +69,6 @@ const TextField = React.forwardRef((props, ref) => {
       }}
       label={label}
       readOnly={readOnly}
-      ref={ref}
       variant={readOnly ? "outlined" : variant}
       {...otherProps}
     />

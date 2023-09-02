@@ -6,7 +6,6 @@ import Div100vh from "react-div-100vh";
 import { IntlProvider } from "react-intl";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 //import { messages, routes } from 'components/Main';
-
 import { ApiProvider } from "components/ApiProvider";
 import { ConfirmProvider } from "components/ConfirmProvider";
 import { SnackbarProvider } from "components/SnackbarProvider";

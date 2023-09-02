@@ -1,12 +1,13 @@
 import React from "react";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 import Stack from "@mui/material/Stack";
 import { alpha, styled } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { IconButton, Tooltip } from "components/MuiCustomizations";
+import { IconButton, Tooltip } from "components/MuiExtensions";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -15,7 +16,6 @@ const Search = styled("div")(({ theme }) => ({
   "&:hover": {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
-  marginLeft: 0,
   width: "100%",
   [theme.breakpoints.up("sm")]: {
     marginLeft: theme.spacing(1),
@@ -58,6 +58,13 @@ export default function TableToolbar({
     label: null,
     onClick: () => null,
   },
+  filterOptions = {
+    buttonReference: null,
+    disabled: false,
+    hidden: false,
+    label: null,
+    onClick: () => null,
+  },
   searchOptions,
   title,
 }) {
@@ -67,6 +74,12 @@ export default function TableToolbar({
     label: addOptionLabel,
     ...addOptionsOther
   } = addOptions;
+  const {
+    buttonReference: filterOptionButtonReference,
+    hidden: filterOptionHidden,
+    label: filterOptionLabel,
+    ...filterOptionsOther
+  } = filterOptions;
 
   // const table = useTable();
 
@@ -88,7 +101,7 @@ export default function TableToolbar({
           </Typography>
         )}
       </Stack>
-      <Stack direction="row" spacing={2}>
+      <Stack direction="row" spacing={0}>
         {searchOptions ? (
           <Search>
             <SearchIconWrapper>
@@ -101,12 +114,24 @@ export default function TableToolbar({
           </Search>
         ) : null}
 
-        {!addOptionHidden ? (
-          <Tooltip title="Add new element">
+        {!filterOptionHidden ? (
+          <Tooltip title={filterOptionLabel}>
             <IconButton
+              ref={filterOptionButtonReference}
+              aria-label={"filter-table-results"}
+              {...filterOptionsOther}
+            >
+              <FilterAltRoundedIcon />
+            </IconButton>
+          </Tooltip>
+        ) : null}
+
+        {!addOptionHidden ? (
+          <Tooltip title={addOptionLabel}>
+            <IconButton
+              ref={addOptionButtonReference}
               aria-label={"add-new-element"}
               edge="end"
-              ref={addOptionButtonReference}
               {...addOptionsOther}
             >
               <AddRoundedIcon />

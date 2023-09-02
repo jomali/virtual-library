@@ -4,33 +4,35 @@ import FormGroup from "@mui/material/FormGroup";
 import Rating from "@mui/material/Rating";
 import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Unstable_Grid2";
-import FormField from "components/FormFields";
+import FormField from "components/FormInputs";
 import { PROPERTIES } from "sections/videogames";
 
 const VideogameNotes = (props) => {
   const { readOnly } = props;
 
-  return (
-    <Grid container spacing={2}>
-      <Grid xs={12}>
-        <FormField name={PROPERTIES.rating}>
-          <Rating precision={0.5} readOnly={readOnly} value={3.5} />
-        </FormField>
-      </Grid>
+  return <p>Notes.</p>;
 
-      <Grid xs={12}>
-        <FormField name={PROPERTIES.personalCollection}>
-          <FormGroup>
-            <FormControlLabel
-              control={<Switch />}
-              label="Personal collection"
-              sx={{ margin: 0 }}
-            />
-          </FormGroup>
-        </FormField>
-      </Grid>
-    </Grid>
-  );
+  // return (
+  //   <Grid container spacing={2}>
+  //     <Grid xs={12}>
+  //       <FormField name={PROPERTIES.rating}>
+  //         <Rating precision={0.5} readOnly={readOnly} value={3.5} />
+  //       </FormField>
+  //     </Grid>
+
+  //     <Grid xs={12}>
+  //       <FormField name={PROPERTIES.personalCollection}>
+  //         <FormGroup>
+  //           <FormControlLabel
+  //             control={<Switch />}
+  //             label="Personal collection"
+  //             sx={{ margin: 0 }}
+  //           />
+  //         </FormGroup>
+  //       </FormField>
+  //     </Grid>
+  //   </Grid>
+  // );
 };
 
 export default VideogameNotes;

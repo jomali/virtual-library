@@ -4,12 +4,12 @@ import PropTypes from "prop-types";
 
 const FormField = (props) => {
   const {
-    children,
     max,
     min,
     name,
+    renderInput,
     required,
-    type = "string",
+    type,
     validate,
     ...otherProps
   } = props;
@@ -41,6 +41,8 @@ const FormField = (props) => {
     return errorMessage;
   };
 
+  /* Alternative implementation using `children` the prop and element cloning:
+  ```
   return React.Children.toArray(children).length ? (
     <Field name={name} type={type} validate={handleValidate} {...otherProps}>
       {({ field, form, meta }) => {
@@ -51,6 +53,25 @@ const FormField = (props) => {
           disabled: children.props.disabled || form.isSubmitting,
           error: showError,
           helperText: showError ? fieldError : children.props.helperText,
+          onChange: (newValue, event) =>
+            form.setFieldValue(field.name, newValue),
+          value: field.value,
+        });
+      }}
+    </Field>
+  ) : null;
+  ``` */
+
+  return renderInput ? (
+    <Field name={name} validate={handleValidate} {...otherProps}>
+      {({ field, form, meta }) => {
+        const fieldError = getIn(form.errors, field.name);
+        const showError = getIn(form.touched, field.name) && !!fieldError;
+
+        return renderInput({
+          disabled: form.isSubmitting,
+          error: showError,
+          helperText: showError ? fieldError : undefined,
           onChange: (newValue, event) =>
             form.setFieldValue(field.name, newValue),
           value: field.value,
@@ -74,12 +95,42 @@ FormField.propTypes = {
   min: PropTypes.number,
 
   /**
+   * A field's name in Formik state. To access nested objects or arrays, name
+   * can also accept lodash-like dot path like `social.facebook` or
+   * `friends[0].firstName`.
+   */
+  name: PropTypes.string.isRequired,
+
+  /**
+   * Render the field input.
+   */
+  renderInput: PropTypes.func.isRequired,
+
+  /**
    * __Validation prop__. Mark the field as required, which will not allow
    * undefined, null or empty strings as a value.
    */
   required: PropTypes.bool,
 
+  /**
+   * __Validation prop__. Used in conjunction with the other validation props.
+   */
   type: PropTypes.oneOf(["email", "number", "string"]),
+
+  /**
+   * You can run independent field-level validations by passing a function to
+   * the `validate` prop. The function will respect the `validateOnBlur` and
+   * `validateOnChanget` config/props specified in the `<Field>'s` parent
+   * `<Formik>` / `withFormik`. This function can either be synchronous or
+   * asynchronous:
+   *
+   * - Sync: if invalid, return a _string_ containing the error message or
+   * return _undefined_.
+   * - Async: return a Promise that resolves a _string_ containing the error
+   * message. This works like Formik's _validate_, but instead of returning an
+   * _errors_ object, it's just a _string_.
+   */
+  validate: PropTypes.func,
 };
 
 export default FormField;

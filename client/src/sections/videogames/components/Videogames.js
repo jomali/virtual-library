@@ -23,7 +23,7 @@ import TableProvider, {
   TableSummary,
   TableToolbar,
   useTable,
-} from "components/TableProvider";
+} from "components/MuiExtensions/TableProvider";
 import VideogameDetails from "./VideogameDetails";
 import { PROPERTIES } from "./videogamesConstants";
 
@@ -122,6 +122,18 @@ export default function Videogames() {
         >
           <TableContainer>
             <TableToolbar
+              addOptions={{
+                label: "Add new videogame",
+                onClick: () => {
+                  table.setSelected();
+                  navigate("/videogames/new");
+                },
+              }}
+              filterOptions={{
+                label: "Filter results",
+                onClick: () => console.log("filter results"),
+              }}
+              // searchOptions={{}}
               title={"Videogames"}
               title_={() => (
                 <ButtonBase
@@ -150,12 +162,6 @@ export default function Videogames() {
                   />
                 </ButtonBase>
               )}
-              addOptions={{
-                onClick: () => {
-                  table.setSelected();
-                  navigate("/videogames/new");
-                },
-              }}
             />
             <TableContent />
             <TableSummary />
@@ -165,34 +171,38 @@ export default function Videogames() {
 
       <Popover
         anchorEl={anchorEl}
-        id="account-menu"
-        open={Boolean(anchorEl)}
-        onClose={() => setAnchorEl()}
-        onClick={() => setAnchorEl()}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            backgroundColor: (theme) => theme.palette.common.black,
-            overflow: "visible",
-            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-            mt: 1.5,
-            "&:before": {
-              content: '""',
-              display: "block",
-              position: "absolute",
-              top: 0,
-              left: 14,
-              width: 10,
-              height: 10,
-              backgroundColor: (theme) => theme.palette.common.black,
-              transform: "translateY(-50%) rotate(45deg)",
-              zIndex: 0,
-            },
-          },
-        }}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
+        }}
+        id="account-menu"
+        onClick={() => setAnchorEl()}
+        onClose={() => setAnchorEl()}
+        open={Boolean(anchorEl)}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            // backgroundColor: (theme) => theme.palette.common.black,
+            backgroundColor: (theme) => theme.palette.primary.main,
+            color: (theme) => theme.palette.primary.contrastText,
+            overflow: "visible",
+            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+            mt: 1.5,
+            // "&:before": {
+            //   content: '""',
+            //   display: "block",
+            //   position: "absolute",
+            //   top: 0,
+            //   left: 14,
+            //   width: 10,
+            //   height: 10,
+            //   // backgroundColor: (theme) => theme.palette.common.black,
+            //   backgroundColor: (theme) => theme.palette.primary.main,
+            //   color: (theme) => theme.palette.primary.contrastText,
+            //   transform: "translateY(-50%) rotate(45deg)",
+            //   zIndex: 0,
+            // },
+          },
         }}
         transformOrigin={{
           vertical: "top",
@@ -229,16 +239,19 @@ export default function Videogames() {
         <List>
           <ListItem disablePadding>
             <ListItemButton onClick={() => navigate(`/videogames/developers`)}>
+              <ListItemIcon />
               <ListItemText primary={"Developers"} />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
             <ListItemButton onClick={() => navigate(`/videogames/publishers`)}>
+              <ListItemIcon />
               <ListItemText primary={"Publishers"} />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
             <ListItemButton onClick={() => navigate(`/videogames/platforms`)}>
+              <ListItemIcon />
               <ListItemText primary={"Platforms"} />
             </ListItemButton>
           </ListItem>

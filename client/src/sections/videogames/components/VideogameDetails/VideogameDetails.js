@@ -1,6 +1,6 @@
 import React from "react";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-// import ForumRoundedIcon from '@mui/icons-material/ForumRounded';
+import ForumRoundedIcon from "@mui/icons-material/ForumRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import ViewListRoundedIcon from "@mui/icons-material/ViewListRounded";
 import AppBar from "@mui/material/AppBar";
@@ -19,13 +19,13 @@ import SwipeableViews from "react-swipeable-views";
 import { useApi } from "components/ApiProvider";
 import { useConfirm } from "components/ConfirmProvider";
 import EditionToolbar from "components/EditionToolbar";
-import { IconButton, Tooltip } from "components/MuiCustomizations";
+import { IconButton, Tooltip } from "components/MuiExtensions";
 import { useSnackbar } from "components/SnackbarProvider";
 import TabPanel from "components/TabPanel";
 import { PROPERTIES } from "../videogamesConstants";
 import VideogameNotes from "./VideogameNotes";
 import VideogameProfile from "./VideogameProfile";
-// import VideogameReviews from './VideogameReviews';
+import VideogameReviews from "./VideogameReviews";
 
 const ImagePlaceholder = styled("div", {
   shouldForwardProp: (prop) => prop !== "height",
@@ -214,13 +214,13 @@ const VideogameDetails = (props) => {
             {...a11yProps(1)}
           />
         </Tooltip>
-        {/* <Tooltip title="Reviews">
+        <Tooltip title="Reviews">
           <Tab
             disabled={videogameCreateUpdateMutation.isLoading}
             icon={<ForumRoundedIcon />}
             {...a11yProps(2)}
           />
-        </Tooltip> */}
+        </Tooltip>
       </Tabs>
       <Divider />
       <Formik
@@ -238,7 +238,7 @@ const VideogameDetails = (props) => {
             index={currentTab}
             onChangeIndex={(index) => setCurrentTab(index)}
           >
-            <TabPanel value={currentTab} index={0} dir={theme.direction}>
+            <TabPanel dir={theme.direction} index={0} value={currentTab}>
               <VideogameProfile
                 developers={profileMasterDataQuery.data.developers}
                 platforms={profileMasterDataQuery.data.platforms}
@@ -246,12 +246,12 @@ const VideogameDetails = (props) => {
                 readOnly={!editMode}
               />
             </TabPanel>
-            <TabPanel value={currentTab} index={1} dir={theme.direction}>
+            <TabPanel dir={theme.direction} index={1} value={currentTab}>
               <VideogameNotes readOnly={!editMode} />
             </TabPanel>
-            {/* <TabPanel value={currentTab} index={2} dir={theme.direction}>
+            <TabPanel dir={theme.direction} index={2} value={currentTab}>
               <VideogameReviews readOnly={!editMode} />
-            </TabPanel> */}
+            </TabPanel>
           </SwipeableViews>
         </StyledForm>
       </Formik>

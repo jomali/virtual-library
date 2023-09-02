@@ -41,7 +41,8 @@ CREATE TABLE IF NOT EXISTS videogame_platforms (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name VARCHAR(100) NOT NULL,
   fullname VARCHAR(100),
-  company VARCHAR(100)
+  company VARCHAR(100),
+  generation VARCHAR(100)
 );
 `, (error) => {
   if (error) {
@@ -51,15 +52,16 @@ CREATE TABLE IF NOT EXISTS videogame_platforms (
   // Database seeding
   db.run(`
   INSERT INTO videogame_platforms (
-		id, name, fullname, company
+		id, name, fullname, company, generation
 	) VALUES
-		(1, 'PC', NULL, NULL),
-		(2, 'PSX', 'PlayStation', 'Sony'),
-		(3, 'PS2', 'PlayStation 2', 'Sony'),
-		(4, 'PS3', 'PlayStation 3', 'Sony'),
-		(5, 'PS4', 'PlayStation 4', 'Sony'),
-		(6, 'PS5', 'PlayStation 5', 'Sony'),
-    (7, 'X360', 'XBOX 360', 'Microsoft')
+		(1, 'PC', NULL, NULL, NULL),
+		(2, 'PSX', 'PlayStation', 'Sony', '5th'),
+		(3, 'PS2', 'PlayStation 2', 'Sony', '6th'),
+		(4, 'PS3', 'PlayStation 3', 'Sony', '7th'),
+		(5, 'PS4', 'PlayStation 4', 'Sony', '8th'),
+		(6, 'PS5', 'PlayStation 5', 'Sony', '9th'),
+    (7, 'X360', 'XBOX 360', 'Microsoft', NULL),
+    (8, 'Switch', NULL, 'Nintendo', '8th/9th')
   ;`, (error) => {
     if (error) {
       console.error(error.message);

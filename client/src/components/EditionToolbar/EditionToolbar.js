@@ -11,7 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import { useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import PropTypes from "prop-types";
-import { Tooltip } from "components/MuiCustomizations";
+import { Tooltip } from "components/MuiExtensions";
 
 export default function EditionToolbar({
   editMode,

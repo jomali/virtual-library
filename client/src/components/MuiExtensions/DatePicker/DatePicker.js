@@ -1,8 +1,14 @@
 import React from "react";
 import { DatePicker as MuiDatePicker } from "@mui/x-date-pickers/DatePicker";
 import PropTypes from "prop-types";
-import TextField from "../TextField";
+import { TextField } from "components/MuiExtensions";
 
+/**
+ * Customization of Material UI __DatePicker__ component.
+ *
+ * - Changes the styles and behaviour when the `readOnly` prop is _true_ to
+ * prevent the component from being displayed as an input field.
+ */
 const DatePicker = React.forwardRef((props, ref) => {
   const { readOnly, required, value, ...otherProps } = props;
 
@@ -39,10 +45,12 @@ const DatePicker = React.forwardRef((props, ref) => {
 
 DatePicker.propTypes = {
   ...MuiDatePicker.propTypes,
+
   /**
    * If `true`, the input element is not editable.
    */
   readOnly: PropTypes.bool,
+
   /**
    * If `true`, the label is displayed as required and the input element is
    * required.
