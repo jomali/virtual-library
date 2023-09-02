@@ -1,7 +1,7 @@
-import React from 'react';
-import { DatePicker as MuiDatePicker } from '@mui/x-date-pickers/DatePicker';
-import PropTypes from 'prop-types';
-import TextField from '../TextField';
+import React from "react";
+import { DatePicker as MuiDatePicker } from "@mui/x-date-pickers/DatePicker";
+import PropTypes from "prop-types";
+import TextField from "../TextField";
 
 const DatePicker = React.forwardRef((props, ref) => {
   const { readOnly, required, value, ...otherProps } = props;
@@ -12,7 +12,7 @@ const DatePicker = React.forwardRef((props, ref) => {
         {...otherProps}
         readOnly={readOnly}
         required={required}
-        value={'—'}
+        value={"—"}
       />
     );
   }

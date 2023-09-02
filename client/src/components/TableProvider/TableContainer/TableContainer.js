@@ -1,13 +1,13 @@
-import React from 'react';
-import { styled } from '@mui/material/styles';
-import PropTypes from 'prop-types';
+import React from "react";
+import { styled } from "@mui/material/styles";
+import PropTypes from "prop-types";
 
-const DefaultComponent = styled('div')(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
+const DefaultComponent = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
   flexGrow: 1,
-  height: '100%',
-  overflowY: 'auto',
+  height: "100%",
+  overflowY: "auto",
 }));
 
 const TableContainer = React.forwardRef((props, ref) => {

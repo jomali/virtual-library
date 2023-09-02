@@ -1,26 +1,26 @@
-import React from 'react';
-import Checkbox from '@mui/material/Checkbox';
-import { styled } from '@mui/material/styles';
-import MuiTableCell from '@mui/material/TableCell';
-import MuiTableHead from '@mui/material/TableHead';
-import MuiTableRow from '@mui/material/TableRow';
-import useTable from '../useTableState';
+import React from "react";
+import Checkbox from "@mui/material/Checkbox";
+import { styled } from "@mui/material/styles";
+import MuiTableCell from "@mui/material/TableCell";
+import MuiTableHead from "@mui/material/TableHead";
+import MuiTableRow from "@mui/material/TableRow";
+import useTable from "../useTableState";
 
 const StyledTableRow = styled(MuiTableRow, {
-  shouldForwardProp: (prop) => prop !== 'topRadius',
+  shouldForwardProp: (prop) => prop !== "topRadius",
 })(({ theme, topRadius }) => ({
   ...(topRadius && {
-    '& th:first-child': {
+    "& th:first-child": {
       borderTopLeftRadius: theme.shape.borderRadius,
     },
-    '& th:last-child': {
+    "& th:last-child": {
       borderTopRightRadius: theme.shape.borderRadius,
     },
   }),
 }));
 
 export default function TableHead({
-  color = 'default',
+  color = "default",
   setRowProps = () => ({}),
   topRadius,
 }) {
@@ -43,7 +43,7 @@ export default function TableHead({
   return (
     <MuiTableHead>
       <StyledTableRow topRadius={topRadius}>
-        {tableState.selectable === 'multiple' ? (
+        {tableState.selectable === "multiple" ? (
           <MuiTableCell padding="checkbox">
             <Checkbox
               checked={
@@ -69,7 +69,7 @@ export default function TableHead({
                 ).length > 0 &&
                 tableState.state.selected.length > 0
               }
-              inputProps={{ 'aria-label': 'select all' }} // TODO - i18n
+              inputProps={{ "aria-label": "select all" }} // TODO - i18n
               onChange={handleSelectAll}
             />
           </MuiTableCell>
@@ -78,9 +78,9 @@ export default function TableHead({
           .filter((column) => column.options.display)
           .map((column, index) => (
             <MuiTableCell
-              align={column.options.align || 'left'}
+              align={column.options.align || "left"}
               key={index}
-              padding={'normal'} // TODO
+              padding={"normal"} // TODO
               sortDirection={false} // TODO
             >
               {column.options.displayLabel ? column.label : null}

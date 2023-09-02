@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import * as objectUtils from 'components/objectUtils';
+import React from "react";
+import PropTypes from "prop-types";
+import * as objectUtils from "components/objectUtils";
 
 export const TableContext = React.createContext();
 
@@ -64,7 +64,7 @@ export const TableProvider = ({
   const handleClick = (value) => {
     if (selectable) {
       onClick(value);
-      if (selectable !== 'multiple') {
+      if (selectable !== "multiple") {
         onSelect(
           selected.find((element) => element === selector(value))
             ? []
@@ -78,7 +78,7 @@ export const TableProvider = ({
     if (Boolean(newValue) || Boolean(controls?.quickSearch)) {
       onChangeControls({
         ...controls,
-        quickSearch: newValue === '' ? undefined : newValue,
+        quickSearch: newValue === "" ? undefined : newValue,
       });
     }
   };
@@ -102,7 +102,7 @@ export const TableProvider = ({
     () => {
       // we filter all excluded columns from the `columns` array
       const filteredColumns = columns.filter(
-        (column) => column.options?.display !== 'excluded'
+        (column) => column.options?.display !== "excluded"
       );
       if (
         filteredColumns.length !== includedColumns.length ||
@@ -183,8 +183,8 @@ TableProvider.propTypes = {
       attribute: PropTypes.string.isRequired,
       label: PropTypes.string,
       options: PropTypes.shape({
-        align: PropTypes.oneOf(['center', 'left', 'right']),
-        display: PropTypes.oneOf([false, true, 'excluded']),
+        align: PropTypes.oneOf(["center", "left", "right"]),
+        display: PropTypes.oneOf([false, true, "excluded"]),
         displayLabel: PropTypes.oneOf([false, true]),
         format: PropTypes.func,
         setCellProps: PropTypes.func,
@@ -209,7 +209,7 @@ TableProvider.propTypes = {
     sorting: PropTypes.arrayOf(
       PropTypes.exact({
         attribute: PropTypes.string,
-        order: PropTypes.oneOf(['asc', 'desc']),
+        order: PropTypes.oneOf(["asc", "desc"]),
       })
     ),
   }),
@@ -248,7 +248,7 @@ TableProvider.propTypes = {
    * - `multiple`: multiple items can be selected any given time. When the user
    *    clics on a new item, it is added to the selected array.
    */
-  selectable: PropTypes.oneOf([false, true, 'multiple']),
+  selectable: PropTypes.oneOf([false, true, "multiple"]),
   /**
    * Array with the references of all the elements currently selected in the
    * table.

@@ -1,43 +1,43 @@
-import React from 'react';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import React from "react";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 // import ForumRoundedIcon from '@mui/icons-material/ForumRounded';
-import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
-import ViewListRoundedIcon from '@mui/icons-material/ViewListRounded';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
-import Fade from '@mui/material/Fade';
-import { styled, useTheme } from '@mui/material/styles';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { Formik, Form } from 'formik';
-import PropTypes from 'prop-types';
-import SwipeableViews from 'react-swipeable-views';
-import { useApi } from 'components/ApiProvider';
-import { useConfirm } from 'components/ConfirmProvider';
-import EditionToolbar from 'components/EditionToolbar';
-import { IconButton, Tooltip } from 'components/MuiCustomizations';
-import { useSnackbar } from 'components/SnackbarProvider';
-import TabPanel from 'components/TabPanel';
-import { PROPERTIES } from '../videogamesConstants';
-import VideogameNotes from './VideogameNotes';
-import VideogameProfile from './VideogameProfile';
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import ViewListRoundedIcon from "@mui/icons-material/ViewListRounded";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import Fade from "@mui/material/Fade";
+import { styled, useTheme } from "@mui/material/styles";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Formik, Form } from "formik";
+import PropTypes from "prop-types";
+import SwipeableViews from "react-swipeable-views";
+import { useApi } from "components/ApiProvider";
+import { useConfirm } from "components/ConfirmProvider";
+import EditionToolbar from "components/EditionToolbar";
+import { IconButton, Tooltip } from "components/MuiCustomizations";
+import { useSnackbar } from "components/SnackbarProvider";
+import TabPanel from "components/TabPanel";
+import { PROPERTIES } from "../videogamesConstants";
+import VideogameNotes from "./VideogameNotes";
+import VideogameProfile from "./VideogameProfile";
 // import VideogameReviews from './VideogameReviews';
 
-const ImagePlaceholder = styled('div', {
-  shouldForwardProp: (prop) => prop !== 'height',
+const ImagePlaceholder = styled("div", {
+  shouldForwardProp: (prop) => prop !== "height",
 })(({ height, theme }) => ({
-  backgroundColor: 'darkgray',
+  backgroundColor: "darkgray",
   // height: height,
   height: 0,
 }));
 
 const StyledForm = styled(Form)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
+  display: "flex",
+  flexDirection: "column",
   flexGrow: 1,
 }));
 
@@ -55,7 +55,7 @@ const VideogameDetails = (props) => {
   const formRef = React.useRef();
 
   const videogameQuery = useQuery(
-    ['videogame', value.id],
+    ["videogame", value.id],
     async () => {
       const response = await api.GET(`videogames/${value.id}`);
       return {
@@ -75,11 +75,11 @@ const VideogameDetails = (props) => {
   );
 
   const profileMasterDataQuery = useQuery(
-    ['profileMasterData'],
+    ["profileMasterData"],
     async () => {
-      const developersResponse = await api.GET('videogameDevelopers');
-      const platformsResponse = await api.GET('videogamePlatforms');
-      const publishersResponse = await api.GET('videogamePublishers');
+      const developersResponse = await api.GET("videogameDevelopers");
+      const platformsResponse = await api.GET("videogamePlatforms");
+      const publishersResponse = await api.GET("videogamePublishers");
 
       return {
         developers: developersResponse.data,
@@ -95,7 +95,7 @@ const VideogameDetails = (props) => {
       },
       onError: (error) => {
         console.error(error.message);
-        snackbar.open('Unexpected error.');
+        snackbar.open("Unexpected error.");
       },
     }
   );
@@ -103,19 +103,19 @@ const VideogameDetails = (props) => {
   const videogameCreateUpdateMutation = useMutation(
     (newValues) => {
       const developer =
-        typeof newValues.developers === 'string'
+        typeof newValues.developers === "string"
           ? { id: null, name: newValues.developers }
           : newValues.developers;
       const publisher =
-        typeof newValues.publishers === 'string'
+        typeof newValues.publishers === "string"
           ? { id: null, name: newValues.publishers }
           : newValues.publishers;
 
       const body = {
         ...newValues,
-        developers: [{ ...developer, tag: 'main' }],
+        developers: [{ ...developer, tag: "main" }],
         platforms: [newValues.platforms].filter((element) => Boolean(element)),
-        publishers: [{ ...publisher, tag: 'main' }],
+        publishers: [{ ...publisher, tag: "main" }],
       };
 
       return value.id
@@ -125,13 +125,13 @@ const VideogameDetails = (props) => {
     {
       onError: (error) => {
         // console.error(error);
-        snackbar.open('Error creating element.', {
-          variant: 'error',
+        snackbar.open("Error creating element.", {
+          variant: "error",
         });
       },
       onSuccess: (value) => {
-        snackbar.open('New element successfully created.', {
-          variant: 'success',
+        snackbar.open("New element successfully created.", {
+          variant: "success",
         });
         const refresh = true;
         onClose(refresh);
@@ -144,13 +144,13 @@ const VideogameDetails = (props) => {
     {
       onError: (error) => {
         console.error(error);
-        snackbar.open('Error deleting element.', {
-          variant: 'error',
+        snackbar.open("Error deleting element.", {
+          variant: "error",
         });
       },
       onSuccess: (value) => {
-        snackbar.open('New element successfully deleted.', {
-          variant: 'success',
+        snackbar.open("New element successfully deleted.", {
+          variant: "success",
         });
         const refresh = true;
         onClose(refresh);
@@ -161,7 +161,7 @@ const VideogameDetails = (props) => {
   const a11yProps = (index) => {
     return {
       id: `full-width-tab-${index}`,
-      'aria-controls': `full-width-tabpanel-${index}`,
+      "aria-controls": `full-width-tabpanel-${index}`,
     };
   };
 
@@ -171,7 +171,7 @@ const VideogameDetails = (props) => {
         <Toolbar>
           <Fade in timeout={theme.transitions.duration.enteringScreen * 1.5}>
             <Typography>
-              {value.id ? videogameQuery.data.title : 'New'}
+              {value.id ? videogameQuery.data.title : "New"}
             </Typography>
           </Fade>
           <Box sx={{ flexGrow: 1 }} />
@@ -234,7 +234,7 @@ const VideogameDetails = (props) => {
       >
         <StyledForm>
           <SwipeableViews
-            axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+            axis={theme.direction === "rtl" ? "x-reverse" : "x"}
             index={currentTab}
             onChangeIndex={(index) => setCurrentTab(index)}
           >
@@ -261,7 +261,7 @@ const VideogameDetails = (props) => {
         onDelete={
           value.id
             ? () => {
-                confirm('Esta operación no se puede deshacer.', {
+                confirm("Esta operación no se puede deshacer.", {
                   onSuccess: () => videogameDeleteMutation.mutate(value.id),
                 });
               }
@@ -271,7 +271,7 @@ const VideogameDetails = (props) => {
         onToggleEditMode={() => {
           if (editMode && formRef.current?.dirty) {
             console.log(
-              'Los cambios no guardados se perderán. ¿Quieres continuar?'
+              "Los cambios no guardados se perderán. ¿Quieres continuar?"
             );
             formRef.current?.resetForm();
           }

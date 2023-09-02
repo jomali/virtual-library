@@ -16,16 +16,16 @@ const defaultTheme = {
     coverSmall: 80,
   },
   palette: {
-    mode: 'dark',
+    mode: "dark",
     primary: {
-      main: '#4caf50',
+      main: "#4caf50",
     },
     secondary: {
-      main: '#ec407a',
+      main: "#ec407a",
     },
     background: {
-      default: '#09090d',
-      paper: '#131418',
+      default: "#09090d",
+      paper: "#131418",
     },
   },
   shape: {

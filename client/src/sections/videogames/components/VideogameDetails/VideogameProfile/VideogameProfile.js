@@ -1,12 +1,12 @@
-import React from 'react';
-import Grid from '@mui/material/Unstable_Grid2';
-import PropTypes from 'prop-types';
+import React from "react";
+import Grid from "@mui/material/Unstable_Grid2";
+import PropTypes from "prop-types";
 import FormField, {
   AutocompleteField,
   DateField,
   TextField,
-} from 'components/FormFields';
-import { PROPERTIES } from 'sections/videogames';
+} from "components/FormFields";
+import { PROPERTIES } from "sections/videogames";
 
 const VideogameProfile = (props) => {
   const { developers = [], platforms = [], publishers = [], readOnly } = props;
@@ -18,7 +18,7 @@ const VideogameProfile = (props) => {
           <TextField
             // Title
             autoFocus
-            label={'Title'}
+            label={"Title"}
             readOnly={readOnly}
             required={!readOnly}
           />
@@ -32,7 +32,7 @@ const VideogameProfile = (props) => {
             freeSolo
             getOptionLabel={(option) => option.name}
             isOptionEqualToValue={(option, value) => option.id === value?.id}
-            label={'Developer'}
+            label={"Developer"}
             options={developers}
             readOnly={readOnly}
             required={!readOnly}
@@ -47,7 +47,7 @@ const VideogameProfile = (props) => {
             freeSolo
             getOptionLabel={(option) => option.name}
             isOptionEqualToValue={(option, value) => option.id === value?.id}
-            label={'Publisher'}
+            label={"Publisher"}
             options={publishers}
             readOnly={readOnly}
             required={!readOnly}
@@ -59,7 +59,7 @@ const VideogameProfile = (props) => {
         <FormField name={PROPERTIES.releaseDates}>
           <DateField
             // Release dates
-            label={'Initial release date'}
+            label={"Initial release date"}
             readOnly={readOnly}
             required={!readOnly}
           />
@@ -86,7 +86,7 @@ const VideogameProfile = (props) => {
           <FormField max={500} name={PROPERTIES.synopsis} type="string">
             <TextField
               // Synopsis
-              label={'Synopsis'}
+              label={"Synopsis"}
               multiline
               readOnly={readOnly}
               rows={4}

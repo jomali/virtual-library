@@ -1,13 +1,13 @@
-import React from 'react';
-import { Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import useTableState from '../useTableState';
+import React from "react";
+import { Typography } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import useTableState from "../useTableState";
 
-const StyledTableSummary = styled('div')(({ theme }) => ({
+const StyledTableSummary = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
-  alignItems: 'center',
-  display: 'flex',
-  justifyContent: 'flex-end',
+  alignItems: "center",
+  display: "flex",
+  justifyContent: "flex-end",
   margin: theme.spacing(0, 2),
 }));
 

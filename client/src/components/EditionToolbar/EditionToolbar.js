@@ -1,17 +1,17 @@
-import React from 'react';
-import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import EditOffRoundedIcon from '@mui/icons-material/EditOffRounded';
-import EditRoundedIcon from '@mui/icons-material/EditRounded';
-import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Fade from '@mui/material/Fade';
-import IconButton from '@mui/material/IconButton';
-import { useTheme } from '@mui/material/styles';
-import Toolbar from '@mui/material/Toolbar';
-import PropTypes from 'prop-types';
-import { Tooltip } from 'components/MuiCustomizations';
+import React from "react";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import EditOffRoundedIcon from "@mui/icons-material/EditOffRounded";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Fade from "@mui/material/Fade";
+import IconButton from "@mui/material/IconButton";
+import { useTheme } from "@mui/material/styles";
+import Toolbar from "@mui/material/Toolbar";
+import PropTypes from "prop-types";
+import { Tooltip } from "components/MuiCustomizations";
 
 export default function EditionToolbar({
   editMode,
@@ -29,7 +29,7 @@ export default function EditionToolbar({
           // EDIT MODE: left actions
           sx={{
             left: (theme) => theme.spacing(3),
-            position: 'absolute',
+            position: "absolute",
             zIndex: (theme) => theme.zIndex.appBar - 1,
           }}
         >
@@ -54,7 +54,7 @@ export default function EditionToolbar({
           // EDIT MODE: right actions
           sx={{
             marginRight: -1,
-            position: 'absolute',
+            position: "absolute",
             right: (theme) => theme.spacing(3),
             zIndex: (theme) => theme.zIndex.appBar - 1,
           }}
@@ -76,7 +76,7 @@ export default function EditionToolbar({
                 }}
                 variant="text"
               >
-                {'Delete'}
+                {"Delete"}
               </Button>
             </Fade>
           ) : null}
@@ -93,7 +93,7 @@ export default function EditionToolbar({
                 type="submit"
                 variant="contained"
               >
-                {'Save'}
+                {"Save"}
               </Button>
             </Fade>
           ) : null}

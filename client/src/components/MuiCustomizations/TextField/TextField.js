@@ -1,27 +1,27 @@
-import React from 'react';
-import { styled } from '@mui/material/styles';
-import MuiTextField from '@mui/material/TextField';
-import PropTypes from 'prop-types';
+import React from "react";
+import { styled } from "@mui/material/styles";
+import MuiTextField from "@mui/material/TextField";
+import PropTypes from "prop-types";
 
 const StyledTextField = styled(MuiTextField, {
-  shouldForwardProp: (prop) => prop !== 'readOnly',
+  shouldForwardProp: (prop) => prop !== "readOnly",
 })(({ readOnly, theme }) => ({
   ...(readOnly && {
-    '& label': {
+    "& label": {
       transform: `translate(0px, -9px) scale(0.75)`,
     },
-    '& label.Mui-focused': {
+    "& label.Mui-focused": {
       color: theme.palette.text.secondary,
     },
     // variant: outlined
-    '& .MuiOutlinedInput-root': {
-      '& input': {
-        padding: '16.5px 0',
+    "& .MuiOutlinedInput-root": {
+      "& input": {
+        padding: "16.5px 0",
       },
-      '& fieldset': {
+      "& fieldset": {
         borderWidth: 0,
       },
-      '&.Mui-focused fieldset': {
+      "&.Mui-focused fieldset": {
         borderWidth: 0,
       },
     },
@@ -30,11 +30,11 @@ const StyledTextField = styled(MuiTextField, {
 
 const TextField = React.forwardRef((props, ref) => {
   const {
-    color = 'primary',
+    color = "primary",
     fullWidth = true,
     label,
     readOnly = true,
-    variant = 'outlined',
+    variant = "outlined",
     ...otherProps
   } = props;
 
@@ -49,7 +49,7 @@ const TextField = React.forwardRef((props, ref) => {
       label={label}
       readOnly={readOnly}
       ref={ref}
-      variant={readOnly ? 'outlined' : variant}
+      variant={readOnly ? "outlined" : variant}
       {...otherProps}
     />
   );

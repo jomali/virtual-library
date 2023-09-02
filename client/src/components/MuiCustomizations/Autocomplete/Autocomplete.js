@@ -1,31 +1,31 @@
-import React from 'react';
-import MuiAutocomplete from '@mui/material/Autocomplete';
-import Chip from '@mui/material/Chip';
-import { styled } from '@mui/material/styles';
-import PropTypes from 'prop-types';
-import TextField from '../TextField';
+import React from "react";
+import MuiAutocomplete from "@mui/material/Autocomplete";
+import Chip from "@mui/material/Chip";
+import { styled } from "@mui/material/styles";
+import PropTypes from "prop-types";
+import TextField from "../TextField";
 
 const StyledAutocomplete = styled(MuiAutocomplete, {
-  shouldForwardProp: (prop) => prop !== 'readOnly' || prop !== 'withTags',
+  shouldForwardProp: (prop) => prop !== "readOnly" || prop !== "withTags",
 })(({ readOnly, theme, withTags }) => ({
   ...(readOnly && {
-    '& .MuiInputBase-root': {
-      paddingLeft: '0px !important',
-      paddingRight: '0px !important',
+    "& .MuiInputBase-root": {
+      paddingLeft: "0px !important",
+      paddingRight: "0px !important",
     },
-    '& .MuiAutocomplete-endAdornment': {
-      display: 'none',
+    "& .MuiAutocomplete-endAdornment": {
+      display: "none",
     },
     // variant: outlined
-    '& .MuiOutlinedInput-root .MuiAutocomplete-input': {
+    "& .MuiOutlinedInput-root .MuiAutocomplete-input": {
       paddingLeft: 0,
     },
   }),
   ...(!withTags && {
-    '& .MuiFilledInput-root': {
+    "& .MuiFilledInput-root": {
       paddingLeft: theme.spacing(1.5),
     },
-    '& .MuiOutlinedInput-root': {
+    "& .MuiOutlinedInput-root": {
       paddingLeft: theme.spacing(1.5),
     },
   }),
@@ -64,11 +64,11 @@ const Autocomplete = React.forwardRef((props, ref) => {
           ) : (
             <span
               onClick={() => {
-                console.log('XXXX');
+                console.log("XXXX");
                 setOpen(true);
               }}
             >
-              {index > 0 ? ', ' : ''}
+              {index > 0 ? ", " : ""}
               {option}
             </span>
           )

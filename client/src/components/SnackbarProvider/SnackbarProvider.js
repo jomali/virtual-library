@@ -1,17 +1,17 @@
-import React from 'react';
-import Snackbar from './Snackbar';
+import React from "react";
+import Snackbar from "./Snackbar";
 
-const ACTION_OPEN = 'ACTION_OPEN';
-const ACTION_CLOSE = 'ACTION_CLOSE';
+const ACTION_OPEN = "ACTION_OPEN";
+const ACTION_CLOSE = "ACTION_CLOSE";
 
 export const SnackbarContext = React.createContext();
 
 export const SnackbarProvider = ({ children }) => {
   const initialState = React.useMemo(
     () => ({
-      message: '',
+      message: "",
       open: false,
-      variant: 'success',
+      variant: "success",
     }),
     []
   );

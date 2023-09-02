@@ -1,11 +1,11 @@
-import React from 'react';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
-import Rating from '@mui/material/Rating';
-import Switch from '@mui/material/Switch';
-import Grid from '@mui/material/Unstable_Grid2';
-import FormField from 'components/FormFields';
-import { PROPERTIES } from 'sections/videogames';
+import React from "react";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
+import Rating from "@mui/material/Rating";
+import Switch from "@mui/material/Switch";
+import Grid from "@mui/material/Unstable_Grid2";
+import FormField from "components/FormFields";
+import { PROPERTIES } from "sections/videogames";
 
 const VideogameNotes = (props) => {
   const { readOnly } = props;

@@ -1,5 +1,5 @@
-import React from 'react';
-import MuiTooltip from '@mui/material/Tooltip';
+import React from "react";
+import MuiTooltip from "@mui/material/Tooltip";
 
 const Tooltip = React.forwardRef(({ arrow = true, ...otherProps }, ref) => {
   return <MuiTooltip arrow={arrow} ref={ref} {...otherProps} />;

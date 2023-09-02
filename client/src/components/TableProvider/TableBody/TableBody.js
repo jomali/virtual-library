@@ -1,23 +1,23 @@
-import React from 'react';
-import Checkbox from '@mui/material/Checkbox';
-import Skeleton from '@mui/material/Skeleton';
-import { styled } from '@mui/material/styles';
-import MuiTableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableRow from '@mui/material/TableRow';
-import PropTypes from 'prop-types';
-import useTableState from '../useTableState';
+import React from "react";
+import Checkbox from "@mui/material/Checkbox";
+import Skeleton from "@mui/material/Skeleton";
+import { styled } from "@mui/material/styles";
+import MuiTableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableRow from "@mui/material/TableRow";
+import PropTypes from "prop-types";
+import useTableState from "../useTableState";
 
 const SelectableTableRow = styled(TableRow, {
-  shouldForwardProp: (prop) => prop !== 'selectable',
+  shouldForwardProp: (prop) => prop !== "selectable",
 })(({ selectable, theme }) => ({
   ...(selectable && {
-    cursor: 'pointer',
+    cursor: "pointer",
   }),
 }));
 
 export default function TableBody({
-  color = 'default', // TODO - use color
+  color = "default", // TODO - use color
   loadingRowsNumber = 4,
   setRowProps = () => ({}),
 }) {
@@ -38,7 +38,7 @@ export default function TableBody({
         selectedRows.find((element) => element === tableState.selector(row))
       );
 
-      if (tableState.selectable === 'multiple') {
+      if (tableState.selectable === "multiple") {
         const shiftKey =
           event && event.nativeEvent ? event.nativeEvent.shiftKey : false;
 
@@ -86,7 +86,7 @@ export default function TableBody({
     <MuiTableBody>
       {Array.from({ length: loadingRowsNumber }).map((row, rowIndex) => (
         <TableRow key={`row-${rowIndex}`}>
-          {tableState.selectable === 'multiple' ? (
+          {tableState.selectable === "multiple" ? (
             <TableCell>
               <Skeleton />
             </TableCell>
@@ -123,13 +123,13 @@ export default function TableBody({
             selected={Boolean(rowIsSelected)}
             {...additionalRowProps}
           >
-            {tableState.selectable === 'multiple' ? (
+            {tableState.selectable === "multiple" ? (
               <TableCell padding="checkbox">
                 <Checkbox
                   color="primary" // TODO - variable color
                   checked={Boolean(rowIsSelected)}
                   inputProps={{
-                    'aria-labelledby': `row-checkbox-${rowIndex}`,
+                    "aria-labelledby": `row-checkbox-${rowIndex}`,
                   }}
                   onChange={(event) => handleSelect(event, row, rowIndex)}
                 />
@@ -139,7 +139,7 @@ export default function TableBody({
               .filter((column) => column.options.display)
               .map((column, columnIndex) => {
                 // Get align and format options of the current column:
-                const align = column.options.align || 'left';
+                const align = column.options.align || "left";
                 const formatter = column.options.format;
                 // Get additional cell props:
                 const setCellProps = column.options.setCellProps;
@@ -176,7 +176,7 @@ TableBody.propTypes = {
    * The color of the component. It supports those theme colors that make sense
    * for this component.
    */
-  color: PropTypes.oneOf(['default', 'primary', 'secondary']),
+  color: PropTypes.oneOf(["default", "primary", "secondary"]),
   /**
    * Determines the default number of rows which will display an animation
    * when loading.

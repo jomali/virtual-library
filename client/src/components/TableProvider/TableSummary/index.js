@@ -1,1 +1,1 @@
-export { default } from './TableSummary';
+export { default } from "./TableSummary";

@@ -1,13 +1,13 @@
-import React from 'react';
-import { styled } from '@mui/material/styles';
-import MuiTablePagination from '@mui/material/TablePagination';
-import PropTypes from 'prop-types';
-import useTableState from '../useTableState';
+import React from "react";
+import { styled } from "@mui/material/styles";
+import MuiTablePagination from "@mui/material/TablePagination";
+import PropTypes from "prop-types";
+import useTableState from "../useTableState";
 
 const StyledTablePagination = styled(MuiTablePagination)(({ theme }) => ({
   ...theme.mixins.toolbar,
-  display: 'flex',
-  justifyContent: 'flex-end',
+  display: "flex",
+  justifyContent: "flex-end",
 }));
 
 export default function TablePagination({

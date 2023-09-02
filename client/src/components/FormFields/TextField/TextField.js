@@ -1,5 +1,5 @@
-import React from 'react';
-import { TextField as CustomTextField } from 'components/MuiCustomizations';
+import React from "react";
+import { TextField as CustomTextField } from "components/MuiCustomizations";
 
 const TextField = React.forwardRef((props, ref) => {
   const { onChange, value, ...otherProps } = props;
@@ -8,7 +8,7 @@ const TextField = React.forwardRef((props, ref) => {
     <CustomTextField
       onChange={(event) => onChange(event.target.value, event)}
       ref={ref}
-      value={value || ''}
+      value={value || ""}
       {...otherProps}
     />
   );

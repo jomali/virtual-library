@@ -1,1 +1,1 @@
-export { default } from './useTable';
+export { default } from "./useTable";

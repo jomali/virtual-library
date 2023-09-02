@@ -1,9 +1,9 @@
-import React from 'react';
-import MuiTable from '@mui/material/Table';
-import MuiTableContainer from '@mui/material/TableContainer';
-import PropTypes from 'prop-types';
-import TableBody from '../TableBody';
-import TableHead from '../TableHead';
+import React from "react";
+import MuiTable from "@mui/material/Table";
+import MuiTableContainer from "@mui/material/TableContainer";
+import PropTypes from "prop-types";
+import TableBody from "../TableBody";
+import TableHead from "../TableHead";
 
 export default function TableContents({
   headProps = {},
@@ -11,7 +11,7 @@ export default function TableContents({
   ...otherProps
 }) {
   return (
-    <MuiTableContainer sx={{ height: '100%' }}>
+    <MuiTableContainer sx={{ height: "100%" }}>
       <MuiTable stickyHeader>
         <TableHead {...headProps} {...otherProps} />
         <TableBody {...bodyProps} {...otherProps} />
@@ -34,7 +34,7 @@ TableContents.propTypes = {
      * - `multiple`: multiple items can be selected any given time. When the user
      *    clics on a new item, it is added to the selected array.
      */
-    selectable: PropTypes.oneOf([false, true, 'multiple']),
+    selectable: PropTypes.oneOf([false, true, "multiple"]),
   }),
   /**
    * Set additional props of a given table row.

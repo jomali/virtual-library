@@ -1,6 +1,6 @@
-import React from 'react';
-import { createFilterOptions } from '@mui/material/Autocomplete';
-import { Autocomplete as CustomAutocomplete } from 'components/MuiCustomizations';
+import React from "react";
+import { createFilterOptions } from "@mui/material/Autocomplete";
+import { Autocomplete as CustomAutocomplete } from "components/MuiCustomizations";
 
 const filterOptions = createFilterOptions();
 
@@ -27,7 +27,7 @@ const AutocompleteField = React.forwardRef((props, ref) => {
               const isDefined = options.some(
                 (option) => inputValue === getOptionLabel(option)
               );
-              if (inputValue !== '' && !isDefined) {
+              if (inputValue !== "" && !isDefined) {
                 filtered.push({ inputValue });
               }
               return filtered;
@@ -37,7 +37,7 @@ const AutocompleteField = React.forwardRef((props, ref) => {
       freeSolo={freeSolo}
       getOptionLabel={(option) => {
         // Value selected with enter, right from the input
-        if (typeof option === 'string') {
+        if (typeof option === "string") {
           return option;
         }
         // Add "xxx" option created dynamically
@@ -48,7 +48,7 @@ const AutocompleteField = React.forwardRef((props, ref) => {
         return getOptionLabel(option);
       }}
       onChange={(event, newValue) => {
-        if (typeof newValue === 'string') {
+        if (typeof newValue === "string") {
           setCreatedOptions([newValue]);
           onChange(newValue, event);
         } else if (newValue?.inputValue) {

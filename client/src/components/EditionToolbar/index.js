@@ -1,1 +1,1 @@
-export { default } from './EditionToolbar';
+export { default } from "./EditionToolbar";

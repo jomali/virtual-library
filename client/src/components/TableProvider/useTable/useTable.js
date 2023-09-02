@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
-const ACTION_RESET_STATE = 'ACTION_RESET_STATE';
-const ACTION_SET_STATE = 'ACTION_SET_STATE';
+const ACTION_RESET_STATE = "ACTION_RESET_STATE";
+const ACTION_SET_STATE = "ACTION_SET_STATE";
 const DEFAULT_ROWS_PER_PAGE = 100;
-const STORAGE_MAIN_KEY = 'tableFilters';
+const STORAGE_MAIN_KEY = "tableFilters";
 
 /**
  * @typedef {Object} TableState
@@ -103,7 +103,7 @@ export default function useTable(options = {}) {
       filters: {},
       initialFilters: {},
       initialPagination: {},
-      initialQuickSearch: '',
+      initialQuickSearch: "",
       initialSorting: [],
       pagination: { lastValue: null, page: 0, rowsPerPage: 100 },
       quickSearch: null,

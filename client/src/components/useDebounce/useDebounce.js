@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export default function useDebounce(value, delay) {
   // State and setters for debounced value

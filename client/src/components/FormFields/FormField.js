@@ -1,6 +1,6 @@
-import React from 'react';
-import { Field, getIn } from 'formik';
-import PropTypes from 'prop-types';
+import React from "react";
+import { Field, getIn } from "formik";
+import PropTypes from "prop-types";
 
 const FormField = (props) => {
   const {
@@ -9,7 +9,7 @@ const FormField = (props) => {
     min,
     name,
     required,
-    type = 'string',
+    type = "string",
     validate,
     ...otherProps
   } = props;
@@ -17,21 +17,21 @@ const FormField = (props) => {
   const handleValidate = (value) => {
     let errorMessage;
     if (max) {
-      if (type === 'number' && Number(value) > max) {
+      if (type === "number" && Number(value) > max) {
         errorMessage = `The value cannot be greater than ${max}.`;
       } else if (value?.length > max) {
         errorMessage = `The length cannot be greater than ${max}.`;
       }
     }
     if (min) {
-      if (type === 'number' && Number(value) < min) {
+      if (type === "number" && Number(value) < min) {
         errorMessage = `The value cannot be lower than ${min}.`;
       } else if (value?.length < min) {
         errorMessage = `The length cannot be lower than ${min}.`;
       }
     }
     if (required) {
-      if (!value || (typeof value === 'string' && !value.trim)) {
+      if (!value || (typeof value === "string" && !value.trim)) {
         return `Required field.`;
       }
     }
@@ -79,7 +79,7 @@ FormField.propTypes = {
    */
   required: PropTypes.bool,
 
-  type: PropTypes.oneOf(['email', 'number', 'string']),
+  type: PropTypes.oneOf(["email", "number", "string"]),
 };
 
 export default FormField;
