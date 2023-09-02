@@ -1,12 +1,12 @@
-import Books from './components';
+import Books from "./components";
 
 export const routes = [
   {
-    path: '/books/:id',
+    path: "/books/:id",
     element: <Books />,
   },
   {
-    path: '/books/',
+    path: "/books/",
     element: <Books />,
   },
 ];

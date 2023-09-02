@@ -1,1 +1,1 @@
-export { default } from './VideogameReviews';
+export { default } from "./VideogameReviews";

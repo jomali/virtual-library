@@ -1,5 +1,5 @@
-import React from 'react';
-import { ApiContext } from './ApiProvider';
+import React from "react";
+import { ApiContext } from "./ApiProvider";
 
 const DEBUG = false;
 
@@ -7,35 +7,35 @@ export default () => {
   const hostname = React.useContext(ApiContext);
 
   const headers = new Headers();
-  headers.append('Content-Type', 'application/json');
+  headers.append("Content-Type", "application/json");
 
   const _httpRequest = (options, call, ...params) => {
     const resource = [hostname, call];
 
     params.forEach((param) => {
-      if (typeof param === 'string') {
+      if (typeof param === "string") {
         param = encodeURIComponent(param);
       }
       resource.push(param);
     });
 
     if (DEBUG) {
-      let requestDebug = `${options.method}: ${resource.join('/')}`;
+      let requestDebug = `${options.method}: ${resource.join("/")}`;
       if (options.body) requestDebug += ` - ${options.body}`;
       console.log(requestDebug);
     }
 
     options.headers = headers;
-    options.mode = 'cors';
+    options.mode = "cors";
 
-    return fetch(resource.join('/'), options)
+    return fetch(resource.join("/"), options)
       .then((response) => {
         if (response.ok) {
           return response.status === 200 ? response.json() : true;
         } else {
           let errorcode;
           for (var pair of response.headers.entries()) {
-            if (pair[0] === 'errorcode') {
+            if (pair[0] === "errorcode") {
               errorcode = pair[1];
               break;
             }
@@ -51,28 +51,28 @@ export default () => {
         }
       })
       .catch((error) => {
-        const result = { ...error, level: 'error' };
+        const result = { ...error, level: "error" };
         throw result;
       });
   };
 
   const DELETE = (call, ...params) => {
-    const options = { method: 'DELETE' };
+    const options = { method: "DELETE" };
     return _httpRequest(options, call, ...params);
   };
 
   const GET = (call, ...params) => {
-    const options = { method: 'GET' };
+    const options = { method: "GET" };
     return _httpRequest(options, call, ...params);
   };
 
   const POST = (call, data, ...params) => {
-    const options = { method: 'POST', body: JSON.stringify(data) };
+    const options = { method: "POST", body: JSON.stringify(data) };
     return _httpRequest(options, call, ...params);
   };
 
   const PUT = (call, data, ...params) => {
-    const options = { method: 'PUT', body: JSON.stringify(data) };
+    const options = { method: "PUT", body: JSON.stringify(data) };
     return _httpRequest(options, call, ...params);
   };
 

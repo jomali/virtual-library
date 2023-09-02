@@ -1,2 +1,2 @@
-export { default } from './Videogames';
-export { PROPERTIES } from './videogamesConstants';
+export { default } from "./Videogames";
+export { PROPERTIES } from "./videogamesConstants";

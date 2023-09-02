@@ -1,1 +1,1 @@
-export { default } from './VideogameProfile';
+export { default } from "./VideogameProfile";

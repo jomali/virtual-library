@@ -1,12 +1,12 @@
-import React from 'react';
-import Grid from '@mui/material/Unstable_Grid2';
-import PropTypes from 'prop-types';
+import React from "react";
+import Grid from "@mui/material/Unstable_Grid2";
+import PropTypes from "prop-types";
 import FormField, {
-  AutocompleteField,
-  DateField,
-  TextField,
-} from 'components/FormFields';
-import { PROPERTIES } from 'sections/videogames';
+  AutocompleteInput,
+  DateInput,
+  TextInput,
+} from "components/FormInputs";
+import { PROPERTIES } from "sections/videogames";
 
 const VideogameProfile = (props) => {
   const { developers = [], platforms = [], publishers = [], readOnly } = props;
@@ -14,74 +14,88 @@ const VideogameProfile = (props) => {
   return (
     <Grid container spacing={2}>
       <Grid xs={12}>
-        <FormField max={150} name={PROPERTIES.title} required type="string">
-          <TextField
-            // Title
-            autoFocus
-            label={'Title'}
-            readOnly={readOnly}
-            required={!readOnly}
-          />
-        </FormField>
+        <FormField // Title
+          max={150}
+          name={PROPERTIES.title}
+          renderInput={(params) => (
+            <TextInput
+              autoFocus
+              label={"Title"}
+              readOnly={readOnly}
+              required={!readOnly}
+              {...params}
+            />
+          )}
+          required
+        />
       </Grid>
 
       <Grid xs={12}>
-        <FormField name={PROPERTIES.developers}>
-          <AutocompleteField
-            // Developers
-            freeSolo
-            getOptionLabel={(option) => option.name}
-            isOptionEqualToValue={(option, value) => option.id === value?.id}
-            label={'Developer'}
-            options={developers}
-            readOnly={readOnly}
-            required={!readOnly}
-          />
-        </FormField>
+        <FormField // Developers
+          name={PROPERTIES.developers}
+          renderInput={(params) => (
+            <AutocompleteInput
+              freeSolo
+              getOptionLabel={(option) => option.name}
+              isOptionEqualToValue={(option, value) => option.id === value?.id}
+              label={"Developers"}
+              options={developers}
+              readOnly={readOnly}
+              {...params}
+            />
+          )}
+        />
       </Grid>
 
       <Grid xs={12}>
-        <FormField name={PROPERTIES.publishers}>
-          <AutocompleteField
-            // Publishers
-            freeSolo
-            getOptionLabel={(option) => option.name}
-            isOptionEqualToValue={(option, value) => option.id === value?.id}
-            label={'Publisher'}
-            options={publishers}
-            readOnly={readOnly}
-            required={!readOnly}
-          />
-        </FormField>
+        <FormField // Publishers
+          name={PROPERTIES.publishers}
+          renderInput={(params) => (
+            <AutocompleteInput
+              freeSolo
+              getOptionLabel={(option) => option.name}
+              isOptionEqualToValue={(option, value) => option.id === value?.id}
+              label={"Publisher"}
+              options={publishers}
+              readOnly={readOnly}
+              {...params}
+            />
+          )}
+        />
       </Grid>
 
       <Grid xs={12}>
-        <FormField name={PROPERTIES.releaseDates}>
-          <DateField
-            // Release dates
-            label={'Initial release date'}
-            readOnly={readOnly}
-            required={!readOnly}
-          />
-        </FormField>
+        <FormField // Release dates
+          name={PROPERTIES.releaseDates}
+          renderInput={(params) => (
+            <DateInput
+              label={"Initial release date"}
+              readOnly={readOnly}
+              {...params}
+            />
+          )}
+        ></FormField>
       </Grid>
 
-      {/* <Grid xs={12}>
-        <FormField name={PROPERTIES.platforms}>
-          <AutocompleteField
-            // Platforms
-            getOptionLabel={(option) => option.name}
-            isOptionEqualToValue={(option, value) => option.id === value?.id}
-            label={'Platforms'}
-            multiple
-            options={platforms}
-            readOnly={readOnly}
-            required={!readOnly}
-          />
-        </FormField>
-      </Grid> */}
+      <Grid xs={12}>
+        <FormField // Platforms
+          name={PROPERTIES.platforms}
+          renderInput={(params) => (
+            <AutocompleteInput
+              filterSelectedOptions
+              getOptionLabel={(option) => option.name}
+              isOptionEqualToValue={(option, value) => option.id === value?.id}
+              label={"Platforms"}
+              multiple
+              options={platforms}
+              readOnly={readOnly}
+              {...params}
+            />
+          )}
+        />
+      </Grid>
 
-      {!readOnly ? (
+      {/* {!readOnly ? (
         <Grid xs={12}>
           <FormField max={500} name={PROPERTIES.synopsis} type="string">
             <TextField
@@ -93,7 +107,7 @@ const VideogameProfile = (props) => {
             />
           </FormField>
         </Grid>
-      ) : null}
+      ) : null} */}
     </Grid>
   );
 };

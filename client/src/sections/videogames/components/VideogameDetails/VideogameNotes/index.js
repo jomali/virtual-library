@@ -1,1 +1,1 @@
-export { default } from './VideogameNotes';
+export { default } from "./VideogameNotes";

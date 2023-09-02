@@ -1,12 +1,12 @@
-import Movies from './components';
+import Movies from "./components";
 
 export const routes = [
   {
-    path: '/movies/:id',
+    path: "/movies/:id",
     element: <Movies />,
   },
   {
-    path: '/movies/',
+    path: "/movies/",
     element: <Movies />,
   },
 ];

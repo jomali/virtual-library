@@ -1,21 +1,20 @@
-import CssBaseline from '@mui/material/CssBaseline';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Div100vh from 'react-div-100vh';
-import { IntlProvider } from 'react-intl';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import CssBaseline from "@mui/material/CssBaseline";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Div100vh from "react-div-100vh";
+import { IntlProvider } from "react-intl";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 //import { messages, routes } from 'components/Main';
-
-import { ApiProvider } from 'components/ApiProvider';
-import { ConfirmProvider } from 'components/ConfirmProvider';
-import { SnackbarProvider } from 'components/SnackbarProvider';
-import ThemeProvider from 'components/ThemeProvider';
-import { messages, routes } from 'sections/videogames';
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
+import { ApiProvider } from "components/ApiProvider";
+import { ConfirmProvider } from "components/ConfirmProvider";
+import { SnackbarProvider } from "components/SnackbarProvider";
+import ThemeProvider from "components/ThemeProvider";
+import { messages, routes } from "sections/videogames";
+import "@fontsource/roboto/300.css";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
 
 export default function App() {
   /** Language without region code. */
@@ -26,12 +25,12 @@ export default function App() {
     <IntlProvider locale={language} messages={messages[language]}>
       <ThemeProvider>
         <CssBaseline />
-        <Div100vh style={{ display: 'flex', flexDirection: 'column' }}>
+        <Div100vh style={{ display: "flex", flexDirection: "column" }}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <SnackbarProvider
               anchorOrigin={{
-                horizontal: 'left',
-                vertical: 'bottom',
+                horizontal: "left",
+                vertical: "bottom",
               }}
             >
               <ConfirmProvider>

@@ -18,7 +18,7 @@ export const clearObject = (obj) => {
       // search for empty strings, nulls and undefineds
       result[element] === null ||
       result[element] === undefined ||
-      result[element] === '' ||
+      result[element] === "" ||
       // search for empty arrays
       (Array.isArray(result[element]) && !result[element].length) ||
       // search for empty objects
@@ -40,9 +40,9 @@ export const trimValuesObject = (object) => {
   const newObject = {};
   Object.keys(object).forEach((key) => {
     newObject[key] =
-      typeof object[key] === 'string'
+      typeof object[key] === "string"
         ? object[key].trim()
-        : typeof object[key] === 'object' && object[key] !== null
+        : typeof object[key] === "object" && object[key] !== null
         ? trimValuesObject(object[key])
         : object[key];
   });

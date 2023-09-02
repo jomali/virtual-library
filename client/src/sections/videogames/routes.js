@@ -1,16 +1,16 @@
-import Videogames from './components';
+import Videogames from "./components";
 
 export const routes = [
   {
-    path: '/',
+    path: "/",
     element: <Videogames />,
   },
   {
-    path: '/videogames/:id',
+    path: "/videogames/:id",
     element: <Videogames />,
   },
   {
-    path: '/videogames/',
+    path: "/videogames/",
     element: <Videogames />,
   },
 ];
