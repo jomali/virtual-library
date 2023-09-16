@@ -1,8 +1,5 @@
 import React from "react";
-// import { createFilterOptions } from "@mui/material/Autocomplete";
 import { Autocomplete } from "components/MuiExtensions";
-
-// const filterOptions = createFilterOptions();
 
 const AutocompleteInput = React.forwardRef((props, ref) => {
   const {

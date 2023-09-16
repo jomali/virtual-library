@@ -1,6 +1,8 @@
 const sqlite3 = require('sqlite3').verbose();
 const dbSource = `${__dirname}/virtual-library.db`;
 
+const SEEDING_DATABASE = false;
+
 const db = new sqlite3.Database(dbSource, (error) => {
 	if (Boolean(error)) {
 		console.error(error.message);
@@ -22,18 +24,20 @@ CREATE TABLE IF NOT EXISTS videogame_developers (
   }
   console.log('Successful creation of "videogame_developers" table');
   // Database seeding
-  db.run(`
-  INSERT INTO videogame_developers (id, name) VALUES
-    (1, 'BioWare'),
-    (2, 'Demiurge Studios'),
-    (3, 'Edge of Reality')
-  ;`, (error) => {
-    if (error) {
-      console.error(error.message);
-    } else {
-      console.log('Successful seeding of "videogame_developers" data.');
-    }
-  });
+  if (SEEDING_DATABASE) {
+    db.run(`
+    INSERT INTO videogame_developers (id, name) VALUES
+      (1, 'BioWare'),
+      (2, 'Demiurge Studios'),
+      (3, 'Edge of Reality')
+    ;`, (error) => {
+      if (error) {
+        console.error(error.message);
+      } else {
+        console.log('Successful seeding of "videogame_developers" data.');
+      }
+    });  
+  }
 });
 
 db.run(`
@@ -50,25 +54,27 @@ CREATE TABLE IF NOT EXISTS videogame_platforms (
   }
   console.log('Successful creation of "videogame_platforms" table');
   // Database seeding
-  db.run(`
-  INSERT INTO videogame_platforms (
-		id, name, fullname, company, generation
-	) VALUES
-		(1, 'PC', NULL, NULL, NULL),
-		(2, 'PSX', 'PlayStation', 'Sony', '5th'),
-		(3, 'PS2', 'PlayStation 2', 'Sony', '6th'),
-		(4, 'PS3', 'PlayStation 3', 'Sony', '7th'),
-		(5, 'PS4', 'PlayStation 4', 'Sony', '8th'),
-		(6, 'PS5', 'PlayStation 5', 'Sony', '9th'),
-    (7, 'X360', 'XBOX 360', 'Microsoft', NULL),
-    (8, 'Switch', NULL, 'Nintendo', '8th/9th')
-  ;`, (error) => {
-    if (error) {
-      console.error(error.message);
-    } else {
-      console.log('Successful seeding of "videogame_platforms" data.');
-    }
-  });
+  if (SEEDING_DATABASE) {
+    db.run(`
+    INSERT INTO videogame_platforms (
+      id, name, fullname, company, generation
+    ) VALUES
+      (1, 'PC', NULL, NULL, NULL),
+      (2, 'PSX', 'PlayStation', 'Sony', '5th'),
+      (3, 'PS2', 'PlayStation 2', 'Sony', '6th'),
+      (4, 'PS3', 'PlayStation 3', 'Sony', '7th'),
+      (5, 'PS4', 'PlayStation 4', 'Sony', '8th'),
+      (6, 'PS5', 'PlayStation 5', 'Sony', '9th'),
+      (7, 'X360', 'XBOX 360', 'Microsoft', NULL),
+      (8, 'Switch', NULL, 'Nintendo', '8th/9th')
+    ;`, (error) => {
+      if (error) {
+        console.error(error.message);
+      } else {
+        console.log('Successful seeding of "videogame_platforms" data.');
+      }
+    });  
+  }
 });
 
 db.run(`
@@ -82,17 +88,19 @@ CREATE TABLE IF NOT EXISTS videogame_publishers (
   }
   console.log('Successful creation of "videogame_publishers" table');
   // Database seeding
-  db.run(`
-  INSERT INTO videogame_publishers (id, name) VALUES
-    (1, 'Microsoft Game Studios'),
-    (2, 'Electronic Arts')
-  ;`, (error) => {
-    if (error) {
-      console.error(error.message);
-    } else {
-      console.log('Successful seeding of "videogame_publishers" data.');
-    }
-  });
+  if (SEEDING_DATABASE) {
+    db.run(`
+    INSERT INTO videogame_publishers (id, name) VALUES
+      (1, 'Microsoft Game Studios'),
+      (2, 'Electronic Arts')
+    ;`, (error) => {
+      if (error) {
+        console.error(error.message);
+      } else {
+        console.log('Successful seeding of "videogame_publishers" data.');
+      }
+    });  
+  }
 });
 
 db.run(`
@@ -112,20 +120,22 @@ CREATE TABLE IF NOT EXISTS videogames (
   }
   console.log('Successful creation of "videogames" table');
   // Database seeding
-  db.run(`
-  INSERT INTO videogames (
-    id, title
-  ) VALUES
-    (1, 'Mass Effect'),
-    (2, 'Mass Effect 2'),
-    (3, 'Mass Effect 3')
-  ;`, (error) => {
-    if (error) {
-      console.error(error.message);
-    } else {
-      console.log('Successful seeding of "videogames" data.');
-    }
-  });
+  if (SEEDING_DATABASE) {
+    db.run(`
+    INSERT INTO videogames (
+      id, title
+    ) VALUES
+      (1, 'Mass Effect'),
+      (2, 'Mass Effect 2'),
+      (3, 'Mass Effect 3')
+    ;`, (error) => {
+      if (error) {
+        console.error(error.message);
+      } else {
+        console.log('Successful seeding of "videogames" data.');
+      }
+    });  
+  }
 });
 
 db.run(`
@@ -143,22 +153,24 @@ CREATE TABLE IF NOT EXISTS videogames_developers_relations (
   }
   console.log('Successful creation of "videogames_developers_relations" table');
   // Database seeding
-  db.run(`
-  INSERT INTO videogames_developers_relations (
-    videogame_id, videogame_developer_id, tag
-  ) VALUES
-    (1, 1, 'X360'),
-    (1, 2, 'PC'),
-    (1, 3, 'PS3'),
-    (2, 1, NULL),
-    (3, 1, NULL)
-  ;`, (error) => {
-    if (error) {
-      console.error(error.message);
-    } else {
-      console.log('Successful seeding of "videogames_developers_relations" data.');
-    }
-  });
+  if (SEEDING_DATABASE) {
+    db.run(`
+    INSERT INTO videogames_developers_relations (
+      videogame_id, videogame_developer_id, tag
+    ) VALUES
+      (1, 1, 'X360'),
+      (1, 2, 'PC'),
+      (1, 3, 'PS3'),
+      (2, 1, NULL),
+      (3, 1, NULL)
+    ;`, (error) => {
+      if (error) {
+        console.error(error.message);
+      } else {
+        console.log('Successful seeding of "videogames_developers_relations" data.');
+      }
+    });  
+  }
 });
 
 db.run(`
@@ -175,26 +187,28 @@ CREATE TABLE IF NOT EXISTS videogames_platforms_relations (
   }
   console.log('Successful creation of "videogames_platforms_relations" table');
   // Database seeding
-  db.run(`
-  INSERT INTO videogames_platforms_relations (
-    videogame_id, videogame_platform_id
-  ) VALUES
-    (1, 1),
-    (1, 4),
-    (1, 7),
-    (2, 1),
-    (2, 4),
-    (2, 7),
-    (3, 1),
-    (3, 4),
-    (3, 7)
-  ;`, (error) => {
-    if (error) {
-      console.error(error.message);
-    } else {
-      console.log('Successful seeding of "videogames_developers_relations" data.');
-    }
-  });
+  if (SEEDING_DATABASE) {
+    db.run(`
+    INSERT INTO videogames_platforms_relations (
+      videogame_id, videogame_platform_id
+    ) VALUES
+      (1, 1),
+      (1, 4),
+      (1, 7),
+      (2, 1),
+      (2, 4),
+      (2, 7),
+      (3, 1),
+      (3, 4),
+      (3, 7)
+    ;`, (error) => {
+      if (error) {
+        console.error(error.message);
+      } else {
+        console.log('Successful seeding of "videogames_developers_relations" data.');
+      }
+    });
+  }
 });
 
 db.run(`
@@ -212,21 +226,23 @@ CREATE TABLE IF NOT EXISTS videogames_publishers_relations (
   }
   console.log('Successful creation of "videogames_publishers_relations" table');
   // Database seeding
-  db.run(`
-  INSERT INTO videogames_publishers_relations (
-    videogame_id, videogame_publisher_id, tag
-  ) VALUES
-    (1, 1, 'X360'),
-    (1, 2, 'PC; PS3'),
-    (2, 2, NULL),
-    (3, 2, NULL)
-  ;`, (error) => {
-    if (error) {
-      console.error(error.message);
-    } else {
-      console.log('Successful seeding of "videogames_developers_relations" data.');
-    }
-  });
+  if (SEEDING_DATABASE) {
+    db.run(`
+    INSERT INTO videogames_publishers_relations (
+      videogame_id, videogame_publisher_id, tag
+    ) VALUES
+      (1, 1, 'X360'),
+      (1, 2, 'PC; PS3'),
+      (2, 2, NULL),
+      (3, 2, NULL)
+    ;`, (error) => {
+      if (error) {
+        console.error(error.message);
+      } else {
+        console.log('Successful seeding of "videogames_developers_relations" data.');
+      }
+    });
+  }
 });
 
 db.run(`
@@ -243,20 +259,22 @@ CREATE TABLE IF NOT EXISTS videogame_releases (
   }
   console.log('Successful creation of "videogame_releases" table');
   // Database seeding
-  db.run(`
-  INSERT INTO videogame_releases (
-    videogame_id, date, tag
-  ) VALUES
-    (1, '2007-11-20', 'X360:NA'),
-    (1, '2007-11-22', 'X360:AU'),
-    (1, '2007-11-23', 'X360:EU')
-  `, (error) => {
-    if (error) {
-      console.error(error.message);
-    } else {
-      console.log('Successful seeding of "videogame_releases" data.');
-    }
-  })
+  if (SEEDING_DATABASE) {
+    db.run(`
+    INSERT INTO videogame_releases (
+      videogame_id, date, tag
+    ) VALUES
+      (1, '2007-11-19T23:00:00.000Z', 'X360:NA'),
+      (1, '2007-11-21T23:00:00.000Z', 'X360:AU'),
+      (1, '2007-11-22T23:00:00.000Z', 'X360:EU')
+    `, (error) => {
+      if (error) {
+        console.error(error.message);
+      } else {
+        console.log('Successful seeding of "videogame_releases" data.');
+      }
+    })  
+  }
 });
 
 //

@@ -60,8 +60,6 @@ const VideogameDetails = (props) => {
       const response = await api.GET(`videogames/${value.id}`);
       return {
         ...response.data,
-        [PROPERTIES.developers]:
-          response.data[PROPERTIES.developers]?.[0] || null,
         [PROPERTIES.publishers]:
           response.data[PROPERTIES.publishers]?.[0] || null,
         [PROPERTIES.releaseDates]:
@@ -102,20 +100,13 @@ const VideogameDetails = (props) => {
 
   const videogameCreateUpdateMutation = useMutation(
     (newValues) => {
-      const developer =
-        typeof newValues.developers === "string"
-          ? { id: null, name: newValues.developers }
-          : newValues.developers;
-      const publisher =
-        typeof newValues.publishers === "string"
-          ? { id: null, name: newValues.publishers }
-          : newValues.publishers;
-
       const body = {
         ...newValues,
-        developers: [{ ...developer, tag: "main" }],
-        platforms: [newValues.platforms].filter((element) => Boolean(element)),
-        publishers: [{ ...publisher, tag: "main" }],
+        developers: [newValues.developers],
+        publishers: [newValues.publishers],
+        releaseDates: [
+          { date: newValues[PROPERTIES.releaseDates], tag: "main" },
+        ],
       };
 
       return value.id

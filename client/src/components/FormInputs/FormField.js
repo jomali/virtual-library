@@ -41,7 +41,7 @@ const FormField = (props) => {
     return errorMessage;
   };
 
-  /* Alternative implementation using `children` the prop and element cloning:
+  /* Alternative implementation using the prop `children` and element cloning:
   ```
   return React.Children.toArray(children).length ? (
     <Field name={name} type={type} validate={handleValidate} {...otherProps}>
@@ -69,8 +69,10 @@ const FormField = (props) => {
         const showError = getIn(form.touched, field.name) && !!fieldError;
 
         return renderInput({
-          disabled: form.isSubmitting,
+          // disabled: form.isSubmitting, // TODO
           error: showError,
+          field: field,
+          form: form,
           helperText: showError ? fieldError : undefined,
           onChange: (newValue, event) =>
             form.setFieldValue(field.name, newValue),

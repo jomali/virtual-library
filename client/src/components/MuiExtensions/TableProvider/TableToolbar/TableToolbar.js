@@ -65,6 +65,7 @@ export default function TableToolbar({
     label: null,
     onClick: () => null,
   },
+  options = [],
   searchOptions,
   title,
 }) {
@@ -138,6 +139,8 @@ export default function TableToolbar({
             </IconButton>
           </Tooltip>
         ) : null}
+
+        {options.map((element) => element)}
       </Stack>
     </Toolbar>
   );

@@ -1,11 +1,14 @@
 import React from "react";
-import { styled } from "@mui/material/styles";
+import { alpha, styled } from "@mui/material/styles";
 import MuiTextField from "@mui/material/TextField";
 import PropTypes from "prop-types";
 
 const StyledTextField = styled(MuiTextField, {
   shouldForwardProp: (prop) => prop !== "readOnly",
 })(({ readOnly, theme }) => ({
+  "& svg": {
+    color: alpha(theme.palette.action.active, 0.7),
+  },
   "& .MuiOutlinedInput-root": {
     // variant: outlined
     "& input": {

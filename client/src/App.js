@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Div100vh from "react-div-100vh";
 import { IntlProvider } from "react-intl";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-//import { messages, routes } from 'components/Main';
 import { ApiProvider } from "components/ApiProvider";
 import { ConfirmProvider } from "components/ConfirmProvider";
 import { SnackbarProvider } from "components/SnackbarProvider";
@@ -34,7 +33,7 @@ export default function App() {
               }}
             >
               <ConfirmProvider>
-                <ApiProvider host="http://localhost:9000/api">
+                <ApiProvider host="http://192.168.1.25:9000/api">
                   <QueryClientProvider client={queryClient}>
                     <BrowserRouter>
                       <Routes>

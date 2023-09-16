@@ -117,8 +117,8 @@ export default function TableBody({
         } = rowProps;
         return (
           <SelectableTableRow
-            hover={Boolean(tableState.selectable) && !rowDisabled}
             key={`page-${tableState.controls.pagination.page}-row-${rowIndex}`}
+            hover={Boolean(tableState.selectable) && !rowDisabled}
             selectable={Boolean(tableState.selectable)}
             selected={Boolean(rowIsSelected)}
             {...additionalRowProps}
@@ -126,8 +126,8 @@ export default function TableBody({
             {tableState.selectable === "multiple" ? (
               <TableCell padding="checkbox">
                 <Checkbox
-                  color="primary" // TODO - variable color
                   checked={Boolean(rowIsSelected)}
+                  color="primary" // TODO - variable color
                   inputProps={{
                     "aria-labelledby": `row-checkbox-${rowIndex}`,
                   }}
@@ -151,11 +151,12 @@ export default function TableBody({
 
                 return (
                   <TableCell
-                    align={align}
                     key={`cell-${columnIndex}`}
+                    align={align}
                     onClick={
                       rowDisabled ? undefined : () => tableState.onClick(row)
                     }
+                    sx={{ whiteSpace: "nowrap" }}
                     {...additionalCellProps}
                   >
                     {formatter

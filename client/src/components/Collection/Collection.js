@@ -2,7 +2,6 @@ import React from "react";
 import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
 import Divider from "@mui/material/Divider";
-import Paper from "@mui/material/Paper";
 import { styled, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import PropTypes from "prop-types";
@@ -14,15 +13,17 @@ const Container = styled("main", {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
   display: "flex",
+  flexDirection: "column",
   flexGrow: 1,
   overflow: "auto",
+  width: "100%",
 }));
 
-const Panel = styled(Paper, {
+const Panel = styled("div", {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ open, theme }) => ({
   display: "flex",
-  flexDirection: "column",
+  flexDirection: "row",
   flexGrow: 1,
   maxWidth: SIDE_PANEL_WIDTH.xs,
   minWidth: 0,
@@ -68,7 +69,6 @@ export default function Collection({
   onClose,
   open,
   sideContent,
-  title,
   ...otherProps
 }) {
   const theme = useTheme();
@@ -77,13 +77,8 @@ export default function Collection({
   return (
     <>
       <Box sx={{ display: "flex", height: " 100%", overflow: "hidden" }}>
-        <Container
-          open={open}
-          sx={{ display: "flex", flexDirection: "column" }}
-        >
-          {children}
-        </Container>
-        <div style={{ display: "flex", height: " 100%", overflow: "hidden" }}>
+        <Container open={open}>{children}</Container>
+        <Panel open={open}>
           <Transition
             in={open}
             timeout={theme.transitions.duration.enteringScreen}
@@ -91,17 +86,25 @@ export default function Collection({
             {(state) => (
               <>
                 <Divider orientation="vertical" />
-                <Panel elevation={0} open={open} square>
+                <Box
+                  sx={{
+                    backgroundColor: (theme) => theme.palette.background.paper,
+                    display: "flex",
+                    flexDirection: "column",
+                    flexGrow: 1,
+                    overflow: "auto",
+                  }}
+                >
                   {state === "entered" ? (
                     sideContent({ onClose, ...otherProps })
                   ) : (
                     <span />
                   )}
-                </Panel>
+                </Box>
               </>
             )}
           </Transition>
-        </div>
+        </Panel>
       </Box>
 
       <Dialog

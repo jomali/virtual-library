@@ -78,10 +78,11 @@ export default function TableHead({
           .filter((column) => column.options.display)
           .map((column, index) => (
             <MuiTableCell
-              align={column.options.align || "left"}
               key={index}
+              align={column.options.align || "left"}
               padding={"normal"} // TODO
               sortDirection={false} // TODO
+              sx={{ whiteSpace: "nowrap" }}
             >
               {column.options.displayLabel ? column.label : null}
             </MuiTableCell>

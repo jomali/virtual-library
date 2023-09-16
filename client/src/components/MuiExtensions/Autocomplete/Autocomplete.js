@@ -65,6 +65,7 @@ const StyledAutocomplete = styled(MuiAutocomplete, {
  */
 const Autocomplete = React.forwardRef((props, ref) => {
   const {
+    disabled,
     freeSolo,
     getOptionLabel,
     helperText,
@@ -111,6 +112,7 @@ const Autocomplete = React.forwardRef((props, ref) => {
       //     )
       //   }
       ref={ref}
+      disabled={disabled}
       filterOptions={
         freeSolo
           ? (options, params) => {
@@ -164,6 +166,7 @@ const Autocomplete = React.forwardRef((props, ref) => {
       renderInput={(params) => (
         <TextField
           {...params}
+          disabled={disabled}
           helperText={helperText}
           label={label}
           readOnly={readOnly}
@@ -177,6 +180,7 @@ const Autocomplete = React.forwardRef((props, ref) => {
 
 Autocomplete.propTypes = {
   ...MuiAutocomplete.propTypes,
+  disabled: PropTypes.bool,
   renderInput: PropTypes.func, // no longer a required prop
   withTags: PropTypes.bool,
 };

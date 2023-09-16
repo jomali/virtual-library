@@ -10,10 +10,10 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import Paper from "@mui/material/Paper";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { useNavigate, useParams } from "react-router-dom";
 import { useApi } from "components/ApiProvider";
 import Collection from "components/Collection";
@@ -22,8 +22,10 @@ import TableProvider, {
   TableContent,
   TableSummary,
   TableToolbar,
+  TableToolbarOption,
   useTable,
 } from "components/MuiExtensions/TableProvider";
+import TablePaper from "components/TablePaper";
 import VideogameDetails from "./VideogameDetails";
 import { PROPERTIES } from "./videogamesConstants";
 
@@ -64,7 +66,7 @@ export default function Videogames() {
       attribute: PROPERTIES.initialReleaseDate,
       label: "Release date",
       options: {
-        format: (value) => value?.date,
+        format: (value) => value?.date && format(new Date(value.date), "P"),
       },
     },
     {
@@ -97,77 +99,68 @@ export default function Videogames() {
       )}
       title={"Videogames"}
     >
-      <Paper
-        sx={{
-          backgroundColor: "background.paper",
-          margin: 2,
-          display: "flex",
-          flexGrow: 1,
+      <TableProvider
+        columns={columns}
+        controls={table.controls}
+        count={videogamesQuery.data?.length}
+        loading={videogamesQuery.isFetching}
+        onSelect={(value) => {
+          table.setSelected(value);
+          navigate(value[0] ? `/videogames/${value[0]}` : `/videogames`);
         }}
-        variant="outlined"
+        rows={videogamesQuery.data}
+        selectable
+        selected={table.selected}
+        selector={(value) => value.id}
       >
-        <TableProvider
-          columns={columns}
-          controls={table.controls}
-          count={videogamesQuery.data?.length}
-          loading={videogamesQuery.isFetching}
-          onSelect={(value) => {
-            table.setSelected(value);
-            navigate(value[0] ? `/videogames/${value[0]}` : `/videogames`);
-          }}
-          rows={videogamesQuery.data}
-          selectable
-          selected={table.selected}
-          selector={(value) => value.id}
-        >
-          <TableContainer>
-            <TableToolbar
-              addOptions={{
-                label: "Add new videogame",
-                onClick: () => {
-                  table.setSelected();
-                  navigate("/videogames/new");
-                },
-              }}
-              filterOptions={{
-                label: "Filter results",
-                onClick: () => console.log("filter results"),
-              }}
-              // searchOptions={{}}
-              title={"Videogames"}
-              title_={() => (
-                <ButtonBase
-                  onClick={(event) => setAnchorEl(event.currentTarget)}
+        <TableContainer component={TablePaper} variant="outlined">
+          <TableToolbar
+            addOptions={{
+              label: "Add new videogame",
+              onClick: () => {
+                table.setSelected();
+                navigate("/videogames/new");
+              },
+            }}
+            options={[<TableToolbarOption />, <TableToolbarOption />]}
+            filterOptions={{
+              label: "Filter results",
+              onClick: () => console.log("filter results"),
+            }}
+            // searchOptions={{}}
+            title={"Videogames"}
+            title_={() => (
+              <ButtonBase
+                onClick={(event) => setAnchorEl(event.currentTarget)}
+                sx={{
+                  borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+                  padding: 1,
+                  "&:hover": {
+                    backgroundColor: (theme) => theme.palette.action.hover,
+                  },
+                }}
+              >
+                <Typography component="div" id="tableTitle" variant="h6">
+                  Videogames
+                </Typography>
+                <ArrowDropDownRoundedIcon
                   sx={{
-                    borderRadius: (theme) => `${theme.shape.borderRadius}px`,
-                    padding: 1,
-                    "&:hover": {
-                      backgroundColor: (theme) => theme.palette.action.hover,
-                    },
+                    marginLeft: 0.5,
+                    marginRight: -0.5,
+                    transition: (theme) =>
+                      theme.transitions.create("transform", {
+                        duration: (theme) => theme.transitions.duration.short,
+                      }),
+                    ...(Boolean(anchorEl) && { transform: "rotate(180deg)" }),
                   }}
-                >
-                  <Typography component="div" id="tableTitle" variant="h6">
-                    Videogames
-                  </Typography>
-                  <ArrowDropDownRoundedIcon
-                    sx={{
-                      marginLeft: 0.5,
-                      marginRight: -0.5,
-                      transition: (theme) =>
-                        theme.transitions.create("transform", {
-                          duration: (theme) => theme.transitions.duration.short,
-                        }),
-                      ...(Boolean(anchorEl) && { transform: "rotate(180deg)" }),
-                    }}
-                  />
-                </ButtonBase>
-              )}
-            />
-            <TableContent />
-            <TableSummary />
-          </TableContainer>
-        </TableProvider>
-      </Paper>
+                />
+              </ButtonBase>
+            )}
+          />
+          <TableContent />
+          <TableSummary />
+        </TableContainer>
+      </TableProvider>
 
       <Popover
         anchorEl={anchorEl}

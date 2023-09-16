@@ -24,6 +24,8 @@ module.exports = {
         ...body
       } = req.body;
 
+      console.log("-- body", req.body);
+
       const data = await videogames.create({
         ...body,
         developers: developers,
@@ -133,6 +135,9 @@ module.exports = {
         releaseDates = [],
         ...body
       } = req.body;
+      
+
+      console.log("-- body", req.body);
 
       const data = await videogames.update(id, {
         ...body,
