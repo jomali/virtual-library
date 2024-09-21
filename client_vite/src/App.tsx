@@ -1,7 +1,6 @@
-
 import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Books from "./sections/books/Books"
+import Books from "./sections/books/Books";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
@@ -24,7 +23,7 @@ function App() {
     },
     shape: {
       borderRadius: 8,
-    }
+    },
   });
 
   return (
@@ -32,7 +31,7 @@ function App() {
       <CssBaseline />
       <Books />
     </ThemeProvider>
-  )
+  );
 }
 
-export default App
+export default App;
