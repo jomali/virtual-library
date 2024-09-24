@@ -1,12 +1,17 @@
+import Dialog from "@mui/material/Dialog";
 import React from "react";
+
 import TableProvider, {
   Column,
-  TableContent,
   TableContainer,
+  TableContent,
+  useTable,
 } from "../../components/TableProvider";
+import VideogameDetails from "./VideogameDetails";
+import { Videogame } from "./Videogames.types";
 
 const createData = (amount: number) => {
-  const result = [];
+  const result: Videogame[] = [];
   for (let i = 0; i < amount; i++) {
     result.push({
       title: `Videogame title ${i}`,
@@ -24,18 +29,18 @@ const columns: Column[] = [
     attribute: "title",
     label: "Title",
   },
-  {
-    attribute: "developer",
-    label: "Developer",
-  },
-  {
-    attribute: "publisher",
-    label: "Publisher",
-  },
-  {
-    attribute: "releaseDate",
-    label: "Release date",
-  },
+  // {
+  //   attribute: "developer",
+  //   label: "Developer",
+  // },
+  // {
+  //   attribute: "publisher",
+  //   label: "Publisher",
+  // },
+  // {
+  //   attribute: "releaseDate",
+  //   label: "Release date",
+  // },
   {
     attribute: "platform",
     label: "Platform",
@@ -82,12 +87,36 @@ const rows = [
 ];
 
 const Videogames = () => {
+  const table = useTable();
+
   return (
-    <TableProvider columns={columns} rows={rows}>
-      <TableContainer>
-        <TableContent aria-label="simple table" />
-      </TableContainer>
-    </TableProvider>
+    <>
+      <TableProvider
+        columns={columns}
+        onClick={(value: any) => {
+          table.select(value);
+        }}
+        rows={rows}
+        selectable
+      >
+        <TableContainer>
+          <TableContent aria-label="simple table" />
+        </TableContainer>
+      </TableProvider>
+
+      <Dialog
+        aria-labelledby="side-panel-dialog"
+        fullScreen
+        onClose={() => table.select()}
+        open={Boolean(table.selected)}
+        PaperProps={{ elevation: 0 }}
+      >
+        <VideogameDetails
+          onClose={() => table.select()}
+          value={table.selected}
+        />
+      </Dialog>
+    </>
   );
 };
 

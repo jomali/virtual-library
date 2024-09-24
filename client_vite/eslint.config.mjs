@@ -1,14 +1,15 @@
-// @ts-check
-
 import eslint from "@eslint/js";
-import tseslint from "typescript-eslint";
 import eslintConfigPrettier from "eslint-config-prettier";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
-import customConfigPrettier from "./.prettierrc.cjs";
 import eslintPluginReact from "eslint-plugin-react";
+import eslintPluginSimpleImportSort from "eslint-plugin-simple-import-sort";
 import globals from "globals";
+import tseslint from "typescript-eslint";
+
+import customConfigPrettier from "./.prettierrc.cjs";
 
 export default tseslint.config(
+  // TypeScript
   {
     files: ["**/*.{ts,tsx}"],
     extends: [eslint.configs.recommended, ...tseslint.configs.recommended],
@@ -17,6 +18,26 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": "error",
     },
   },
+  // Prettier
+  {
+    files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
+    extends: [eslintPluginPrettierRecommended],
+    rules: {
+      ...eslintConfigPrettier.rules,
+      "prettier/prettier": ["error", customConfigPrettier],
+    },
+  },
+  // Simple import sort
+  {
+    plugins: {
+      "simple-import-sort": eslintPluginSimpleImportSort,
+    },
+    rules: {
+      "simple-import-sort/imports": "error",
+      "simple-import-sort/exports": "error",
+    },
+  },
+  // React
   {
     files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
     ...eslintPluginReact.configs.flat.recommended,
@@ -57,14 +78,6 @@ export default tseslint.config(
           html: true,
         },
       ],
-    },
-  },
-  {
-    files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
-    extends: [eslintPluginPrettierRecommended],
-    rules: {
-      ...eslintConfigPrettier.rules,
-      "prettier/prettier": ["error", customConfigPrettier],
     },
   }
 );

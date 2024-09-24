@@ -1,9 +1,9 @@
-import React from "react";
 import { enUS, esES } from "@mui/material/locale";
 import {
   createTheme,
   ThemeProvider as MuiThemeProvider,
 } from "@mui/material/styles";
+import React from "react";
 
 const ThemeProvider = (props: object) => {
   const locale = navigator.language === "es-ES" ? esES : enUS;

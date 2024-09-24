@@ -18,12 +18,13 @@ export type TableContainerProps = MuiTableContainerProps & {
   component?: string | React.ReactNode;
 };
 
-const TableContainer: React.FC<TableContainerProps> = React.forwardRef(
-  (props, ref) => {
-    const { component: Component = DefaultComponent, ...otherProps } = props;
+const TableContainer = React.forwardRef<
+  React.Ref<unknown>,
+  TableContainerProps
+>((props, ref) => {
+  const { component: Component = DefaultComponent, ...otherProps } = props;
 
-    return <Component ref={ref} {...otherProps} />;
-  }
-);
+  return <Component ref={ref} {...otherProps} />;
+});
 
 export default TableContainer;
