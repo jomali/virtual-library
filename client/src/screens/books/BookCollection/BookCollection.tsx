@@ -16,8 +16,6 @@ const BookCollection = () => {
   const params = useParams();
   const table = useTable();
 
-  console.log(`🔔 params`, params);
-
   const columns = React.useMemo<MRT_ColumnDef<MRT_RowData>[]>(
     () => [
       {
@@ -46,12 +44,12 @@ const BookCollection = () => {
         navigate("/books");
       }}
       open={Boolean(params.id)}
-      sideContent={() => <BookDetails />}
+      sideContent={(params) => <BookDetails {...params} />}
     >
       <TableProvider
         columns={columns}
-        onClick={() => {
-          navigate(`/books/${13}`);
+        onClick={(item) => {
+          navigate(`/books/${item.id}`);
         }}
         rows={books.data ?? []}
         {...table}

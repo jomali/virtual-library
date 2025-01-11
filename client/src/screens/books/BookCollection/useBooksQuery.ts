@@ -6,6 +6,7 @@ const useBooksQuery = () => {
     queryFn: () => {
       return [
         {
+          id: 1,
           author: "Druyan, Ann",
           language: "spanish",
           publisher: "National Geographic",
@@ -13,6 +14,7 @@ const useBooksQuery = () => {
           title: "Cosmos: Mundos Posibles",
         },
         {
+          id: 2,
           author: "VV.AA.",
           language: "english",
           publisher: "Titan Books",
