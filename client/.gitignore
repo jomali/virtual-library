@@ -7,7 +7,17 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Tests
+coverage/
+reports/
+test-report.json
+
+# Registry and dependencies
+.npmrc
+npm-debug.log
 node_modules
+
+# Builds
 dist
 dist-ssr
 *.local
