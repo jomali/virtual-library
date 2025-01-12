@@ -1,28 +1,36 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "Back-end for virtual-library application",
   "main": "index.js",
-  "author": "J. Francisco Martín Lisaso",
   "license": "MIT",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "sqlite": "^4.0.22",
-    "sqlite3": "^5.0.2",
-    "unirest": "^0.6.0"
-  },
+  "type": "module",
   "scripts": {
-    "start": "npx nodemon index.js",
-    "lint": "eslint --cache \"src/**/*.{js,jsx,ts,tsx}\"",
-    "lint:fix": "eslint --cache --fix \"src/**/*.{js,jsx,ts,tsx}\"",
-    "format:fix": "yarn run prettier --write \"**/*.{js,json,scss,md}\""
+    "dev": "node --loader=ts-node/esm --env-file=.env --watch src/server.ts",
+    "lint": "eslint .",
+    "lint:fix": "yarn run lint --fix",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "sqlite3": "^5.1.7",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
-    "eslint": "^8.26.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-formatjs": "^4.3.4",
-    "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.7.1"
+    "@eslint/js": "^9.18.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.5",
+    "@types/sqlite3": "^3.1.11",
+    "@types/swagger-ui-express": "^4.1.7",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.19.1"
   }
 }
