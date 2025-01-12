@@ -1,0 +1,28 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Back-end for virtual-library application",
+  "main": "index.js",
+  "author": "J. Francisco Martín Lisaso",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "sqlite": "^4.0.22",
+    "sqlite3": "^5.0.2",
+    "unirest": "^0.6.0"
+  },
+  "scripts": {
+    "start": "npx nodemon index.js",
+    "lint": "eslint --cache \"src/**/*.{js,jsx,ts,tsx}\"",
+    "lint:fix": "eslint --cache --fix \"src/**/*.{js,jsx,ts,tsx}\"",
+    "format:fix": "yarn run prettier --write \"**/*.{js,json,scss,md}\""
+  },
+  "devDependencies": {
+    "eslint": "^8.26.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-formatjs": "^4.3.4",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.7.1"
+  }
+}
