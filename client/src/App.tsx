@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import ThemeProvider from "./components/ThemeProvider";
 import QueryClientProvider from "./components/QueryClientProvider";
 import { routes } from "./screens";
+import ApiProvider from "./components/ApiProvider";
 import IntlProvider from "./components/IntlProvider";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
@@ -17,15 +18,17 @@ function App() {
       <ThemeProvider>
         <CssBaseline />
         <Div100vh>
-          <QueryClientProvider>
-            <BrowserRouter>
-              <Routes>
-                {routes.map(({ component: Component, path }) => (
-                  <Route key={path} element={<Component />} path={path} />
-                ))}
-              </Routes>
-            </BrowserRouter>
-          </QueryClientProvider>
+          <ApiProvider host="http://192.168.1.25:5173">
+            <QueryClientProvider>
+              <BrowserRouter>
+                <Routes>
+                  {routes.map(({ component: Component, path }) => (
+                    <Route key={path} element={<Component />} path={path} />
+                  ))}
+                </Routes>
+              </BrowserRouter>
+            </QueryClientProvider>
+          </ApiProvider>
         </Div100vh>
       </ThemeProvider>
     </IntlProvider>

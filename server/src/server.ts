@@ -1,25 +1,19 @@
-// src/server.ts
-import express, { Request, Response } from "express";
-import swaggerUi from "swagger-ui-express";
-import bookRoutes from "./routes/bookRoutes";
-import swaggerDocument from "./swagger.json";
+import cors from 'cors';
+import 'dotenv/config';
+import express from 'express';
+
+import { router } from '@/router';
+
+const port = process.env.PORT || 3000;
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+app.use(cors());
 
-// Set up Swagger UI
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.get('/', (req, res) => res.send('Server is running!'));
 
-// Routes
-app.use("/api", bookRoutes);
+app.use('/api', router);
 
-// Basic route
-app.get("/", (req: Request, res: Response) => {
-  res.send("Welcome to the Book API");
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`App listening on port: ${port}`);
 });

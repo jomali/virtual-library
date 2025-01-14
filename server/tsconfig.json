@@ -1,17 +1,28 @@
 {
   "compilerOptions": {
-    /* Visit https://aka.ms/tsconfig to read more about this file */
-    
+    "target": "esnext",
     "esModuleInterop": true,
-    // "module": "CommonJS",
-    "module": "ES6",
-    "outDir": "./dist",
-    "rootDir": "./src",
     "strict": true,
-    "target": "ES6",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true
+    "moduleResolution": "node",
+    "noEmit": true,
+
+    "outDir": "dist",
+
+    "forceConsistentCasingInFileNames": true,  
+    "skipLibCheck": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitAny": true,
+
+    
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
   },
-  "include": ["src/**/*.ts"],
+  "tsc-alias": {
+    "resolveFullPaths": true,
+    "verbose": false
+  },
+  "include": ["src"],
   "exclude": ["node_modules"]
 }
