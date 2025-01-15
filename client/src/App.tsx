@@ -18,7 +18,7 @@ function App() {
       <ThemeProvider>
         <CssBaseline />
         <Div100vh>
-          <ApiProvider host="http://192.168.1.25:5173">
+          <ApiProvider host="http://192.168.1.25:3000">
             <QueryClientProvider>
               <BrowserRouter>
                 <Routes>

@@ -9,6 +9,7 @@ import Collection from "../../../components/Collection";
 import useBooksQuery from "./useBooksQuery";
 import BookDetails from "./BookDetails";
 import { useNavigate, useParams } from "react-router";
+import Rating from "@mui/material/Rating";
 
 const BookCollection = () => {
   const books = useBooksQuery();
@@ -23,16 +24,30 @@ const BookCollection = () => {
         header: "Title",
       },
       {
-        accessorKey: "author",
-        header: "Author",
+        accessorKey: "publisher.name",
+        header: "Publisher",
+      },
+      {
+        accessorKey: "language",
+        header: "Language",
       },
       {
         accessorKey: "releaseDate",
         header: "Release date",
       },
       {
-        accessorKey: "publisher",
-        header: "Publisher",
+        accessorKey: "rating",
+        header: "Rating",
+        Cell: (value) => {
+          const rating = (value.renderedCellValue as number) ?? 0;
+          return <Rating precision={0.5} readOnly value={(rating * 5) / 10} />;
+        },
+        muiTableBodyCellProps: () => ({
+          sx: {
+            paddingBottom: 0,
+            paddingTop: 0,
+          },
+        }),
       },
     ],
     []

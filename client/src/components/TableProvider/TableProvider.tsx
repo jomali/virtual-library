@@ -255,7 +255,7 @@ export interface ITableProvider {
   /**
    * Callback triggered when the user clicks on a row.
    */
-  onClick?: (row: object) => void;
+  onClick?: (row: MRT_RowData) => void;
   /**
    * Callback triggered when the user changes the order of any column.
    */
