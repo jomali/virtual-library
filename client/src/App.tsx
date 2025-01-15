@@ -3,7 +3,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { BrowserRouter, Route, Routes } from "react-router";
 import ThemeProvider from "./components/ThemeProvider";
 import QueryClientProvider from "./components/QueryClientProvider";
-import { routes } from "./screens";
+import { messages, routes } from "./screens";
 import ApiProvider from "./components/ApiProvider";
 import IntlProvider from "./components/IntlProvider";
 import "@fontsource/roboto/300.css";
@@ -14,7 +14,7 @@ import Div100vh from "react-div-100vh";
 
 function App() {
   return (
-    <IntlProvider>
+    <IntlProvider messages={messages}>
       <ThemeProvider>
         <CssBaseline />
         <Div100vh>

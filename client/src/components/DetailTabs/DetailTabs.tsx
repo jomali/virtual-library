@@ -1,13 +1,10 @@
 import React from "react";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
-import ForumRoundedIcon from "@mui/icons-material/ForumRounded";
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
-import ViewListRoundedIcon from "@mui/icons-material/ViewListRounded";
 import { ConditionalTooltip } from "../MuiExtensions";
 
 const DetailTabs: React.FC<IDetailTabs> = (props) => {
-  const { disabled, onChange, value } = props;
+  const { disabled, onChange, tabs = [], value } = props;
 
   const a11yProps = (index: number) => {
     return {
@@ -24,27 +21,11 @@ const DetailTabs: React.FC<IDetailTabs> = (props) => {
       value={value}
       variant="fullWidth"
     >
-      <ConditionalTooltip title={"Profile"}>
-        <Tab
-          disabled={disabled}
-          icon={<ViewListRoundedIcon />}
-          {...a11yProps(0)}
-        />
-      </ConditionalTooltip>
-      <ConditionalTooltip title={"Personal notes"}>
-        <Tab
-          disabled={disabled}
-          icon={<PersonRoundedIcon />}
-          {...a11yProps(1)}
-        />
-      </ConditionalTooltip>
-      <ConditionalTooltip title={"Reception"}>
-        <Tab
-          disabled={disabled}
-          icon={<ForumRoundedIcon />}
-          {...a11yProps(2)}
-        />
-      </ConditionalTooltip>
+      {tabs.map((element, index) => (
+        <ConditionalTooltip key={`tab-${index}`} title={element.label}>
+          <Tab disabled={disabled} icon={element.icon} {...a11yProps(index)} />
+        </ConditionalTooltip>
+      ))}
     </Tabs>
   );
 };
@@ -52,6 +33,10 @@ const DetailTabs: React.FC<IDetailTabs> = (props) => {
 export interface IDetailTabs {
   disabled?: boolean;
   onChange: React.Dispatch<React.SetStateAction<number>>;
+  tabs: {
+    label: string;
+    icon: React.ReactElement;
+  }[];
   value: number;
 }
 

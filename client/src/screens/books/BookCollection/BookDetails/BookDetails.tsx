@@ -5,9 +5,13 @@ import Divider from "@mui/material/Divider";
 import DetailFooter from "../../../../components/DetailFooter";
 import { styled } from "@mui/material/styles";
 import BookProfile from "./BookProfile";
+import ForumRoundedIcon from "@mui/icons-material/ForumRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import ViewListRoundedIcon from "@mui/icons-material/ViewListRounded";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useIntl } from "react-intl";
 
 const Form = styled("form")(() => ({
   display: "flex",
@@ -27,6 +31,8 @@ const schema = yup.object({
 
 const BookDetails: React.FC<IBookDetails> = (props) => {
   const { onClose } = props;
+
+  const intl = useIntl();
 
   const [currentTab, setCurrentTab] = React.useState<number>(0);
 
@@ -48,7 +54,24 @@ const BookDetails: React.FC<IBookDetails> = (props) => {
   return (
     <>
       <DetailHeader onClose={onClose} title={"Book title"} />
-      <DetailTabs onChange={setCurrentTab} value={currentTab} />
+      <DetailTabs
+        onChange={setCurrentTab}
+        tabs={[
+          {
+            label: intl.formatMessage({ id: "books.bibliographyNotes" }),
+            icon: <ViewListRoundedIcon />,
+          },
+          {
+            label: intl.formatMessage({ id: "books.personalNotes" }),
+            icon: <PersonRoundedIcon />,
+          },
+          {
+            label: intl.formatMessage({ id: "books.reception" }),
+            icon: <ForumRoundedIcon />,
+          },
+        ]}
+        value={currentTab}
+      />
       <Divider />
 
       <Form onSubmit={handleSubmit(onSubmit)}>

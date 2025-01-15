@@ -4,9 +4,12 @@ import Toolbar from "@mui/material/Toolbar";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import Button from "@mui/material/Button";
+import { useIntl } from "react-intl";
 
 const DetailFooter: React.FC<IDetailFooter> = (props) => {
   const { onDelete } = props;
+
+  const intl = useIntl();
 
   return (
     <AppBar elevation={0} position="relative">
@@ -23,7 +26,7 @@ const DetailFooter: React.FC<IDetailFooter> = (props) => {
           startIcon={<DeleteRoundedIcon />}
           variant="text"
         >
-          {"Delete"}
+          {intl.formatMessage({ id: "delete" })}
         </Button>
 
         <Button
@@ -31,7 +34,7 @@ const DetailFooter: React.FC<IDetailFooter> = (props) => {
           type="submit"
           variant="contained"
         >
-          {"Save"}
+          {intl.formatMessage({ id: "save" })}
         </Button>
       </Toolbar>
     </AppBar>

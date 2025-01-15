@@ -10,9 +10,11 @@ import useBooksQuery from "./useBooksQuery";
 import BookDetails from "./BookDetails";
 import { useNavigate, useParams } from "react-router";
 import Rating from "@mui/material/Rating";
+import { useIntl } from "react-intl";
 
 const BookCollection = () => {
   const books = useBooksQuery();
+  const intl = useIntl();
   const navigate = useNavigate();
   const params = useParams();
   const table = useTable();
@@ -21,23 +23,26 @@ const BookCollection = () => {
     () => [
       {
         accessorKey: "title",
-        header: "Title",
+        header: intl.formatMessage({ id: "books.title" }),
       },
       {
         accessorKey: "publisher.name",
-        header: "Publisher",
+        header: intl.formatMessage({ id: "books.publisher" }),
       },
       {
         accessorKey: "language",
-        header: "Language",
+        header: intl.formatMessage({ id: "books.language" }),
+        Cell: ({ renderedCellValue }) => {
+          return intl.formatMessage({ id: `language.${renderedCellValue}` });
+        },
       },
       {
         accessorKey: "releaseDate",
-        header: "Release date",
+        header: intl.formatMessage({ id: "books.releaseDate" }),
       },
       {
         accessorKey: "rating",
-        header: "Rating",
+        header: intl.formatMessage({ id: "books.rating" }),
         Cell: (value) => {
           const rating = (value.renderedCellValue as number) ?? 0;
           return <Rating precision={0.5} readOnly value={(rating * 5) / 10} />;
@@ -74,7 +79,7 @@ const BookCollection = () => {
             onClick: () => console.log(`🔔 add`),
             visible: true,
           }}
-          title="Books"
+          title={intl.formatMessage({ id: "books.books" })}
         />
         <TableContents />
       </TableProvider>
