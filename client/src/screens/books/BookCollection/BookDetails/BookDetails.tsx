@@ -1,12 +1,11 @@
 import React from "react";
 import DetailHeader from "../../../../components/DetailHeader";
 import DetailTabs from "../../../../components/DetailTabs";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import DetailFooter from "../../../../components/DetailFooter";
-import { styled, useTheme } from "@mui/material/styles";
-import BookProfile from "./BookProfile";
-import ForumRoundedIcon from "@mui/icons-material/ForumRounded";
+import { styled } from "@mui/material/styles";
+import BookProfile from "./BibliographicalNotes";
+// import ForumRoundedIcon from "@mui/icons-material/ForumRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import ViewListRoundedIcon from "@mui/icons-material/ViewListRounded";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -15,9 +14,10 @@ import * as yup from "yup";
 import DetailAnimatedPanel from "../../../../components/DetailAnimatedPanel";
 import { useIntl } from "react-intl";
 import { AnimatePresence } from "motion/react";
-import Gap from "../../../../components/Gap";
 import useBookQuery from "../../queries/useBookQuery";
 import useNotification from "../../../../components/NotificationProvider/useNotification";
+import { Book } from "../../types";
+import PersonalNotes from "./PersonalNotes";
 
 const Form = styled("form")(() => ({
   display: "flex",
@@ -36,8 +36,17 @@ const StyledImage = styled("img", {
 }));
 
 const schema = yup.object({
-  author: yup.string().required(),
+  // Required fields:
+  authors: yup.string().required(),
+  language: yup.string().required(),
+  publisher: yup.string().required(),
+  releaseDate: yup.string().required(),
   title: yup.string().required(),
+  // Optional fields:
+  edition: yup.string(),
+  originalTitle: yup.string(),
+  rating: yup.number(),
+  translators: yup.string(),
 });
 
 const BookDetails: React.FC<BookDetailsProps> = (props) => {
@@ -45,9 +54,9 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
 
   const intl = useIntl();
   const notification = useNotification();
-  const theme = useTheme();
 
   const [editMode, setEditMode] = React.useState<boolean>(false);
+
   const [tab, setTab] = React.useState<{
     current: number;
     direction: number;
@@ -57,7 +66,6 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
   });
 
   const bookQuery = useBookQuery({ id: value.id });
-  console.log(`🔔 bookQuery`, bookQuery.data);
 
   const onSubmit: SubmitHandler<Book> = (data) =>
     console.log(`🔔 submit`, data);
@@ -66,17 +74,39 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
     control,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm<Book>({
     defaultValues: {
-      author: "",
+      authors: "",
+      edition: "",
+      language: "",
+      originalTitle: "",
+      publisher: "",
+      rating: undefined,
+      releaseDate: "",
       title: "",
+      translators: "",
     },
     resolver: yupResolver(schema),
   });
 
+  const detailTitle = React.useMemo(() => {
+    if (value.id) {
+      return bookQuery.data?.title ?? "";
+    } else {
+      return intl.formatMessage({ id: "books.newBook" });
+    }
+  }, [bookQuery.data, value.id]);
+
+  React.useEffect(() => {
+    if (bookQuery.data) {
+      reset(bookQuery.data);
+    }
+  }, [bookQuery.data, reset]);
+
   return (
     <>
-      <DetailHeader onClose={onClose} title={"Book title"} />
+      <DetailHeader onClose={onClose} title={detailTitle} />
       <StyledImage alt={`cover-art`} height={0} src={`broken-image.png`} />
       <DetailTabs
         onChange={(newValue: number) => {
@@ -87,17 +117,17 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
         }}
         tabs={[
           {
-            label: intl.formatMessage({ id: "books.bibliographyNotes" }),
+            label: intl.formatMessage({ id: "books.bibliographicalNotes" }),
             icon: <ViewListRoundedIcon />,
           },
           {
             label: intl.formatMessage({ id: "books.personalNotes" }),
             icon: <PersonRoundedIcon />,
           },
-          {
-            label: intl.formatMessage({ id: "books.reception" }),
-            icon: <ForumRoundedIcon />,
-          },
+          // {
+          //   label: intl.formatMessage({ id: "books.reception" }),
+          //   icon: <ForumRoundedIcon />,
+          // },
         ]}
         value={tab.current}
       />
@@ -106,51 +136,27 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
         <AnimatePresence custom={tab.direction} initial={false} mode="wait">
           {tab.current === 0 ? (
             <DetailAnimatedPanel key={`tab-0`} custom={tab.direction}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  flexGrow: 1,
-                  padding: theme.spacing(4, 6),
-                }}
-              >
-                <BookProfile control={control} errors={errors} />
-                <Gap />
-              </Box>
+              <BookProfile
+                control={control}
+                errors={errors}
+                readOnly={!editMode}
+              />
             </DetailAnimatedPanel>
           ) : null}
           {tab.current === 1 ? (
             <DetailAnimatedPanel key={`tab-1`} custom={tab.direction}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  flexGrow: 1,
-                  padding: theme.spacing(4, 6),
-                }}
-              >
-                <Typography>
-                  {intl.formatMessage({ id: "books.personalNotes" })}
-                </Typography>
-                <Gap />
-              </Box>
+              <PersonalNotes
+                control={control}
+                errors={errors}
+                readOnly={!editMode}
+              />
             </DetailAnimatedPanel>
           ) : null}
           {tab.current === 2 ? (
             <DetailAnimatedPanel key={`tab-2`} custom={tab.direction}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  flexGrow: 1,
-                  padding: theme.spacing(4, 6),
-                }}
-              >
-                <Typography>
-                  {intl.formatMessage({ id: "books.reception" })}
-                </Typography>
-                <Gap />
-              </Box>
+              <Typography>
+                {intl.formatMessage({ id: "books.reception" })}
+              </Typography>
             </DetailAnimatedPanel>
           ) : null}
         </AnimatePresence>
@@ -165,11 +171,6 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
       </Form>
     </>
   );
-};
-
-export type Book = {
-  author: string;
-  title: string;
 };
 
 export type BookDetailsProps = {

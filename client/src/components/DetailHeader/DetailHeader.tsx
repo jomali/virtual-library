@@ -16,7 +16,15 @@ const DetailHeader: React.FC<IDetailHeader> = (props) => {
   return (
     <AppBar elevation={0} position="sticky">
       <Toolbar>
-        <Typography>{title}</Typography>
+        <Typography
+          sx={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {title}
+        </Typography>
         <Gap />
         {onClose ? (
           <ConditionalTooltip title={intl.formatMessage({ id: "close" })}>

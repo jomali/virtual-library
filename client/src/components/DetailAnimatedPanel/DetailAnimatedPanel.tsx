@@ -1,8 +1,18 @@
 import React from "react";
 import { motion } from "motion/react";
-import { useTheme } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
+import Gap from "../Gap";
+
+const MotionContainer = styled(motion.div)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  flexGrow: 1,
+  padding: theme.spacing(4, 6),
+}));
 
 const DetailAnimatedPanel: React.FC<IDetailAnimatedPanel> = (props) => {
+  const { children, ...otherProps } = props;
+
   const theme = useTheme();
 
   const duration = React.useMemo(
@@ -30,19 +40,18 @@ const DetailAnimatedPanel: React.FC<IDetailAnimatedPanel> = (props) => {
   );
 
   return (
-    <motion.div
+    <MotionContainer
       animate={"active"}
       exit={"exit"}
       initial={"enter"}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        flexGrow: 1,
-      }}
+      style={{}}
       transition={{ type: "tween", duration: duration.leaving }}
       variants={variants}
-      {...props}
-    />
+      {...otherProps}
+    >
+      {children}
+      <Gap />
+    </MotionContainer>
   );
 };
 

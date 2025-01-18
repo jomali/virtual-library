@@ -1,9 +1,10 @@
 export default {
-  "books.author": "Autor(es)",
-  "books.bibliographyNotes": "Notas bibliográficas",
+  "books.authors": "Autor(es)",
+  "books.bibliographicalNotes": "Notas bibliográficas",
   "books.books": "Libros",
   "books.edition": "Edición",
   "books.language": "Idioma",
+  "books.newBook": "Nuevo libro",
   "books.originalTitle": "Título original",
   "books.personalNotes": "Notas personales",
   "books.publisher": "Editorial",
@@ -11,5 +12,5 @@ export default {
   "books.reception": "Crítica",
   "books.releaseDate": "Fecha de publicación",
   "books.title": "Título",
-  "books.translator": "Traductor(es)",
+  "books.translators": "Traductor(es)",
 };
