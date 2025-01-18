@@ -6,17 +6,19 @@ import TableProvider, {
 } from "../../../components/TableProvider";
 import { MRT_ColumnDef, MRT_RowData } from "material-react-table";
 import Collection from "../../../components/Collection";
-import useBooksQuery from "./useBooksQuery";
+import useBooksQuery from "../queries/useBooksQuery";
 import BookDetails from "./BookDetails";
 import { useNavigate, useParams } from "react-router";
 import Rating from "@mui/material/Rating";
 import { useIntl } from "react-intl";
+import { useNotification } from "../../../components/NotificationProvider";
 
 const BookCollection = () => {
   const books = useBooksQuery();
   const intl = useIntl();
   const navigate = useNavigate();
-  const params = useParams();
+  const notification = useNotification();
+  const urlParams = useParams();
   const table = useTable();
 
   const columns = React.useMemo<MRT_ColumnDef<MRT_RowData>[]>(
@@ -63,8 +65,10 @@ const BookCollection = () => {
       onClose={() => {
         navigate("/books");
       }}
-      open={Boolean(params.id)}
-      sideContent={(params) => <BookDetails {...params} />}
+      open={Boolean(urlParams.id)}
+      sideContent={(params) => (
+        <BookDetails value={{ id: urlParams.id }} {...params} />
+      )}
     >
       <TableProvider
         columns={columns}
@@ -76,7 +80,7 @@ const BookCollection = () => {
       >
         <TableToolbar
           addTool={{
-            onClick: () => console.log(`🔔 add`),
+            onClick: () => notification.info("Añadir"),
             visible: true,
           }}
           title={intl.formatMessage({ id: "books.books" })}

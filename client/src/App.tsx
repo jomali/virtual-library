@@ -11,6 +11,7 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import Div100vh from "react-div-100vh";
+import NotificationProvider from "./components/NotificationProvider";
 
 function App() {
   return (
@@ -18,17 +19,19 @@ function App() {
       <ThemeProvider>
         <CssBaseline />
         <Div100vh>
-          <ApiProvider host="http://192.168.1.25:3000">
-            <QueryClientProvider>
-              <BrowserRouter>
-                <Routes>
-                  {routes.map(({ component: Component, path }) => (
-                    <Route key={path} element={<Component />} path={path} />
-                  ))}
-                </Routes>
-              </BrowserRouter>
-            </QueryClientProvider>
-          </ApiProvider>
+          <NotificationProvider>
+            <ApiProvider host="http://192.168.1.25:3000">
+              <QueryClientProvider>
+                <BrowserRouter>
+                  <Routes>
+                    {routes.map(({ component: Component, path }) => (
+                      <Route key={path} element={<Component />} path={path} />
+                    ))}
+                  </Routes>
+                </BrowserRouter>
+              </QueryClientProvider>
+            </ApiProvider>
+          </NotificationProvider>
         </Div100vh>
       </ThemeProvider>
     </IntlProvider>

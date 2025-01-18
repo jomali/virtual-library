@@ -4,6 +4,8 @@ import Toolbar from "@mui/material/Toolbar";
 import { styled } from "@mui/material/styles";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import IconTool from "./IconTool";
+import { useIntl } from "react-intl";
+import Gap from "../../Gap";
 
 const CustomToolbar = styled(Toolbar)(({ theme }) => ({
   justifyContent: "center",
@@ -15,13 +17,10 @@ const CustomToolbar = styled(Toolbar)(({ theme }) => ({
   }),
 }));
 
-const Gap = styled("span")(() => ({
-  display: "flex",
-  flexGrow: 1,
-}));
-
 const TableToolbar: React.FC<ITableToolbar> = (props) => {
   const { addTool, title } = props;
+
+  const intl = useIntl();
 
   return (
     <CustomToolbar role="toolbar">
@@ -40,7 +39,7 @@ const TableToolbar: React.FC<ITableToolbar> = (props) => {
         <IconTool
           edge="end"
           icon={<AddRoundedIcon />}
-          label="Add"
+          label={intl.formatMessage({ id: "add" })}
           onClick={addTool.onClick}
         />
       ) : null}

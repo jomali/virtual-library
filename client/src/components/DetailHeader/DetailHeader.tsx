@@ -5,15 +5,13 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { ConditionalTooltip } from "../MuiExtensions";
-import { styled } from "@mui/material/styles";
-
-const Gap = styled("span")(() => ({
-  display: "flex",
-  flexGrow: 1,
-}));
+import { useIntl } from "react-intl";
+import Gap from "../Gap";
 
 const DetailHeader: React.FC<IDetailHeader> = (props) => {
   const { onClose, title } = props;
+
+  const intl = useIntl();
 
   return (
     <AppBar elevation={0} position="sticky">
@@ -21,7 +19,7 @@ const DetailHeader: React.FC<IDetailHeader> = (props) => {
         <Typography>{title}</Typography>
         <Gap />
         {onClose ? (
-          <ConditionalTooltip title="Close">
+          <ConditionalTooltip title={intl.formatMessage({ id: "close" })}>
             <IconButton edge="end" onClick={onClose}>
               <CloseRoundedIcon />
             </IconButton>
