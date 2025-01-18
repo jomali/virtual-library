@@ -1,9 +1,9 @@
 import React from "react";
 import { Control, Controller, FieldErrors } from "react-hook-form";
-import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid2";
 import { useIntl } from "react-intl";
 import { Book } from "../../../types";
+import { TextField } from "../../../../../components/MuiExtensions";
 
 const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
   const { control, readOnly } = props;
@@ -21,7 +21,7 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
               autoFocus
               fullWidth
               label={intl.formatMessage({ id: "books.title" })}
-              // readOnly={readOnly}
+              readOnly={readOnly}
               required
               variant="outlined"
               {...field}

@@ -5,11 +5,13 @@ import { useIntl } from "react-intl";
 import { Book } from "../../../types";
 import Rating from "@mui/material/Rating";
 import { Typography } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const PersonalNotes: React.FC<PersonalNotesProps> = (props) => {
   const { control, readOnly } = props;
 
   const intl = useIntl();
+  const wideScreen = useMediaQuery((theme) => theme.breakpoints.up("sm"));
 
   return (
     <Grid container spacing={2}>
@@ -22,7 +24,12 @@ const PersonalNotes: React.FC<PersonalNotesProps> = (props) => {
               <Typography component={"legend"} variant="caption">
                 {intl.formatMessage({ id: "books.rating" })}
               </Typography>
-              <Rating precision={0.5} readOnly={readOnly} {...field} />
+              <Rating
+                precision={0.5}
+                readOnly={readOnly}
+                size={wideScreen ? "medium" : "large"}
+                {...field}
+              />
             </>
           )}
         />
