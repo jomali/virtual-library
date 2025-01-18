@@ -2,7 +2,8 @@ import cors from "cors";
 import express from "express";
 import "dotenv/config";
 
-import { router } from "@/routers/router";
+import { router as bookAuthorsRouter } from "@/routers/bookAuthorsRouter";
+import { router as bookPublishersRouter } from "@/routers/bookPublishersRouter";
 import { router as booksRouter } from "@/routers/booksRouter";
 
 const port = process.env.PORT || 3000;
@@ -15,7 +16,8 @@ app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => res.send("Server is running!"));
 
-app.use("/api", router);
+app.use("/api/books/authors", bookAuthorsRouter);
+app.use("/api/books/publishers", bookPublishersRouter);
 app.use("/api/books", booksRouter);
 
 app.listen(port, () => {

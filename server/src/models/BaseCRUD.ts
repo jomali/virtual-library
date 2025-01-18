@@ -36,11 +36,9 @@ export class BaseCRUD {
       `
         SELECT ${table}.*
         FROM ${table}
-        WHERE id = $id
+        WHERE id = ?
       `,
-      {
-        $id: id,
-      }
+      [id]
     );
 
     return result;
@@ -56,6 +54,7 @@ export class BaseCRUD {
         FROM ${table}
       `
     );
+
     return result;
   }
 }

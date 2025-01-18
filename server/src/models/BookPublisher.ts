@@ -1,17 +1,17 @@
 import { BaseCRUD } from "./BaseCRUD";
 import { Database } from "./Database";
+import { CamelizeKeys } from "@/utils/types";
 
 export type BookPublisherDB = {
   id: string;
   name: string;
 };
 
-export class BookPublisher {
-  private static TABLE = "book_publishers";
+export type BookPublisherDTO = CamelizeKeys<BookPublisherDB>;
 
-  /**
-   * Creates a new `BookPublisher`.
-   */
+export class BookPublisher {
+  public static TABLE = "book_publishers";
+
   static create = async (
     data: Omit<BookPublisherDB, "id">
   ): Promise<BookPublisherDB> => {
@@ -32,4 +32,5 @@ export class BookPublisher {
   };
 
   static read = (id: string) => BaseCRUD.read<BookPublisherDB>(this.TABLE, id);
+  static readAll = () => BaseCRUD.readAll<BookPublisherDB>(this.TABLE);
 }

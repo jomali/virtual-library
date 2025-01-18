@@ -19,11 +19,11 @@ const createBook = async (req: Request, res: Response) => {
 
 const readBook = async (req: Request, res: Response) => {
   try {
-    // const { id = "" } = req.params;
-    // const data = await Books.read(id);
+    const { id = "" } = req.params;
+    const data = await Books.read(id);
 
     res.status(200).json({
-      data: {},
+      data,
       message: "Success",
     });
   } catch (error) {
@@ -71,4 +71,4 @@ const deleteBook = async (req: Request, res: Response) => {
   }
 };
 
-export { createBook, readBook, readBooks, updateBook, deleteBook };
+export default { createBook, readBook, readBooks, updateBook, deleteBook };

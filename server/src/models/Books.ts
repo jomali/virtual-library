@@ -1,8 +1,8 @@
 import { Database } from "./Database";
 import { BaseCRUD } from "./BaseCRUD";
-import { BookPublisher, BookPublisherDB } from "./BookPublisher";
-import { IBookAuthor } from "./BookAuthor";
+import { BookPublisher, BookPublisherDTO } from "./BookPublisher";
 import { CamelizeKeys } from "@/utils/types";
+import { BookAuthor, BookAuthorDB, BookAuthorDTO } from "./BookAuthor";
 
 export type BookDB = {
   edition?: number;
@@ -21,18 +21,19 @@ export type BookDTO = Omit<
   CamelizeKeys<BookDB>,
   "id" | "publisherId" | "seriesId"
 > & {
-  authors: IBookAuthor[];
+  authors: BookAuthorDTO[];
   id?: string;
-  publisher: BookPublisherDB;
+  publisher: BookPublisherDTO;
   series?: object; // TODO
 };
 
 export class Books {
-  private static TABLE = "books";
+  public static table = "books";
+  public static authorRelationsTable = "books_authors_relations";
 
   static checkPublisher = async (
-    publisher: BookPublisherDB | string
-  ): Promise<BookPublisherDB> => {
+    publisher: BookPublisherDTO | string
+  ): Promise<BookPublisherDTO> => {
     if (typeof publisher === "string") {
       return await BookPublisher.create({ name: publisher });
     } else {
@@ -42,9 +43,29 @@ export class Books {
 
   static checkSeries = () => null;
 
-  /**
-   * Creates a new `Book`.
-   */
+  static createBookAuthorsAndRelations = (
+    bookId: string,
+    authors: (BookAuthorDTO | string)[]
+  ): Promise<BookAuthorDTO[]> => {
+    const bookAuthorRelationSql = `
+      INSERT INTO books_authors_relations
+      (book_id, book_author_id)
+      VALUES (?, ?)
+    `;
+    return Promise.all(
+      authors.map(async (element) => {
+        if (typeof element === "string") {
+          const newAuthor = await BookAuthor.create({ name: element });
+          await Database.run(bookAuthorRelationSql, [bookId, newAuthor.id]);
+          return newAuthor;
+        } else {
+          await Database.run(bookAuthorRelationSql, [bookId, element.id]);
+          return element;
+        }
+      })
+    );
+  };
+
   static create = async (data: BookDTO): Promise<BookDTO> => {
     try {
       const id = crypto.randomUUID();
@@ -52,7 +73,7 @@ export class Books {
 
       await Database.run(
         `
-        INSERT INTO ${this.TABLE}
+        INSERT INTO ${this.table}
         (
           id,
           title,
@@ -81,10 +102,16 @@ export class Books {
         ]
       );
 
+      // Author and book-author relation entities:
+      const authors = await this.createBookAuthorsAndRelations(
+        id,
+        data.authors
+      );
+
       return {
         id,
+        authors,
         publisher,
-        authors: [],
         edition: data.edition,
         language: data.language,
         originalTitle: data.originalTitle,
@@ -100,49 +127,81 @@ export class Books {
     }
   };
 
-  // static read = async (id: string): Promise<IBookDTO> => {
-  //   try {
-  //     const book = await Database.get<IBook>(
-  //       `
-  //         SELECT ${this.TABLE}.*
-  //         FROM ${this.TABLE}
-  //         WHERE id = $id
-  //       `,
-  //       {
-  //         $id: id,
-  //       }
-  //     );
+  static read = async (id: string): Promise<BookDTO> => {
+    try {
+      const book = await Database.get<BookDB>(
+        `
+          SELECT ${this.table}.*
+          FROM ${this.table}
+          WHERE id = ?
+        `,
+        [id]
+      );
 
-  //     const language = await BookLanguages.read(book.language_id);
+      // Authors:
+      const authors = await Database.all<BookAuthorDB>(
+        `
+          SELECT book_authors.*
+          FROM books_authors_relations
+          INNER JOIN books
+            ON books.id = books_authors_relations.book_id
+          INNER JOIN book_authors
+            ON book_authors.id = books_authors_relations.book_author_id
+          WHERE books.id = ?
+        `,
+        [book.id]
+      );
 
-  //     return {
-  //       language,
-  //       id: book.id,
-  //       rating: book.rating,
-  //       title: book.title,
-  //     };
-  //   } catch (error) {
-  //     console.error(
-  //       `[ERROR] Books.read: "${error instanceof Error ? error.message : String(error)}"`
-  //     );
-  //     throw error;
-  //   }
-  // };
+      // Publisher:
+      const publisher = await BookPublisher.read(book.publisher_id);
+
+      return {
+        authors,
+        publisher,
+        id: book.id,
+        title: book.title,
+        language: book.language,
+        releaseDate: book.release_date,
+        edition: book.edition,
+        rating: book.rating,
+      };
+    } catch (error) {
+      console.error(
+        `[ERROR] Books.read: "${error instanceof Error ? error.message : String(error)}"`
+      );
+      throw error;
+    }
+  };
 
   static readAll = async (): Promise<BookDTO[]> => {
     try {
       const books = await Database.all<BookDB>(
         `
-          SELECT ${this.TABLE}.*
-          FROM ${this.TABLE}
+          SELECT ${this.table}.*
+          FROM ${this.table}
         `
       );
 
       const result = books.map(async (element) => {
+        // Authors:
+        const authors = await Database.all<BookAuthorDB>(
+          `
+            SELECT book_authors.*
+            FROM books_authors_relations
+            INNER JOIN books
+              ON books.id = books_authors_relations.book_id
+            INNER JOIN book_authors
+              ON book_authors.id = books_authors_relations.book_author_id
+            WHERE books.id = ?
+          `,
+          [element.id]
+        );
+
+        // Publisher:
         const publisher = await BookPublisher.read(element.publisher_id);
 
         return {
-          authors: [],
+          authors,
           publisher,
           id: element.id,
           title: element.title,
@@ -162,7 +221,7 @@ export class Books {
     }
   };
 
-  static delete = (id: string) => BaseCRUD.delete(this.TABLE, id);
+  static delete = (id: string) => BaseCRUD.delete(this.table, id);
   static deleteMultiple = (ids: string[]) =>
-    BaseCRUD.deleteMultiple(this.TABLE, ids);
+    BaseCRUD.deleteMultiple(this.table, ids);
 }

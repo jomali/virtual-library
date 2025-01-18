@@ -30,7 +30,7 @@ export class Database {
    */
   static all<T>(
     sql: string,
-    params: Record<string, string | number | boolean | undefined> = {}
+    params: (string | number | boolean | undefined)[] = []
   ): Promise<T[]> {
     return new Promise((resolve, rejects) => {
       this.db.all(sql, params, function (error, rows: T[]) {
@@ -58,7 +58,7 @@ export class Database {
    */
   static get<T>(
     sql: string,
-    params: Record<string, string | number | boolean | undefined> = {}
+    params: (string | number | boolean | undefined)[] = []
   ): Promise<T> {
     return new Promise((resolve, rejects) => {
       this.db.get(sql, params, function (error, row: T) {
@@ -78,7 +78,10 @@ export class Database {
    * function because arrow functions don't have their own `this` or
    * `arguments` bindings.
    */
-  static run = (sql: string, params: unknown[] = []) => {
+  static run = (
+    sql: string,
+    params: (string | number | boolean | undefined)[] = []
+  ) => {
     return new Promise((resolve, rejects) => {
       this.db.run(sql, params, function (error) {
         if (error) {
