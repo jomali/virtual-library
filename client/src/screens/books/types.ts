@@ -1,9 +1,9 @@
 export type Book = {
-  authors: string;
+  authors?: string;
   edition?: string;
-  language: "en" | "es" | string;
+  language?: "en" | "es" | string;
   originalTitle?: string;
-  publisher: string;
+  publisher?: string;
   rating?: number;
   releaseDate: string;
   title: string;

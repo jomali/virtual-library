@@ -31,21 +31,21 @@ export class Books {
   public static table = "books";
   public static authorRelationsTable = "books_authors_relations";
 
-  static checkPublisher = async (
-    publisher: BookPublisherDTO | string
+  private static checkPublisher = async (
+    publisher: BookPublisherDTO
   ): Promise<BookPublisherDTO> => {
-    if (typeof publisher === "string") {
-      return await BookPublisher.create({ name: publisher });
-    } else {
+    if (publisher.id) {
       return publisher;
+    } else {
+      return await BookPublisher.create(publisher);
     }
   };
 
-  static checkSeries = () => null;
+  private static checkSeries = () => null;
 
-  static createBookAuthorsAndRelations = (
+  private static createBookAuthorsAndRelations = (
     bookId: string,
-    authors: (BookAuthorDTO | string)[]
+    authors: BookAuthorDTO[]
   ): Promise<BookAuthorDTO[]> => {
     const bookAuthorRelationSql = `
       INSERT INTO books_authors_relations
@@ -54,19 +54,29 @@ export class Books {
     `;
     return Promise.all(
       authors.map(async (element) => {
-        if (typeof element === "string") {
-          const newAuthor = await BookAuthor.create({ name: element });
-          await Database.run(bookAuthorRelationSql, [bookId, newAuthor.id]);
-          return newAuthor;
-        } else {
+        if (element.id) {
           await Database.run(bookAuthorRelationSql, [bookId, element.id]);
           return element;
+        } else {
+          const newAuthor = await BookAuthor.create(element);
+          await Database.run(bookAuthorRelationSql, [bookId, newAuthor.id]);
+          return newAuthor;
         }
       })
     );
   };
 
-  static create = async (data: BookDTO): Promise<BookDTO> => {
+  private static removeDetachedAuthors = async (bookId: string) => {
+    console.log(`🔔 removeDetachedAuthors`, bookId);
+    // TODO
+  };
+
+  private static removeDetachedPublishers = async (bookId: string) => {
+    console.log(`🔔 removeDetachedPublishers`, bookId);
+    // TODO
+  };
+
+  public static create = async (data: BookDTO): Promise<BookDTO> => {
     try {
       const id = crypto.randomUUID();
       const publisher = await this.checkPublisher(data.publisher);
@@ -127,7 +137,7 @@ export class Books {
     }
   };
 
-  static read = async (id: string): Promise<BookDTO> => {
+  public static read = async (id: string): Promise<BookDTO> => {
     try {
       const book = await Database.get<BookDB>(
         `
@@ -173,7 +183,7 @@ export class Books {
     }
   };
 
-  static readAll = async (): Promise<BookDTO[]> => {
+  public static readAll = async (): Promise<BookDTO[]> => {
     try {
       const books = await Database.all<BookDB>(
         `
@@ -221,7 +231,22 @@ export class Books {
     }
   };
 
-  static delete = (id: string) => BaseCRUD.delete(this.table, id);
-  static deleteMultiple = (ids: string[]) =>
+  public static delete = async (id: string) => {
+    try {
+      await this.removeDetachedAuthors(id);
+      await this.removeDetachedPublishers(id);
+
+      const result = await BaseCRUD.delete(this.table, id);
+      console.log(`[SUCCESS] Books.delete: Deleted "${id}`);
+      return result;
+    } catch (error) {
+      console.error(
+        `[ERROR] Books.delete: "${error instanceof Error ? error.message : String(error)}"`
+      );
+      throw new Error("Unavailable service.");
+    }
+  };
+
+  public static deleteMultiple = (ids: string[]) =>
     BaseCRUD.deleteMultiple(this.table, ids);
 }

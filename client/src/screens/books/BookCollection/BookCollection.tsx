@@ -11,13 +11,11 @@ import BookDetails from "./BookDetails";
 import { useNavigate, useParams } from "react-router";
 import Rating from "@mui/material/Rating";
 import { useIntl } from "react-intl";
-import { useNotification } from "../../../components/NotificationProvider";
 
 const BookCollection = () => {
   const books = useBooksQuery();
   const intl = useIntl();
   const navigate = useNavigate();
-  const notification = useNotification();
   const urlParams = useParams();
   const table = useTable();
 
@@ -67,7 +65,10 @@ const BookCollection = () => {
       }}
       open={Boolean(urlParams.id)}
       sideContent={(params) => (
-        <BookDetails value={{ id: urlParams.id }} {...params} />
+        <BookDetails
+          value={{ id: urlParams.id === "new" ? undefined : urlParams.id }}
+          {...params}
+        />
       )}
     >
       <TableProvider
@@ -80,7 +81,10 @@ const BookCollection = () => {
       >
         <TableToolbar
           addTool={{
-            onClick: () => notification.info("Añadir"),
+            onClick: () => {
+              table.setActiveRow(undefined);
+              navigate("/books/new");
+            },
             visible: true,
           }}
           title={intl.formatMessage({ id: "books.books" })}

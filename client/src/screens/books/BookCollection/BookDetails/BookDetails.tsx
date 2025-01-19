@@ -18,6 +18,9 @@ import useBookQuery from "../../queries/useBookQuery";
 import useNotification from "../../../../components/NotificationProvider/useNotification";
 import { Book } from "../../types";
 import PersonalNotes from "./PersonalNotes";
+import useCreateBookMutation from "../../queries/useCreateBookMutation";
+import useEditBookMutation from "../../queries/useEditBookMutation";
+import useDeleteBookMutation from "../../queries/useDeleteBookMutation";
 
 const Form = styled("form")(() => ({
   display: "flex",
@@ -37,9 +40,9 @@ const StyledImage = styled("img", {
 
 const schema = yup.object({
   // Required fields:
-  authors: yup.string().required(),
-  language: yup.string().required(),
-  publisher: yup.string().required(),
+  authors: yup.string(), //.required(),
+  language: yup.string(), //.required(),
+  publisher: yup.string(), //.required(),
   releaseDate: yup.string().required(),
   title: yup.string().required(),
   // Optional fields:
@@ -55,7 +58,7 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
   const intl = useIntl();
   const notification = useNotification();
 
-  const [editMode, setEditMode] = React.useState<boolean>(false);
+  const [editMode, setEditMode] = React.useState<boolean>(!value.id);
 
   const [tab, setTab] = React.useState<{
     current: number;
@@ -67,8 +70,29 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
 
   const bookQuery = useBookQuery({ id: value.id });
 
-  const onSubmit: SubmitHandler<Book> = (data) =>
-    console.log(`🔔 submit`, data);
+  const createBookMutation = useCreateBookMutation({
+    onSuccess: () => {
+      notification.success("Nuevo libro creado con éxito.");
+    },
+  });
+
+  const updateBookMutation = useEditBookMutation({
+    bookId: value.id,
+    onSuccess: () => {
+      notification.success("Libro actualizado con éxito.");
+    },
+  });
+
+  const deleteBookMutation = useDeleteBookMutation({
+    bookId: value.id,
+    onSuccess: () => {
+      notification.success("Libro eliminado con éxito.");
+    },
+  });
+
+  const onSubmit: SubmitHandler<Book> = (data) => {
+    createBookMutation.mutate(data);
+  };
 
   const {
     control,
@@ -167,6 +191,7 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
             notification.error("Error al eliminar");
           }}
           onToggleEditMode={() => setEditMode(!editMode)}
+          toggable={Boolean(value.id)}
         />
       </Form>
     </>

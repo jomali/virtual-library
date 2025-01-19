@@ -7,7 +7,9 @@ export type BookAuthorDB = {
   name: string;
 };
 
-export type BookAuthorDTO = CamelizeKeys<BookAuthorDB>;
+export type BookAuthorDTO = Omit<CamelizeKeys<BookAuthorDB>, "id"> & {
+  id?: string;
+};
 
 export class BookAuthor {
   public static TABLE = "book_authors";

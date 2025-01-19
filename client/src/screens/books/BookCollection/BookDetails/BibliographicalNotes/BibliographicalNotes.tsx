@@ -4,6 +4,7 @@ import Grid from "@mui/material/Grid2";
 import { useIntl } from "react-intl";
 import { Book } from "../../../types";
 import { TextField } from "../../../../../components/MuiExtensions";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
   const { control, readOnly } = props;
@@ -19,11 +20,9 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
           render={({ field }) => (
             <TextField
               autoFocus
-              fullWidth
               label={intl.formatMessage({ id: "books.title" })}
               readOnly={readOnly}
               required
-              variant="outlined"
               {...field}
             />
           )}
@@ -62,37 +61,48 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
         />
       </Grid> */}
 
-      {/* <Grid size={12}>
+      <Grid size={12}>
         <Controller
           control={control}
           name="language"
           render={({ field }) => (
-            <TextField
-              fullWidth
-              label={intl.formatMessage({ id: "books.language" })}
-              required
-              variant="outlined"
+            <Autocomplete
               {...field}
+              getOptionLabel={(option) => {
+                return option === "en" ? "Inglés" : "Español";
+              }}
+              options={["en", "es"]}
+              renderInput={(params) => {
+                console.log(`🔔 params`, params);
+
+                return (
+                  <TextField
+                    {...params}
+                    label={intl.formatMessage({ id: "books.language" })}
+                    readOnly={readOnly}
+                    required
+                  />
+                );
+              }}
             />
           )}
         />
-      </Grid> */}
+      </Grid>
 
-      {/* <Grid size={12}>
+      <Grid size={12}>
         <Controller
           control={control}
           name="releaseDate"
           render={({ field }) => (
             <TextField
-              fullWidth
               label={intl.formatMessage({ id: "books.releaseDate" })}
+              readOnly={readOnly}
               required
-              variant="outlined"
               {...field}
             />
           )}
         />
-      </Grid> */}
+      </Grid>
 
       {/* <Grid size={12}>
         <Controller
