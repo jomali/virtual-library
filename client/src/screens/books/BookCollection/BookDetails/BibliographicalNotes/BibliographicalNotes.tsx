@@ -3,11 +3,19 @@ import { Control, Controller, FieldErrors } from "react-hook-form";
 import Grid from "@mui/material/Grid2";
 import { useIntl } from "react-intl";
 import { Book } from "../../../types";
-import { TextField } from "../../../../../components/MuiExtensions";
-import Autocomplete from "@mui/material/Autocomplete";
+import { createFilterOptions } from "@mui/material/Autocomplete";
+import {
+  Autocomplete,
+  TextField,
+} from "../../../../../components/MuiExtensions";
+import useBookPublishersQuery from "../../../queries/useBookPublishersQuery";
+
+const filterPublishers = createFilterOptions<{ id?: string; name: string }>();
 
 const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
   const { control, readOnly } = props;
+
+  const bookPublishersQuery = useBookPublishersQuery();
 
   const intl = useIntl();
 
@@ -45,21 +53,48 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
         />
       </Grid> */}
 
-      {/* <Grid size={12}>
+      <Grid size={12}>
         <Controller
           control={control}
           name="publisher"
           render={({ field }) => (
-            <TextField
-              fullWidth
-              label={intl.formatMessage({ id: "books.publisher" })}
-              required
-              variant="outlined"
+            <Autocomplete
               {...field}
+              filterOptions={(options, params) => {
+                const filtered = filterPublishers(options, params);
+                const { inputValue } = params;
+
+                // Suggest the creation of a new value
+                const isExisting = options.some(
+                  (option) => inputValue === option.name
+                );
+                if (inputValue !== "" && !isExisting) {
+                  filtered.push(inputValue);
+                }
+
+                return filtered;
+              }}
+              freeSolo
+              getOptionLabel={(option) => {
+                // Value selected with `enter`, right from the input
+                if (typeof option === "string") {
+                  return `Add "${option}"`; // TODO
+                }
+                return option.name ?? "";
+              }}
+              label={intl.formatMessage({ id: "books.publisher" })}
+              onChange={(_event: React.SyntheticEvent, value) => {
+                field.onChange(
+                  typeof value === "string" ? { id: null, name: value } : value
+                );
+              }}
+              options={bookPublishersQuery.data ?? []}
+              readOnly={readOnly}
+              required
             />
           )}
         />
-      </Grid> */}
+      </Grid>
 
       <Grid size={12}>
         <Controller
@@ -71,19 +106,13 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
               getOptionLabel={(option) => {
                 return option === "en" ? "Inglés" : "Español";
               }}
-              options={["en", "es"]}
-              renderInput={(params) => {
-                console.log(`🔔 params`, params);
-
-                return (
-                  <TextField
-                    {...params}
-                    label={intl.formatMessage({ id: "books.language" })}
-                    readOnly={readOnly}
-                    required
-                  />
-                );
+              label={intl.formatMessage({ id: "books.language" })}
+              onChange={(_event: React.SyntheticEvent, value) => {
+                field.onChange(value);
               }}
+              options={["en", "es"]}
+              readOnly={readOnly}
+              required
             />
           )}
         />

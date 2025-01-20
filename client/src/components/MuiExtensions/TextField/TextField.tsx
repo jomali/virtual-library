@@ -59,7 +59,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
       fullWidth = true,
       readOnly,
       required,
-      // slotProps,
+      slotProps,
       ...otherProps
     } = props;
 
@@ -69,13 +69,13 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
         fullWidth={fullWidth}
         readOnly={readOnly}
         required={required && !readOnly}
-        // slotProps={{
-        //   ...slotProps,
-        //   input: {
-        //     readOnly: readOnly,
-        //     ...(slotProps?.input ?? {}),
-        //   },
-        // }}
+        slotProps={{
+          ...slotProps,
+          input: {
+            readOnly: readOnly,
+            ...(slotProps?.input ?? {}),
+          },
+        }}
         {...otherProps}
       />
     );

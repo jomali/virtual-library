@@ -12,7 +12,15 @@ export default [
   { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
   { languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended,
+  // TypeScript
   ...tseslint.configs.recommended,
+  {
+    rules: {
+      // Disallow the `any` type.
+      // https://typescript-eslint.io/rules/no-explicit-any/
+      "@typescript-eslint/no-explicit-any": "warn",
+    },
+  },
   // Prettier
   {
     plugins: {

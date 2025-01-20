@@ -5,6 +5,10 @@ export const bookKeyFactory = {
     ...bookKeyFactory.all(), //
     bookId,
   ],
+  getBookPublishers: () => [
+    ...bookKeyFactory.all(), //
+    "publishers",
+  ],
   createBook: () => [
     ...bookKeyFactory.all(), //
     "create",

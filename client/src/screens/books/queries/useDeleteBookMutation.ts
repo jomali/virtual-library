@@ -1,27 +1,35 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMutation, UseMutationOptions } from "@tanstack/react-query";
+import {
+  useMutation,
+  UseMutationOptions,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useApi } from "../../../components/ApiProvider";
 import { bookKeyFactory } from "./bookKeyFactory";
 
 const useDeleteBookMutation = (
-  options: UseMutationOptions & {
-    bookId?: string;
-  } = {}
+  options: MutationOptions & { bookId?: string } = {}
 ) => {
-  const { bookId = "", ...otherOptions } = options;
-  const api = useApi();
+  const { bookId = "", onSuccess, ...otherOptions } = options;
 
-  return useMutation({
+  const api = useApi();
+  const queryClient = useQueryClient();
+
+  return useMutation<any, any, any>({
     mutationKey: bookKeyFactory.deleteBook({ bookId }),
     meta: {},
-    mutationFn: (data: any) => {
-      const dto = { ...data }; // TODO
-      console.log(`🔔 dto`, dto);
-
-      return api.POST("/videogames/adfadfasdg", dto);
+    mutationFn: (bookId: any) => {
+      return api.DELETE(["books", bookId].join("/"));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: bookKeyFactory.all() });
+      onSuccess?.();
     },
     ...otherOptions,
   });
+};
+
+type MutationOptions = Omit<UseMutationOptions, "onSuccess"> & {
+  onSuccess?: () => Promise<unknown> | unknown;
 };
 
 export default useDeleteBookMutation;

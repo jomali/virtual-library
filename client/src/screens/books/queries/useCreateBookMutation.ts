@@ -1,11 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMutation, UseMutationOptions } from "@tanstack/react-query";
+import {
+  useMutation,
+  UseMutationOptions,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useApi } from "../../../components/ApiProvider";
 import { bookKeyFactory } from "./bookKeyFactory";
-import { Book } from "../types";
+import { Book, BookDTO } from "../types";
 
-const useCreateBookMutation = (options: UseMutationOptions = {}) => {
+const useCreateBookMutation = (options: MutationOptions = {}) => {
+  const { onSuccess, ...otherOptions } = options;
+
   const api = useApi();
+  const queryClient = useQueryClient();
 
   return useMutation<any, any, any>({
     mutationKey: bookKeyFactory.createBook(),
@@ -19,18 +25,26 @@ const useCreateBookMutation = (options: UseMutationOptions = {}) => {
             name: "McGuire, Richard",
           },
         ],
-        publisher: {
-          id: "ea8a127d-06c7-4a70-b9b4-005a65dae90f",
-          name: "Salamandra Graphic",
-        },
-        language: "es",
+        publisher: data.publisher,
+        language: data.language,
         edition: 1,
         rating: ((data.rating ?? 0) * 10) / 5,
       };
+      console.log(`🔔 data`, data);
+      console.log(`🔔 dto`, dto);
+      throw new Error();
       return api.POST("books", dto);
     },
-    ...options,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: bookKeyFactory.all() });
+      onSuccess?.(data);
+    },
+    ...otherOptions,
   });
+};
+
+type MutationOptions = Omit<UseMutationOptions, "onSuccess"> & {
+  onSuccess?: (response: BookDTO) => Promise<unknown> | unknown;
 };
 
 export default useCreateBookMutation;

@@ -16,9 +16,9 @@ const useBookQuery = (options: { id?: string }) => {
       };
       const result: Book = {
         ...response.data,
-        authors: response.data.authors[0]?.name,
+        authors: response.data.authors[0]?.name, // TODO
         edition: String(response.data.edition),
-        publisher: response.data.publisher.name,
+        publisher: response.data.publisher,
         rating: ((response.data.rating ?? 0) * 5) / 10,
         translators: response.data.translators?.[0]?.name, // TODO
       };

@@ -21,6 +21,8 @@ import PersonalNotes from "./PersonalNotes";
 import useCreateBookMutation from "../../queries/useCreateBookMutation";
 import useEditBookMutation from "../../queries/useEditBookMutation";
 import useDeleteBookMutation from "../../queries/useDeleteBookMutation";
+import { useNavigate } from "react-router";
+import ConfirmDialog from "../../../../components/ConfirmDialog";
 
 const Form = styled("form")(() => ({
   display: "flex",
@@ -41,8 +43,8 @@ const StyledImage = styled("img", {
 const schema = yup.object({
   // Required fields:
   authors: yup.string(), //.required(),
-  language: yup.string(), //.required(),
-  publisher: yup.string(), //.required(),
+  language: yup.string().required(),
+  publisher: yup.mixed(), //.required(),
   releaseDate: yup.string().required(),
   title: yup.string().required(),
   // Optional fields:
@@ -56,8 +58,11 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
   const { onClose, value } = props;
 
   const intl = useIntl();
+  const navigate = useNavigate();
   const notification = useNotification();
 
+  const [deleteConfirmation, setDeleteConfirmation] =
+    React.useState<boolean>(false);
   const [editMode, setEditMode] = React.useState<boolean>(!value.id);
 
   const [tab, setTab] = React.useState<{
@@ -71,8 +76,10 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
   const bookQuery = useBookQuery({ id: value.id });
 
   const createBookMutation = useCreateBookMutation({
-    onSuccess: () => {
+    onSuccess: (response) => {
       notification.success("Nuevo libro creado con éxito.");
+      setEditMode(false);
+      navigate(`/books/${response.id}`);
     },
   });
 
@@ -80,6 +87,7 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
     bookId: value.id,
     onSuccess: () => {
       notification.success("Libro actualizado con éxito.");
+      onClose?.();
     },
   });
 
@@ -87,6 +95,7 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
     bookId: value.id,
     onSuccess: () => {
       notification.success("Libro eliminado con éxito.");
+      onClose?.();
     },
   });
 
@@ -94,19 +103,14 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
     createBookMutation.mutate(data);
   };
 
-  const {
-    control,
-    formState: { errors },
-    handleSubmit,
-    reset,
-  } = useForm<Book>({
+  const { control, formState, handleSubmit, reset } = useForm<Book>({
     defaultValues: {
       authors: "",
       edition: "",
-      language: "",
+      language: "es",
       originalTitle: "",
-      publisher: "",
-      rating: undefined,
+      publisher: null,
+      rating: 0,
       releaseDate: "",
       title: "",
       translators: "",
@@ -162,7 +166,7 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
             <DetailAnimatedPanel key={`tab-0`} custom={tab.direction}>
               <BookProfile
                 control={control}
-                errors={errors}
+                errors={formState.errors}
                 readOnly={!editMode}
               />
             </DetailAnimatedPanel>
@@ -171,7 +175,7 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
             <DetailAnimatedPanel key={`tab-1`} custom={tab.direction}>
               <PersonalNotes
                 control={control}
-                errors={errors}
+                errors={formState.errors}
                 readOnly={!editMode}
               />
             </DetailAnimatedPanel>
@@ -186,14 +190,24 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
         </AnimatePresence>
         <DetailFooter
           editMode={editMode}
-          onDelete={() => {
-            console.log(`🔔 delete`);
-            notification.error("Error al eliminar");
-          }}
+          onDelete={() => setDeleteConfirmation(true)}
           onToggleEditMode={() => setEditMode(!editMode)}
           toggable={Boolean(value.id)}
         />
       </Form>
+
+      <ConfirmDialog
+        messages={{
+          description: "Esta operación no se puede deshacer.",
+          title: "Advertencia",
+        }}
+        onAccept={() => {
+          deleteBookMutation.mutate(value.id);
+          setDeleteConfirmation(false);
+        }}
+        onCancel={() => setDeleteConfirmation(false)}
+        open={deleteConfirmation}
+      />
     </>
   );
 };
