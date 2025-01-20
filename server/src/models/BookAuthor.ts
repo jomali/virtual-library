@@ -35,4 +35,5 @@ export class BookAuthor {
 
   static read = (id: string) => BaseCRUD.read<BookAuthorDB>(this.TABLE, id);
   static readAll = () => BaseCRUD.readAll<BookAuthorDB>(this.TABLE);
+  static delete = (id: string) => BaseCRUD.delete(this.TABLE, id);
 }

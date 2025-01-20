@@ -67,13 +67,48 @@ export class Books {
   };
 
   private static removeDetachedAuthors = async (bookId: string) => {
-    console.log(`🔔 removeDetachedAuthors`, bookId);
-    // TODO
+    const authors = await Database.all<{ id: string }>(
+      `
+        SELECT books_authors_relations.book_author_id AS id
+        FROM books_authors_relations
+        WHERE books_authors_relations.book_author_id IN (
+          SELECT books_authors_relations.book_author_id
+          FROM books_authors_relations
+          WHERE books_authors_relations.book_id = ?
+        );
+      `,
+      [bookId]
+    );
+
+    await Database.run(
+      `
+        DELETE FROM books_authors_relations
+        WHERE books_authors_relations.book_id = ?;
+      `,
+      [bookId]
+    );
+
+    if (authors.length === 1 && authors[0]?.id) {
+      await BookAuthor.delete(authors[0].id);
+    }
   };
 
   private static removeDetachedPublishers = async (bookId: string) => {
-    console.log(`🔔 removeDetachedPublishers`, bookId);
-    // TODO
+    const publishers = await Database.all<{ id: string }>(
+      `
+        SELECT books.publisher_id AS id
+        FROM books
+        WHERE books.publisher_id = (
+          SELECT books.publisher_id
+          FROM books
+          WHERE id = ?
+        );
+      `,
+      [bookId]
+    );
+    if (publishers.length === 1 && publishers[0]?.id) {
+      await BookPublisher.delete(publishers[0].id);
+    }
   };
 
   public static create = async (data: BookDTO): Promise<BookDTO> => {
@@ -234,9 +269,11 @@ export class Books {
   public static delete = async (id: string) => {
     try {
       await this.removeDetachedAuthors(id);
-      await this.removeDetachedPublishers(id);
 
       const result = await BaseCRUD.delete(this.table, id);
+
+      await this.removeDetachedPublishers(id);
+
       console.log(`[SUCCESS] Books.delete: Deleted "${id}`);
       return result;
     } catch (error) {

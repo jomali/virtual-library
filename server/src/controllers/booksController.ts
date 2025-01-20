@@ -6,10 +6,7 @@ const createBook = async (req: Request, res: Response) => {
     const body = req.body;
     const data = await Books.create(body);
 
-    res.status(200).json({
-      data,
-      message: "Success",
-    });
+    res.status(200).json(data);
   } catch (error) {
     res.status(400).json({
       error: error instanceof Error ? error.message : String(error),
