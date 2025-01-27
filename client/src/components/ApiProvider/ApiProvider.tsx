@@ -9,7 +9,7 @@ export const ApiContext = React.createContext<IApi>({
   PUT: () => null,
 });
 
-export const ApiProvider: React.FC<IApiProvider> = (props) => {
+export const ApiProvider: React.FC<ApiProviderProps> = (props) => {
   const { children, host } = props;
 
   const httpRequest = React.useCallback(
@@ -84,10 +84,10 @@ export const ApiProvider: React.FC<IApiProvider> = (props) => {
   );
 };
 
-export interface IApiProvider {
+export type ApiProviderProps = {
   children: React.ReactNode;
   host: string;
-}
+};
 
 export interface IApi {
   host: string;

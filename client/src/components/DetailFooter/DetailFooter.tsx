@@ -39,7 +39,7 @@ const Toolbar = styled(MuiToolbar)(({ theme }) => ({
 }));
 
 const DetailFooter: React.FC<DetailFooterProps> = (props) => {
-  const { editMode, onDelete, onToggleEditMode } = props;
+  const { editMode, onDelete, onToggleEditMode, toggable } = props;
 
   const intl = useIntl();
   const wideScreen = useMediaQuery((theme) => theme.breakpoints.up("sm"));
@@ -57,51 +57,60 @@ const DetailFooter: React.FC<DetailFooterProps> = (props) => {
     <Container>
       <Divider />
       <Toolbar>
-        <ConditionalTooltip title={editMode ? "Cancelar" : "Editar"}>
-          <IconButton onClick={onToggleEditMode}>
-            {editMode ? <EditOffRoundedIcon /> : <EditRoundedIcon />}
-          </IconButton>
-        </ConditionalTooltip>
+        {toggable ? (
+          <>
+            <ConditionalTooltip title={editMode ? "Cancelar" : "Editar"}>
+              <IconButton onClick={onToggleEditMode}>
+                {editMode ? <EditOffRoundedIcon /> : <EditRoundedIcon />}
+              </IconButton>
+            </ConditionalTooltip>
 
-        <AnimatePresence mode="wait">
-          {editMode && !wideScreen ? (
-            <motion.span
-              key={`delete-icon-button`}
-              animate="active"
-              exit="exit"
-              initial="enter"
-              variants={variants}
-            >
-              <ConditionalTooltip title={intl.formatMessage({ id: "delete" })}>
-                <IconButton color="error" onClick={onDelete}>
-                  <DeleteRoundedIcon />
-                </IconButton>
-              </ConditionalTooltip>
-            </motion.span>
-          ) : null}
-        </AnimatePresence>
+            <AnimatePresence mode="wait">
+              {editMode && !wideScreen ? (
+                <motion.span
+                  key={`delete-icon-button`}
+                  animate="active"
+                  exit="exit"
+                  initial="enter"
+                  variants={variants}
+                >
+                  <ConditionalTooltip
+                    title={intl.formatMessage({ id: "delete" })}
+                  >
+                    <IconButton color="error" onClick={onDelete}>
+                      <DeleteRoundedIcon />
+                    </IconButton>
+                  </ConditionalTooltip>
+                </motion.span>
+              ) : null}
+            </AnimatePresence>
+          </>
+        ) : null}
 
         <Gap />
 
-        <AnimatePresence mode="wait">
-          {editMode && wideScreen ? (
-            <motion.span
-              key={`delete-button`}
-              animate="active"
-              exit="exit"
-              initial="enter"
-              variants={variants}
-            >
-              <Button
-                color="error"
-                onClick={onDelete}
-                startIcon={<DeleteRoundedIcon />}
+        {toggable ? (
+          <AnimatePresence mode="wait">
+            {editMode && wideScreen ? (
+              <motion.span
+                key={`delete-button`}
+                animate="active"
+                exit="exit"
+                initial="enter"
+                variants={variants}
               >
-                {intl.formatMessage({ id: "delete" })}
-              </Button>
-            </motion.span>
-          ) : null}
-        </AnimatePresence>
+                <Button
+                  color="error"
+                  onClick={onDelete}
+                  startIcon={<DeleteRoundedIcon />}
+                >
+                  {intl.formatMessage({ id: "delete" })}
+                </Button>
+              </motion.span>
+            ) : null}
+          </AnimatePresence>
+        ) : null}
+
         <AnimatePresence mode="wait">
           {editMode ? (
             <motion.span
@@ -130,6 +139,7 @@ export type DetailFooterProps = {
   editMode: boolean;
   onDelete: VoidFunction;
   onToggleEditMode: VoidFunction;
+  toggable?: boolean;
 };
 
 export default DetailFooter;

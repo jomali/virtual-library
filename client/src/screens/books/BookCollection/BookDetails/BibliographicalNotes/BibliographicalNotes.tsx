@@ -3,10 +3,27 @@ import { Control, Controller, FieldErrors } from "react-hook-form";
 import Grid from "@mui/material/Grid2";
 import { useIntl } from "react-intl";
 import { Book } from "../../../types";
-import { TextField } from "../../../../../components/MuiExtensions";
+import { createFilterOptions } from "@mui/material/Autocomplete";
+import {
+  Autocomplete,
+  TextField,
+} from "../../../../../components/MuiExtensions";
+import useBookPublishersQuery from "../../../queries/useBookPublishersQuery";
+import useBookAuthorsQuery from "../../../queries/useBookAuthorsQuery";
+
+const filterAuthors = createFilterOptions<
+  { id?: string; name: string } | string
+>();
+
+const filterPublishers = createFilterOptions<
+  { id?: string; name: string } | string
+>();
 
 const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
   const { control, readOnly } = props;
+
+  const bookAuthorsQuery = useBookAuthorsQuery();
+  const bookPublishersQuery = useBookPublishersQuery();
 
   const intl = useIntl();
 
@@ -19,80 +36,133 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
           render={({ field }) => (
             <TextField
               autoFocus
-              fullWidth
               label={intl.formatMessage({ id: "books.title" })}
               readOnly={readOnly}
               required
-              variant="outlined"
               {...field}
             />
           )}
         />
       </Grid>
 
-      {/* <Grid size={12}>
+      <Grid size={12}>
         <Controller
           control={control}
           name="authors"
           render={({ field }) => (
-            <TextField
-              fullWidth
-              label={intl.formatMessage({ id: "books.authors" })}
-              required
-              variant="outlined"
+            <Autocomplete
               {...field}
+              filterOptions={(options, params) => {
+                const filtered = filterAuthors(options, params);
+                const { inputValue } = params;
+                // Suggest the creation of a new value
+                const isExisting = options.some(
+                  (option) => inputValue === option.name
+                );
+                if (inputValue !== "" && !isExisting) {
+                  filtered.push(inputValue);
+                }
+                return filtered;
+              }}
+              freeSolo
+              getOptionLabel={(option) => {
+                // Value selected with `enter`, right from the input
+                if (typeof option === "string") {
+                  return `Add "${option}"`; // TODO
+                }
+                return option.name ?? "";
+              }}
+              label={intl.formatMessage({ id: "books.authors" })}
+              onChange={(_event: React.SyntheticEvent, value) => {
+                field.onChange(
+                  typeof value === "string" ? { id: null, name: value } : value
+                );
+              }}
+              options={bookAuthorsQuery.data}
+              readOnly={readOnly}
+              required
             />
           )}
         />
-      </Grid> */}
+      </Grid>
 
-      {/* <Grid size={12}>
+      <Grid size={12}>
         <Controller
           control={control}
           name="publisher"
           render={({ field }) => (
-            <TextField
-              fullWidth
-              label={intl.formatMessage({ id: "books.publisher" })}
-              required
-              variant="outlined"
+            <Autocomplete
               {...field}
+              filterOptions={(options, params) => {
+                const filtered = filterPublishers(options, params);
+                const { inputValue } = params;
+                // Suggest the creation of a new value
+                const isExisting = options.some(
+                  (option) => inputValue === option.name
+                );
+                if (inputValue !== "" && !isExisting) {
+                  filtered.push(inputValue);
+                }
+                return filtered;
+              }}
+              freeSolo
+              getOptionLabel={(option) => {
+                // Value selected with `enter`, right from the input
+                if (typeof option === "string") {
+                  return `Add "${option}"`; // TODO
+                }
+                return option.name ?? "";
+              }}
+              label={intl.formatMessage({ id: "books.publisher" })}
+              onChange={(_event: React.SyntheticEvent, value) => {
+                field.onChange(
+                  typeof value === "string" ? { id: null, name: value } : value
+                );
+              }}
+              options={bookPublishersQuery.data}
+              readOnly={readOnly}
+              required
             />
           )}
         />
-      </Grid> */}
+      </Grid>
 
-      {/* <Grid size={12}>
+      <Grid size={12}>
         <Controller
           control={control}
           name="language"
           render={({ field }) => (
-            <TextField
-              fullWidth
-              label={intl.formatMessage({ id: "books.language" })}
-              required
-              variant="outlined"
+            <Autocomplete
               {...field}
+              getOptionLabel={(option) => {
+                return option === "en" ? "Inglés" : "Español";
+              }}
+              label={intl.formatMessage({ id: "books.language" })}
+              onChange={(_event: React.SyntheticEvent, value) => {
+                field.onChange(value);
+              }}
+              options={["en", "es"]}
+              readOnly={readOnly}
+              required
             />
           )}
         />
-      </Grid> */}
+      </Grid>
 
-      {/* <Grid size={12}>
+      <Grid size={12}>
         <Controller
           control={control}
           name="releaseDate"
           render={({ field }) => (
             <TextField
-              fullWidth
               label={intl.formatMessage({ id: "books.releaseDate" })}
+              readOnly={readOnly}
               required
-              variant="outlined"
               {...field}
             />
           )}
         />
-      </Grid> */}
+      </Grid>
 
       {/* <Grid size={12}>
         <Controller

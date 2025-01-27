@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useApi } from "../../../components/ApiProvider";
 import { Book, BookDTO } from "../types";
+import { bookKeyFactory } from "./bookKeyFactory";
 
 const useBookQuery = (options: { id?: string }) => {
   const { id } = options;
@@ -8,18 +9,16 @@ const useBookQuery = (options: { id?: string }) => {
 
   return useQuery({
     enabled: Boolean(id),
-    queryKey: ["books", id],
+    queryKey: bookKeyFactory.getBook({ bookId: id ?? "" }),
     queryFn: async () => {
-      const response = (await api.GET(["books", id].join("/"))) as {
-        data: BookDTO;
-      };
+      const response = (await api.GET(["books", id].join("/"))) as BookDTO;
       const result: Book = {
-        ...response.data,
-        authors: response.data.authors[0]?.name,
-        edition: String(response.data.edition),
-        publisher: response.data.publisher.name,
-        rating: ((response.data.rating ?? 0) * 5) / 10,
-        translators: response.data.translators?.[0]?.name, // TODO
+        ...response,
+        authors: response.authors[0], // TODO
+        edition: String(response.edition),
+        publisher: response.publisher,
+        rating: ((response.rating ?? 0) * 5) / 10,
+        translators: response.translators?.[0]?.name, // TODO
       };
 
       return result;

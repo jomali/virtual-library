@@ -7,7 +7,9 @@ export type BookPublisherDB = {
   name: string;
 };
 
-export type BookPublisherDTO = CamelizeKeys<BookPublisherDB>;
+export type BookPublisherDTO = Omit<CamelizeKeys<BookPublisherDB>, "id"> & {
+  id?: string;
+};
 
 export class BookPublisher {
   public static TABLE = "book_publishers";
@@ -33,4 +35,5 @@ export class BookPublisher {
 
   static read = (id: string) => BaseCRUD.read<BookPublisherDB>(this.TABLE, id);
   static readAll = () => BaseCRUD.readAll<BookPublisherDB>(this.TABLE);
+  static delete = (id: string) => BaseCRUD.delete(this.TABLE, id);
 }

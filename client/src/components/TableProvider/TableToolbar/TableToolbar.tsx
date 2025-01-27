@@ -1,6 +1,7 @@
 import Typography from "@mui/material/Typography";
 import React from "react";
 import Toolbar from "@mui/material/Toolbar";
+import Divider from "@mui/material/Divider";
 import { styled } from "@mui/material/styles";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import IconTool from "./IconTool";
@@ -23,27 +24,30 @@ const TableToolbar: React.FC<ITableToolbar> = (props) => {
   const intl = useIntl();
 
   return (
-    <CustomToolbar role="toolbar">
-      <Typography
-        sx={{
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-        }}
-        variant="h6"
-      >
-        {title}
-      </Typography>
-      <Gap />
-      {addTool.visible ? (
-        <IconTool
-          edge="end"
-          icon={<AddRoundedIcon />}
-          label={intl.formatMessage({ id: "add" })}
-          onClick={addTool.onClick}
-        />
-      ) : null}
-    </CustomToolbar>
+    <>
+      <CustomToolbar role="toolbar">
+        <Typography
+          sx={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+          variant="h6"
+        >
+          {title}
+        </Typography>
+        <Gap />
+        {addTool.visible ? (
+          <IconTool
+            edge="end"
+            icon={<AddRoundedIcon />}
+            label={intl.formatMessage({ id: "add" })}
+            onClick={addTool.onClick}
+          />
+        ) : null}
+      </CustomToolbar>
+      <Divider />
+    </>
   );
 };
 

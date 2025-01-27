@@ -18,6 +18,10 @@ import useBookQuery from "../../queries/useBookQuery";
 import useNotification from "../../../../components/NotificationProvider/useNotification";
 import { Book } from "../../types";
 import PersonalNotes from "./PersonalNotes";
+import useCreateEditBookMutation from "../../queries/useCreateEditBookMutation";
+import useDeleteBookMutation from "../../queries/useDeleteBookMutation";
+import { useNavigate } from "react-router";
+import ConfirmDialog from "../../../../components/ConfirmDialog";
 
 const Form = styled("form")(() => ({
   display: "flex",
@@ -37,9 +41,9 @@ const StyledImage = styled("img", {
 
 const schema = yup.object({
   // Required fields:
-  authors: yup.string().required(),
+  authors: yup.mixed(), //.required(),
   language: yup.string().required(),
-  publisher: yup.string().required(),
+  publisher: yup.mixed(), //.required(),
   releaseDate: yup.string().required(),
   title: yup.string().required(),
   // Optional fields:
@@ -50,12 +54,15 @@ const schema = yup.object({
 });
 
 const BookDetails: React.FC<BookDetailsProps> = (props) => {
-  const { onClose, value } = props;
+  const { id } = props;
 
   const intl = useIntl();
+  const navigate = useNavigate();
   const notification = useNotification();
 
-  const [editMode, setEditMode] = React.useState<boolean>(false);
+  const [deleteConfirmation, setDeleteConfirmation] =
+    React.useState<boolean>(false);
+  const [editMode, setEditMode] = React.useState<boolean>(!id);
 
   const [tab, setTab] = React.useState<{
     current: number;
@@ -65,24 +72,43 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
     direction: 0,
   });
 
-  const bookQuery = useBookQuery({ id: value.id });
+  const bookQuery = useBookQuery({ id: id });
 
-  const onSubmit: SubmitHandler<Book> = (data) =>
-    console.log(`🔔 submit`, data);
+  const createEditBookMutation = useCreateEditBookMutation({
+    onSuccess: (response) => {
+      notification.success("Nuevo libro creado con éxito.");
+      setEditMode(false);
+      navigate(`/books/${response.id}`);
+    },
+  });
 
-  const {
-    control,
-    formState: { errors },
-    handleSubmit,
-    reset,
-  } = useForm<Book>({
+  const deleteBookMutation = useDeleteBookMutation({
+    bookId: id,
+    onSuccess: () => {
+      notification.success("Libro eliminado con éxito.");
+      onClose?.();
+    },
+  });
+
+  const onClose = () => {
+    navigate("/books");
+  };
+
+  const onSubmit: SubmitHandler<Book> = (data) => {
+    createEditBookMutation.mutate({
+      ...data,
+      id,
+    });
+  };
+
+  const { control, formState, handleSubmit, reset } = useForm<Book>({
     defaultValues: {
-      authors: "",
+      authors: null,
       edition: "",
-      language: "",
+      language: "es",
       originalTitle: "",
-      publisher: "",
-      rating: undefined,
+      publisher: null,
+      rating: 0,
       releaseDate: "",
       title: "",
       translators: "",
@@ -90,13 +116,13 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
     resolver: yupResolver(schema),
   });
 
-  const detailTitle = React.useMemo(() => {
-    if (value.id) {
-      return bookQuery.data?.title ?? "";
-    } else {
-      return intl.formatMessage({ id: "books.newBook" });
-    }
-  }, [bookQuery.data, value.id]);
+  const detailTitle = React.useMemo(
+    () =>
+      id
+        ? (bookQuery.data?.title ?? "")
+        : intl.formatMessage({ id: "books.newBook" }),
+    [bookQuery.data, id]
+  );
 
   React.useEffect(() => {
     if (bookQuery.data) {
@@ -138,7 +164,7 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
             <DetailAnimatedPanel key={`tab-0`} custom={tab.direction}>
               <BookProfile
                 control={control}
-                errors={errors}
+                errors={formState.errors}
                 readOnly={!editMode}
               />
             </DetailAnimatedPanel>
@@ -147,7 +173,7 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
             <DetailAnimatedPanel key={`tab-1`} custom={tab.direction}>
               <PersonalNotes
                 control={control}
-                errors={errors}
+                errors={formState.errors}
                 readOnly={!editMode}
               />
             </DetailAnimatedPanel>
@@ -162,22 +188,30 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
         </AnimatePresence>
         <DetailFooter
           editMode={editMode}
-          onDelete={() => {
-            console.log(`🔔 delete`);
-            notification.error("Error al eliminar");
-          }}
+          onDelete={() => setDeleteConfirmation(true)}
           onToggleEditMode={() => setEditMode(!editMode)}
+          toggable={Boolean(id)}
         />
       </Form>
+
+      <ConfirmDialog
+        messages={{
+          description: "Esta operación no se puede deshacer.",
+          title: "Advertencia",
+        }}
+        onAccept={() => {
+          deleteBookMutation.mutate(id);
+          setDeleteConfirmation(false);
+        }}
+        onCancel={() => setDeleteConfirmation(false)}
+        open={deleteConfirmation}
+      />
     </>
   );
 };
 
 export type BookDetailsProps = {
-  onClose?: VoidFunction;
-  value: {
-    id?: string;
-  } & Record<string, unknown>;
+  id?: string;
 };
 
 export default BookDetails;

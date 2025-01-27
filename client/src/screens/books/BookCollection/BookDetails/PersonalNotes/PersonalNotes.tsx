@@ -21,7 +21,12 @@ const PersonalNotes: React.FC<PersonalNotesProps> = (props) => {
           name="rating"
           render={({ field }) => (
             <>
-              <Typography component={"legend"} variant="caption">
+              <Typography
+                color="textSecondary"
+                component={"legend"}
+                sx={{ transform: `translate(0px, -9px)` }}
+                variant="caption"
+              >
                 {intl.formatMessage({ id: "books.rating" })}
               </Typography>
               <Rating
