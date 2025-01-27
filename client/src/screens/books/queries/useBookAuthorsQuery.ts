@@ -2,17 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 import { useApi } from "../../../components/ApiProvider";
 import { bookKeyFactory } from "./bookKeyFactory";
 
-const useBookPublishersQuery = () => {
+const useBookAuthorsQuery = () => {
   const api = useApi();
 
   return useQuery({
     initialData: [],
-    queryKey: bookKeyFactory.getBookPublishers(),
+    queryKey: bookKeyFactory.getBookAuthors(),
     queryFn: async () => {
-      const response = await api.GET("books/publishers");
+      const response = await api.GET("books/authors");
       return (response.data ?? []) as Record<string, unknown>[];
     },
   });
 };
 
-export default useBookPublishersQuery;
+export default useBookAuthorsQuery;

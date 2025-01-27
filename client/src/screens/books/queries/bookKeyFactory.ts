@@ -1,22 +1,29 @@
 export const bookKeyFactory = {
-  all: () => ["books"],
-  getBooks: () => bookKeyFactory.all(),
+  all: () => ["all"],
+  getBooks: () => [
+    ...bookKeyFactory.all(), //
+    "books",
+  ],
   getBook: ({ bookId }: { bookId: string }) => [
     ...bookKeyFactory.all(), //
+    "book",
     bookId,
+  ],
+  getBookDetails: () => [
+    ...bookKeyFactory.all(), //
+    "details",
+  ],
+  getBookAuthors: () => [
+    ...bookKeyFactory.getBookDetails(), //
+    "authors",
   ],
   getBookPublishers: () => [
-    ...bookKeyFactory.all(), //
+    ...bookKeyFactory.getBookDetails(), //
     "publishers",
   ],
-  createBook: () => [
+  createEditBook: () => [
     ...bookKeyFactory.all(), //
-    "create",
-  ],
-  editBook: ({ bookId }: { bookId: string }) => [
-    ...bookKeyFactory.all(), //
-    "edit",
-    bookId,
+    "createEdit",
   ],
   deleteBook: ({ bookId }: { bookId: string }) => [
     ...bookKeyFactory.all(), //

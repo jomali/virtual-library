@@ -11,8 +11,10 @@ import {
   MRT_RowSelectionState,
 } from "material-react-table";
 import { MRT_Localization_EN } from "material-react-table/locales/en";
+import { MRT_Localization_ES } from "material-react-table/locales/es";
 import { alpha, useTheme } from "@mui/material";
 import { Filters } from "./types";
+import { useIntl } from "react-intl";
 
 export const TableContext = React.createContext<
   MRT_TableInstance<MRT_RowData> | undefined
@@ -41,6 +43,7 @@ const TableProvider: React.FC<ITableProvider> = (props) => {
     sorting = [],
   } = props;
 
+  const intl = useIntl();
   const theme = useTheme();
 
   const computedPinnedColumns = React.useMemo(() => {
@@ -50,6 +53,11 @@ const TableProvider: React.FC<ITableProvider> = (props) => {
     }
     return result;
   }, [pinnedColumns, enableSelect]);
+
+  const localization = React.useMemo(
+    () => (intl.locale === "en" ? MRT_Localization_EN : MRT_Localization_ES),
+    [intl.locale]
+  );
 
   const table = useMaterialReactTable({
     // Data
@@ -92,7 +100,7 @@ const TableProvider: React.FC<ITableProvider> = (props) => {
     enableRowSelection: Boolean(enableSelect),
     enableSorting: Boolean(enableSort),
     enableStickyHeader: true,
-    localization: MRT_Localization_EN,
+    localization: localization,
     manualPagination: true,
     manualSorting: Boolean(enableSort),
     positionToolbarAlertBanner: "none", // [bottom, top, none]
@@ -174,6 +182,7 @@ const TableProvider: React.FC<ITableProvider> = (props) => {
     },
     muiTableHeadProps: {
       sx: (theme) => ({
+        backgroundColor: theme.palette.background.paper,
         // use secondary color in checkbox
         " & .Mui-checked, & .MuiCheckbox-indeterminate": {
           color: `${theme.palette.secondary.main} !important`,

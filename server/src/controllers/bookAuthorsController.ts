@@ -5,10 +5,7 @@ const readAuthors = async (req: Request, res: Response) => {
   try {
     const data = await BookAuthor.readAll();
 
-    res.status(200).json({
-      data,
-      message: "Success",
-    });
+    res.status(200).json(data);
   } catch (error) {
     res.status(400).json({
       error: error instanceof Error ? error.message : String(error),

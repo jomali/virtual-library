@@ -93,21 +93,18 @@ export class Books {
     }
   };
 
-  private static removeDetachedPublishers = async (bookId: string) => {
+  private static removeDetachedPublishers = async (publisherId: string) => {
     const publishers = await Database.all<{ id: string }>(
       `
         SELECT books.publisher_id AS id
         FROM books
-        WHERE books.publisher_id = (
-          SELECT books.publisher_id
-          FROM books
-          WHERE id = ?
-        );
+        WHERE books.publisher_id = ?;
       `,
-      [bookId]
+      [publisherId]
     );
-    if (publishers.length === 1 && publishers[0]?.id) {
-      await BookPublisher.delete(publishers[0].id);
+
+    if (!publishers.length) {
+      await BookPublisher.delete(publisherId);
     }
   };
 
@@ -220,12 +217,7 @@ export class Books {
 
   public static readAll = async (): Promise<BookDTO[]> => {
     try {
-      const books = await Database.all<BookDB>(
-        `
-          SELECT ${this.table}.*
-          FROM ${this.table}
-        `
-      );
+      const books = await BaseCRUD.readAll<BookDB>(this.table);
 
       const result = books.map(async (element) => {
         // Authors:
@@ -268,11 +260,14 @@ export class Books {
 
   public static delete = async (id: string) => {
     try {
+      const book = await BaseCRUD.read<BookDB>(this.table, id);
+      console.log(`🔔 book`, book);
+
       await this.removeDetachedAuthors(id);
 
       const result = await BaseCRUD.delete(this.table, id);
 
-      await this.removeDetachedPublishers(id);
+      await this.removeDetachedPublishers(book.publisher_id);
 
       console.log(`[SUCCESS] Books.delete: Deleted "${id}`);
       return result;

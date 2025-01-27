@@ -1,5 +1,5 @@
 export type Book = {
-  authors?: string;
+  authors?: { id?: string; name: string } | null;
   edition?: string;
   language: "en" | "es" | string;
   originalTitle?: string;

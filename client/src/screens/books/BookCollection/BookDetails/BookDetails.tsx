@@ -18,8 +18,7 @@ import useBookQuery from "../../queries/useBookQuery";
 import useNotification from "../../../../components/NotificationProvider/useNotification";
 import { Book } from "../../types";
 import PersonalNotes from "./PersonalNotes";
-import useCreateBookMutation from "../../queries/useCreateBookMutation";
-import useEditBookMutation from "../../queries/useEditBookMutation";
+import useCreateEditBookMutation from "../../queries/useCreateEditBookMutation";
 import useDeleteBookMutation from "../../queries/useDeleteBookMutation";
 import { useNavigate } from "react-router";
 import ConfirmDialog from "../../../../components/ConfirmDialog";
@@ -42,7 +41,7 @@ const StyledImage = styled("img", {
 
 const schema = yup.object({
   // Required fields:
-  authors: yup.string(), //.required(),
+  authors: yup.mixed(), //.required(),
   language: yup.string().required(),
   publisher: yup.mixed(), //.required(),
   releaseDate: yup.string().required(),
@@ -55,7 +54,7 @@ const schema = yup.object({
 });
 
 const BookDetails: React.FC<BookDetailsProps> = (props) => {
-  const { onClose, value } = props;
+  const { id } = props;
 
   const intl = useIntl();
   const navigate = useNavigate();
@@ -63,7 +62,7 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
 
   const [deleteConfirmation, setDeleteConfirmation] =
     React.useState<boolean>(false);
-  const [editMode, setEditMode] = React.useState<boolean>(!value.id);
+  const [editMode, setEditMode] = React.useState<boolean>(!id);
 
   const [tab, setTab] = React.useState<{
     current: number;
@@ -73,9 +72,9 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
     direction: 0,
   });
 
-  const bookQuery = useBookQuery({ id: value.id });
+  const bookQuery = useBookQuery({ id: id });
 
-  const createBookMutation = useCreateBookMutation({
+  const createEditBookMutation = useCreateEditBookMutation({
     onSuccess: (response) => {
       notification.success("Nuevo libro creado con éxito.");
       setEditMode(false);
@@ -83,29 +82,28 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
     },
   });
 
-  const updateBookMutation = useEditBookMutation({
-    bookId: value.id,
-    onSuccess: () => {
-      notification.success("Libro actualizado con éxito.");
-      onClose?.();
-    },
-  });
-
   const deleteBookMutation = useDeleteBookMutation({
-    bookId: value.id,
+    bookId: id,
     onSuccess: () => {
       notification.success("Libro eliminado con éxito.");
       onClose?.();
     },
   });
 
+  const onClose = () => {
+    navigate("/books");
+  };
+
   const onSubmit: SubmitHandler<Book> = (data) => {
-    createBookMutation.mutate(data);
+    createEditBookMutation.mutate({
+      ...data,
+      id,
+    });
   };
 
   const { control, formState, handleSubmit, reset } = useForm<Book>({
     defaultValues: {
-      authors: "",
+      authors: null,
       edition: "",
       language: "es",
       originalTitle: "",
@@ -118,13 +116,13 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
     resolver: yupResolver(schema),
   });
 
-  const detailTitle = React.useMemo(() => {
-    if (value.id) {
-      return bookQuery.data?.title ?? "";
-    } else {
-      return intl.formatMessage({ id: "books.newBook" });
-    }
-  }, [bookQuery.data, value.id]);
+  const detailTitle = React.useMemo(
+    () =>
+      id
+        ? (bookQuery.data?.title ?? "")
+        : intl.formatMessage({ id: "books.newBook" }),
+    [bookQuery.data, id]
+  );
 
   React.useEffect(() => {
     if (bookQuery.data) {
@@ -192,7 +190,7 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
           editMode={editMode}
           onDelete={() => setDeleteConfirmation(true)}
           onToggleEditMode={() => setEditMode(!editMode)}
-          toggable={Boolean(value.id)}
+          toggable={Boolean(id)}
         />
       </Form>
 
@@ -202,7 +200,7 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
           title: "Advertencia",
         }}
         onAccept={() => {
-          deleteBookMutation.mutate(value.id);
+          deleteBookMutation.mutate(id);
           setDeleteConfirmation(false);
         }}
         onCancel={() => setDeleteConfirmation(false)}
@@ -213,10 +211,7 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
 };
 
 export type BookDetailsProps = {
-  onClose?: VoidFunction;
-  value: {
-    id?: string;
-  } & Record<string, unknown>;
+  id?: string;
 };
 
 export default BookDetails;

@@ -21,7 +21,7 @@ const useDeleteBookMutation = (
       return api.DELETE(["books", bookId].join("/"));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: bookKeyFactory.all() });
+      queryClient.invalidateQueries({ queryKey: bookKeyFactory.getBooks() });
       onSuccess?.();
     },
     ...otherOptions,

@@ -11,16 +11,14 @@ const useBookQuery = (options: { id?: string }) => {
     enabled: Boolean(id),
     queryKey: bookKeyFactory.getBook({ bookId: id ?? "" }),
     queryFn: async () => {
-      const response = (await api.GET(["books", id].join("/"))) as {
-        data: BookDTO;
-      };
+      const response = (await api.GET(["books", id].join("/"))) as BookDTO;
       const result: Book = {
-        ...response.data,
-        authors: response.data.authors[0]?.name, // TODO
-        edition: String(response.data.edition),
-        publisher: response.data.publisher,
-        rating: ((response.data.rating ?? 0) * 5) / 10,
-        translators: response.data.translators?.[0]?.name, // TODO
+        ...response,
+        authors: response.authors[0], // TODO
+        edition: String(response.edition),
+        publisher: response.publisher,
+        rating: ((response.rating ?? 0) * 5) / 10,
+        translators: response.translators?.[0]?.name, // TODO
       };
 
       return result;

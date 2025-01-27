@@ -9,12 +9,20 @@ import {
   TextField,
 } from "../../../../../components/MuiExtensions";
 import useBookPublishersQuery from "../../../queries/useBookPublishersQuery";
+import useBookAuthorsQuery from "../../../queries/useBookAuthorsQuery";
 
-const filterPublishers = createFilterOptions<{ id?: string; name: string }>();
+const filterAuthors = createFilterOptions<
+  { id?: string; name: string } | string
+>();
+
+const filterPublishers = createFilterOptions<
+  { id?: string; name: string } | string
+>();
 
 const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
   const { control, readOnly } = props;
 
+  const bookAuthorsQuery = useBookAuthorsQuery();
   const bookPublishersQuery = useBookPublishersQuery();
 
   const intl = useIntl();
@@ -37,21 +45,46 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
         />
       </Grid>
 
-      {/* <Grid size={12}>
+      <Grid size={12}>
         <Controller
           control={control}
           name="authors"
           render={({ field }) => (
-            <TextField
-              fullWidth
-              label={intl.formatMessage({ id: "books.authors" })}
-              required
-              variant="outlined"
+            <Autocomplete
               {...field}
+              filterOptions={(options, params) => {
+                const filtered = filterAuthors(options, params);
+                const { inputValue } = params;
+                // Suggest the creation of a new value
+                const isExisting = options.some(
+                  (option) => inputValue === option.name
+                );
+                if (inputValue !== "" && !isExisting) {
+                  filtered.push(inputValue);
+                }
+                return filtered;
+              }}
+              freeSolo
+              getOptionLabel={(option) => {
+                // Value selected with `enter`, right from the input
+                if (typeof option === "string") {
+                  return `Add "${option}"`; // TODO
+                }
+                return option.name ?? "";
+              }}
+              label={intl.formatMessage({ id: "books.authors" })}
+              onChange={(_event: React.SyntheticEvent, value) => {
+                field.onChange(
+                  typeof value === "string" ? { id: null, name: value } : value
+                );
+              }}
+              options={bookAuthorsQuery.data}
+              readOnly={readOnly}
+              required
             />
           )}
         />
-      </Grid> */}
+      </Grid>
 
       <Grid size={12}>
         <Controller
@@ -63,7 +96,6 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
               filterOptions={(options, params) => {
                 const filtered = filterPublishers(options, params);
                 const { inputValue } = params;
-
                 // Suggest the creation of a new value
                 const isExisting = options.some(
                   (option) => inputValue === option.name
@@ -71,7 +103,6 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
                 if (inputValue !== "" && !isExisting) {
                   filtered.push(inputValue);
                 }
-
                 return filtered;
               }}
               freeSolo
@@ -88,7 +119,7 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
                   typeof value === "string" ? { id: null, name: value } : value
                 );
               }}
-              options={bookPublishersQuery.data ?? []}
+              options={bookPublishersQuery.data}
               readOnly={readOnly}
               required
             />
