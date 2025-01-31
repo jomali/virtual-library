@@ -2,21 +2,19 @@ import { CamelizeKeys } from "@/utils/types";
 import { BaseCRUD } from "./BaseCRUD";
 import { Database } from "./Database";
 
-export type BookSeriesDB = {
+export type BookTagDB = {
   id: string;
   name: string;
 };
 
-export type BookSeriesDTO = Omit<CamelizeKeys<BookSeriesDB>, "id"> & {
+export type BookTagDTO = Omit<CamelizeKeys<BookTagDB>, "id"> & {
   id?: string;
 };
 
-export class BookSeries {
-  private static TABLE = "book_series";
+export class BookTag {
+  public static TABLE = "book_tags";
 
-  static create = async (
-    data: Omit<BookSeriesDTO, "id">
-  ): Promise<BookSeriesDB> => {
+  static create = async (data: Omit<BookTagDTO, "id">): Promise<BookTagDB> => {
     const id = crypto.randomUUID();
     await Database.run(
       `
@@ -34,8 +32,8 @@ export class BookSeries {
   };
 
   static read = (id?: string) =>
-    id ? BaseCRUD.read<BookSeriesDB>(this.TABLE, id) : undefined;
+    id ? BaseCRUD.read<BookTagDB>(this.TABLE, id) : undefined;
 
-  static readAll = () => BaseCRUD.readAll<BookSeriesDB>(this.TABLE);
+  static readAll = () => BaseCRUD.readAll<BookTagDB>(this.TABLE);
   static delete = (id: string) => BaseCRUD.delete(this.TABLE, id);
 }

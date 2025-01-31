@@ -3,6 +3,8 @@ import { BaseCRUD } from "./BaseCRUD";
 import { BookPublisher, BookPublisherDTO } from "./BookPublisher";
 import { CamelizeKeys } from "@/utils/types";
 import { BookAuthor, BookAuthorDB, BookAuthorDTO } from "./BookAuthor";
+import { BookSeries, BookSeriesDTO } from "./BookSeries";
+import { BookTag, BookTagDTO } from "./BookTag";
 
 export type BookDB = {
   edition?: number;
@@ -24,7 +26,8 @@ export type BookDTO = Omit<
   authors: BookAuthorDTO[];
   id?: string;
   publisher: BookPublisherDTO;
-  series?: object; // TODO
+  series?: BookSeriesDTO;
+  tags?: BookTagDTO[];
 };
 
 export class Books {
@@ -33,17 +36,22 @@ export class Books {
 
   private static checkPublisher = async (
     publisher: BookPublisherDTO
-  ): Promise<BookPublisherDTO> => {
-    if (publisher.id) {
-      return publisher;
+  ): Promise<BookPublisherDTO> =>
+    publisher.id ? publisher : await BookPublisher.create(publisher);
+
+  private static checkSeries = async (
+    series?: BookSeriesDTO
+  ): Promise<BookSeriesDTO | { id?: string }> => {
+    if (!series) {
+      return {};
+    } else if (series.id) {
+      return series;
     } else {
-      return await BookPublisher.create(publisher);
+      return await BookSeries.create(series);
     }
   };
 
-  private static checkSeries = () => null;
-
-  private static createBookAuthorsAndRelations = (
+  private static createBooksAuthorsRelations = (
     bookId: string,
     authors: BookAuthorDTO[]
   ): Promise<BookAuthorDTO[]> => {
@@ -63,6 +71,31 @@ export class Books {
           return newAuthor;
         }
       })
+    );
+  };
+
+  private static createBooksTagsRelations = (
+    bookId: string,
+    tags: BookTagDTO[] = []
+  ): Promise<BookTagDTO[]> => {
+    const booksTagsRelationSql = `
+      INSERT INTO books_tags_relations
+      (book_id, book_tag_id)
+      VALUES (?, ?)
+    `;
+    return Promise.all(
+      tags
+        .filter((element) => Boolean(element))
+        .map(async (element) => {
+          if (element.id) {
+            await Database.run(booksTagsRelationSql, [bookId, element.id]);
+            return element;
+          } else {
+            const newTag = await BookTag.create(element);
+            await Database.run(booksTagsRelationSql, [bookId, newTag.id]);
+            return newTag;
+          }
+        })
     );
   };
 
@@ -93,6 +126,33 @@ export class Books {
     }
   };
 
+  private static removeDetachedTags = async (bookId: string) => {
+    const tags = await Database.all<{ id: string }>(
+      `
+        SELECT books_tags_relations.book_tag_id AS id
+        FROM books_tags_relations
+        WHERE books_tags_relations.book_tag_id IN (
+          SELECT books_tags_relations.book_tag_id
+          FROM books_tags_relations
+          WHERE books_tags_relations.book_id = ?
+        );
+      `,
+      [bookId]
+    );
+
+    await Database.run(
+      `
+        DELETE FROM books_tags_relations
+        WHERE books_tags_relations.book_id = ?;
+      `,
+      [bookId]
+    );
+
+    if (tags.length === 1 && tags[0]?.id) {
+      await BookTag.delete(tags[0].id);
+    }
+  };
+
   private static removeDetachedPublishers = async (publisherId: string) => {
     const publishers = await Database.all<{ id: string }>(
       `
@@ -108,10 +168,28 @@ export class Books {
     }
   };
 
+  private static removeDetachedSeries = async (seriesId?: string) => {
+    if (seriesId) {
+      const series = await Database.all<{ id: string }>(
+        `
+          SELECT books.series_id AS id
+          FROM books
+          WHERE books.series_id = ?;
+        `,
+        [seriesId]
+      );
+
+      if (!series.length) {
+        await BookSeries.delete(seriesId);
+      }
+    }
+  };
+
   public static create = async (data: BookDTO): Promise<BookDTO> => {
     try {
       const id = crypto.randomUUID();
       const publisher = await this.checkPublisher(data.publisher);
+      const series = await this.checkSeries(data.series);
 
       await Database.run(
         `
@@ -133,8 +211,8 @@ export class Books {
         [
           id,
           data.title,
-          undefined,
-          undefined,
+          series.id,
+          data.seriesNumber,
           data.language,
           publisher.id,
           data.edition,
@@ -145,20 +223,23 @@ export class Books {
       );
 
       // Author and book-author relation entities:
-      const authors = await this.createBookAuthorsAndRelations(
-        id,
-        data.authors
-      );
+      const authors = await this.createBooksAuthorsRelations(id, data.authors);
+
+      // Tags and book-tag relation entities:
+      const tags = await this.createBooksTagsRelations(id, data.tags);
 
       return {
         id,
         authors,
         publisher,
+        // series,
+        tags,
         edition: data.edition,
         language: data.language,
         originalTitle: data.originalTitle,
         rating: data.rating,
         releaseDate: data.releaseDate,
+        seriesNumber: data.seriesNumber,
         title: data.title,
       };
     } catch (error) {
@@ -197,15 +278,20 @@ export class Books {
       // Publisher:
       const publisher = await BookPublisher.read(book.publisher_id);
 
+      // Series:
+      const series = await BookSeries.read(book.series_id);
+
       return {
         authors,
         publisher,
-        id: book.id,
-        title: book.title,
-        language: book.language,
-        releaseDate: book.release_date,
+        series,
         edition: book.edition,
+        id: book.id,
+        language: book.language,
         rating: book.rating,
+        releaseDate: book.release_date,
+        seriesNumber: book.series_number,
+        title: book.title,
       };
     } catch (error) {
       console.error(
@@ -237,15 +323,20 @@ export class Books {
         // Publisher:
         const publisher = await BookPublisher.read(element.publisher_id);
 
+        // Series
+        const series = await BookSeries.read(element.series_id);
+
         return {
           authors,
           publisher,
-          id: element.id,
-          title: element.title,
-          language: element.language,
-          releaseDate: element.release_date,
+          series,
           edition: element.edition,
+          id: element.id,
+          language: element.language,
           rating: element.rating,
+          releaseDate: element.release_date,
+          seriesNumber: element.series_number,
+          title: element.title,
         };
       });
 
@@ -261,13 +352,14 @@ export class Books {
   public static delete = async (id: string) => {
     try {
       const book = await BaseCRUD.read<BookDB>(this.table, id);
-      console.log(`🔔 book`, book);
 
       await this.removeDetachedAuthors(id);
+      await this.removeDetachedTags(id);
 
       const result = await BaseCRUD.delete(this.table, id);
 
       await this.removeDetachedPublishers(book.publisher_id);
+      await this.removeDetachedSeries(book.series_id);
 
       console.log(`[SUCCESS] Books.delete: Deleted "${id}`);
       return result;

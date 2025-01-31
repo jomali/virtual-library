@@ -3,28 +3,20 @@ import { Control, Controller, FieldErrors } from "react-hook-form";
 import Grid from "@mui/material/Grid2";
 import { useIntl } from "react-intl";
 import { Book } from "../../../types";
-import { createFilterOptions } from "@mui/material/Autocomplete";
 import {
   Autocomplete,
   TextField,
 } from "../../../../../components/MuiExtensions";
 import useBookPublishersQuery from "../../../queries/useBookPublishersQuery";
 import useBookAuthorsQuery from "../../../queries/useBookAuthorsQuery";
-
-const filterAuthors = createFilterOptions<
-  { id?: string; name: string } | string
->();
-
-const filterPublishers = createFilterOptions<
-  { id?: string; name: string } | string
->();
+import useBookSeriesQuery from "../../../queries/useBookSeriesQuery";
 
 const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
   const { control, readOnly } = props;
 
   const bookAuthorsQuery = useBookAuthorsQuery();
   const bookPublishersQuery = useBookPublishersQuery();
-
+  const bookSeriesQuery = useBookSeriesQuery();
   const intl = useIntl();
 
   return (
@@ -52,26 +44,8 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
           render={({ field }) => (
             <Autocomplete
               {...field}
-              filterOptions={(options, params) => {
-                const filtered = filterAuthors(options, params);
-                const { inputValue } = params;
-                // Suggest the creation of a new value
-                const isExisting = options.some(
-                  (option) => inputValue === option.name
-                );
-                if (inputValue !== "" && !isExisting) {
-                  filtered.push(inputValue);
-                }
-                return filtered;
-              }}
               freeSolo
-              getOptionLabel={(option) => {
-                // Value selected with `enter`, right from the input
-                if (typeof option === "string") {
-                  return `Add "${option}"`; // TODO
-                }
-                return option.name ?? "";
-              }}
+              getOptionLabel={(option) => option.name}
               label={intl.formatMessage({ id: "books.authors" })}
               onChange={(_event: React.SyntheticEvent, value) => {
                 field.onChange(
@@ -89,30 +63,48 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
       <Grid size={12}>
         <Controller
           control={control}
+          name="series"
+          render={({ field }) => (
+            <Autocomplete
+              {...field}
+              freeSolo
+              getOptionLabel={(option) => option.name}
+              label={intl.formatMessage({ id: "books.series" })}
+              onChange={(_event: React.SyntheticEvent, value) => {
+                field.onChange(
+                  typeof value === "string" ? { id: null, name: value } : value
+                );
+              }}
+              options={bookSeriesQuery.data}
+              readOnly={readOnly}
+            />
+          )}
+        />
+      </Grid>
+
+      <Grid size={12}>
+        <Controller
+          control={control}
+          name="seriesNumber"
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label={intl.formatMessage({ id: "books.seriesNumber" })}
+              readOnly={readOnly}
+            />
+          )}
+        />
+      </Grid>
+
+      <Grid size={12}>
+        <Controller
+          control={control}
           name="publisher"
           render={({ field }) => (
             <Autocomplete
               {...field}
-              filterOptions={(options, params) => {
-                const filtered = filterPublishers(options, params);
-                const { inputValue } = params;
-                // Suggest the creation of a new value
-                const isExisting = options.some(
-                  (option) => inputValue === option.name
-                );
-                if (inputValue !== "" && !isExisting) {
-                  filtered.push(inputValue);
-                }
-                return filtered;
-              }}
               freeSolo
-              getOptionLabel={(option) => {
-                // Value selected with `enter`, right from the input
-                if (typeof option === "string") {
-                  return `Add "${option}"`; // TODO
-                }
-                return option.name ?? "";
-              }}
+              getOptionLabel={(option) => option.name}
               label={intl.formatMessage({ id: "books.publisher" })}
               onChange={(_event: React.SyntheticEvent, value) => {
                 field.onChange(
@@ -155,10 +147,10 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
           name="releaseDate"
           render={({ field }) => (
             <TextField
+              {...field}
               label={intl.formatMessage({ id: "books.releaseDate" })}
               readOnly={readOnly}
               required
-              {...field}
             />
           )}
         />

@@ -15,7 +15,7 @@ export class BookPublisher {
   public static TABLE = "book_publishers";
 
   static create = async (
-    data: Omit<BookPublisherDB, "id">
+    data: Omit<BookPublisherDTO, "id">
   ): Promise<BookPublisherDB> => {
     const id = crypto.randomUUID();
     await Database.run(

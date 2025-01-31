@@ -54,10 +54,33 @@ const StyledAutocomplete = styled(MuiAutocomplete)<any>(
  */
 const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps>(
   (props, ref) => {
-    const { label, readOnly, required, ...otherProps } = props;
+    const {
+      clearOnBlur,
+      freeSolo,
+      handleHomeEndKeys,
+      label,
+      onChange,
+      onInputChange,
+      readOnly,
+      required,
+      selectOnFocus,
+      ...otherProps
+    } = props;
+
     return (
       <StyledAutocomplete
         ref={ref}
+        clearOnBlur={clearOnBlur !== undefined ? clearOnBlur : freeSolo}
+        freeSolo={freeSolo}
+        handleHomeEndKeys={
+          handleHomeEndKeys !== undefined ? handleHomeEndKeys : freeSolo
+        }
+        onChange={onChange}
+        onInputChange={(event: React.SyntheticEvent, newInputValue: string) =>
+          freeSolo
+            ? onChange?.(event, newInputValue, "createOption")
+            : onInputChange
+        }
         readOnly={readOnly}
         renderInput={({
           InputLabelProps,
@@ -77,6 +100,7 @@ const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps>(
             }}
           />
         )}
+        selectOnFocus={selectOnFocus !== undefined ? selectOnFocus : freeSolo}
         {...otherProps}
       />
     );

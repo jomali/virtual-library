@@ -50,6 +50,8 @@ const schema = yup.object({
   edition: yup.string(),
   originalTitle: yup.string(),
   rating: yup.number(),
+  series: yup.mixed(),
+  seriesNumber: yup.string(),
   translators: yup.string(),
 });
 
@@ -110,6 +112,8 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
       publisher: null,
       rating: 0,
       releaseDate: "",
+      series: null,
+      seriesNumber: "",
       title: "",
       translators: "",
     },

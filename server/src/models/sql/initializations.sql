@@ -41,6 +41,19 @@ CREATE TABLE IF NOT EXISTS book_series (
   name VARCHAR(100) NOT NULL UNIQUE
 );
 
+CREATE TABLE IF NOT EXISTS book_tags (
+  id BLOB(16) PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS books_tags_relations (
+  book_id BLOB(16) NOT NULL,
+  book_tag_id BLOB(16) NOT NULL,
+  PRIMARY KEY (book_id, book_tag_id),
+  FOREIGN KEY (book_id) REFERENCES books(id),
+  FOREIGN KEY (book_tag_id) REFERENCES book_tags(id)
+);
+
 CREATE TABLE IF NOT EXISTS book_translators (
   id BLOB(16) PRIMARY KEY,
   name VARCHAR(100) NOT NULL UNIQUE

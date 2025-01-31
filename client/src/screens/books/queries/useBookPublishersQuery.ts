@@ -10,7 +10,7 @@ const useBookPublishersQuery = () => {
     queryKey: bookKeyFactory.getBookPublishers(),
     queryFn: async () => {
       const response = await api.GET("books/publishers");
-      return (response.data ?? []) as Record<string, unknown>[];
+      return (response ?? []) as Record<string, unknown>[];
     },
   });
 };

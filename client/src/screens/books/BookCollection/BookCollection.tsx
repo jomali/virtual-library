@@ -25,6 +25,14 @@ const BookCollection = () => {
         header: intl.formatMessage({ id: "books.title" }),
       },
       {
+        accessorKey: "authors",
+        header: intl.formatMessage({ id: "books.authors" }),
+        Cell: ({ renderedCellValue }: any) =>
+          renderedCellValue
+            ?.map((element: { name: string }) => element.name)
+            .join("; "),
+      },
+      {
         accessorKey: "publisher.name",
         header: intl.formatMessage({ id: "books.publisher" }),
       },
@@ -42,8 +50,8 @@ const BookCollection = () => {
       {
         accessorKey: "rating",
         header: intl.formatMessage({ id: "books.rating" }),
-        Cell: (value) => {
-          const rating = (value.renderedCellValue as number) ?? 0;
+        Cell: ({ renderedCellValue }) => {
+          const rating = (renderedCellValue as number) ?? 0;
           return <Rating precision={0.5} readOnly value={(rating * 5) / 10} />;
         },
         muiTableBodyCellProps: () => ({

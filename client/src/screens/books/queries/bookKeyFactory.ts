@@ -21,6 +21,10 @@ export const bookKeyFactory = {
     ...bookKeyFactory.getBookDetails(), //
     "publishers",
   ],
+  getBookSeries: () => [
+    ...bookKeyFactory.getBookDetails(), //
+    "series",
+  ],
   createEditBook: () => [
     ...bookKeyFactory.all(), //
     "createEdit",

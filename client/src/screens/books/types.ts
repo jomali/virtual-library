@@ -6,6 +6,8 @@ export type Book = {
   publisher?: { id?: string; name: string } | null;
   rating?: number;
   releaseDate: string;
+  series?: { id?: string; name: string } | null;
+  seriesNumber?: string;
   title: string;
   translators?: string;
 };
@@ -19,6 +21,8 @@ export type BookDTO = {
   publisher: { id?: string; name: string };
   rating?: number;
   releaseDate: string;
+  series?: { id?: string; name: string };
+  seriesNumber?: number;
   title: string;
   translators?: { id?: string; name: string }[];
 };

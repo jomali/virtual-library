@@ -11,6 +11,8 @@ export default {
   "books.rating": "Rating",
   "books.reception": "Reception",
   "books.releaseDate": "Release date",
+  "books.series": "Series",
+  "books.seriesNumber": "Series number",
   "books.title": "Title",
   "books.translators": "Translator(s)",
 };
