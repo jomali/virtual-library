@@ -46,7 +46,7 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
               {...field}
               freeSolo
               getOptionLabel={(option) => option.name}
-              label={intl.formatMessage({ id: "books.authors" })}
+              label={intl.formatMessage({ id: "books.writers" })}
               onChange={(_event: React.SyntheticEvent, value) => {
                 field.onChange(
                   typeof value === "string" ? { id: null, name: value } : value

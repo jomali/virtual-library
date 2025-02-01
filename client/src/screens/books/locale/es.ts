@@ -1,5 +1,4 @@
 export default {
-  "books.authors": "Autor(es)",
   "books.bibliographicalNotes": "Notas bibliográficas",
   "books.books": "Libros",
   "books.edition": "Edición",
@@ -15,4 +14,5 @@ export default {
   "books.seriesNumber": "Número",
   "books.title": "Título",
   "books.translators": "Traductor(es)",
+  "books.writers": "Escritor(es)",
 };

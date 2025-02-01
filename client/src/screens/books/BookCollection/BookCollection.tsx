@@ -11,6 +11,7 @@ import BookDetails from "./BookDetails";
 import { useNavigate, useParams } from "react-router";
 import Rating from "@mui/material/Rating";
 import { useIntl } from "react-intl";
+import TableContainer from "../../../components/TableContainer";
 
 const BookCollection = () => {
   const books = useBooksQuery();
@@ -35,7 +36,7 @@ const BookCollection = () => {
       },
       {
         accessorKey: "authors",
-        header: intl.formatMessage({ id: "books.authors" }),
+        header: intl.formatMessage({ id: "books.writers" }),
         Cell: ({ renderedCellValue }: any) =>
           renderedCellValue
             ?.map((element: { name: string }) => element.name)
@@ -87,21 +88,24 @@ const BookCollection = () => {
       <TableProvider
         columns={columns}
         getRowKey={(row) => row.id}
-        onClick={(id) => navigate(`/books/${id}`)}
+        onClick={(id) =>
+          urlParams.id === id ? navigate("/books") : navigate(`/books/${id}`)
+        }
         rows={books.data ?? []}
         {...table}
       >
         <TableToolbar
           addTool={{
             onClick: () => {
-              table.setActiveRow(undefined);
               navigate("/books/new");
             },
             visible: true,
           }}
           title={intl.formatMessage({ id: "books.books" })}
         />
-        <TableContents />
+        <TableContainer>
+          <TableContents />
+        </TableContainer>
       </TableProvider>
     </Collection>
   );
