@@ -349,6 +349,41 @@ export class Books {
     }
   };
 
+  public static update = async (id: string, data: BookDTO) => {
+    try {
+      // Book entity
+      await Database.run(
+        `
+          UPDATE ${this.table}
+          SET
+            edition = COALESCE(?, edition),
+            language = COALESCE(?, language),
+            original_title = COALESCE(?, original_title),
+            rating = COALESCE(?, rating),
+            release_date = COALESCE(?, release_date),
+            series_number = COALESCE(?, series_number),
+            title = COALESCE(?, title)
+          WHERE id = ?;
+        `,
+        [
+          data.edition,
+          data.language,
+          data.originalTitle,
+          data.rating,
+          data.releaseDate,
+          data.seriesNumber,
+          data.title,
+          id,
+        ]
+      );
+    } catch (error) {
+      console.error(
+        `[ERROR] Books.update: "${error instanceof Error ? error.message : String(error)}"`
+      );
+      throw new Error("Unavailable service.");
+    }
+  };
+
   public static delete = async (id: string) => {
     try {
       const book = await BaseCRUD.read<BookDB>(this.table, id);

@@ -8,7 +8,7 @@ import { MRT_ColumnDef, MRT_RowData } from "material-react-table";
 import Collection from "../../../components/Collection";
 import useBooksQuery from "../queries/useBooksQuery";
 import BookDetails from "./BookDetails";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import Rating from "@mui/material/Rating";
 import { useIntl } from "react-intl";
 
@@ -16,7 +16,16 @@ const BookCollection = () => {
   const books = useBooksQuery();
   const intl = useIntl();
   const navigate = useNavigate();
+  const urlParams = useParams();
   const table = useTable();
+
+  React.useEffect(() => {
+    if (urlParams.id) {
+      table.onSelect(urlParams.id === "new" ? {} : { [urlParams.id]: true });
+    } else {
+      table.onSelect({});
+    }
+  }, [urlParams.id]);
 
   const columns = React.useMemo<MRT_ColumnDef<MRT_RowData>[]>(
     () => [
@@ -67,13 +76,18 @@ const BookCollection = () => {
 
   return (
     <Collection
-      sideContent={(params) => <BookDetails key={Date.now()} {...params} />}
+      open={Boolean(urlParams.id)}
+      sideContent={() => (
+        <BookDetails
+          key={Date.now()}
+          id={urlParams.id === "new" ? undefined : urlParams.id}
+        />
+      )}
     >
       <TableProvider
         columns={columns}
-        onClick={(item) => {
-          navigate(`/books/${item.id}`);
-        }}
+        getRowKey={(row) => row.id}
+        onClick={(id) => navigate(`/books/${id}`)}
         rows={books.data ?? []}
         {...table}
       >

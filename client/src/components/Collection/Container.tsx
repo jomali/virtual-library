@@ -1,7 +1,6 @@
 import React from "react";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
-import { useParams } from "react-router";
 
 const Container = styled("div")(() => ({
   display: "flex",
@@ -10,17 +9,7 @@ const Container = styled("div")(() => ({
 }));
 
 const Collection: React.FC<ICollection> = (props) => {
-  const { children, sideContent } = props;
-
-  const urlParams = useParams();
-
-  const [selected, setSelected] = React.useState<string | undefined>();
-
-  React.useEffect(() => {
-    if (urlParams.id) {
-      setSelected(urlParams.id === "new" ? undefined : urlParams.id);
-    }
-  }, [urlParams.id]);
+  const { children, open = false, sideContent } = props;
 
   return (
     <>
@@ -29,14 +18,12 @@ const Collection: React.FC<ICollection> = (props) => {
       <Dialog
         aria-labelledby="detail-panel-dialog"
         fullScreen
-        open={Boolean(urlParams.id)}
+        open={open}
         slotProps={{
           paper: { elevation: 0 },
         }}
       >
-        {sideContent instanceof Function
-          ? sideContent({ id: selected })
-          : sideContent}
+        {sideContent instanceof Function ? sideContent() : sideContent}
       </Dialog>
     </>
   );
@@ -44,9 +31,8 @@ const Collection: React.FC<ICollection> = (props) => {
 
 export interface ICollection {
   children: React.ReactNode;
-  sideContent:
-    | React.ReactNode
-    | ((options: { id?: string }) => React.ReactNode);
+  open: boolean;
+  sideContent: React.ReactNode | (() => React.ReactNode);
 }
 
 export default Collection;

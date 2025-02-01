@@ -29,6 +29,7 @@ const TableProvider: React.FC<ITableProvider> = (props) => {
     enableColumnOrdering,
     enableSelect,
     enableSort,
+    getRowKey,
     isLoading,
     onClick,
     onColumnOrderChange,
@@ -96,6 +97,7 @@ const TableProvider: React.FC<ITableProvider> = (props) => {
     enableDensityToggle: false,
     enableFilters: false,
     enableFullScreenToggle: false,
+    getRowId: (originalRow, index) => String(getRowKey?.(originalRow, index)),
     enableMultiSort: false,
     enableRowSelection: Boolean(enableSelect),
     enableSorting: Boolean(enableSort),
@@ -164,7 +166,12 @@ const TableProvider: React.FC<ITableProvider> = (props) => {
       const state = table.getState();
       const isActive = state.rowSelection.length;
       return {
-        onClick: () => onClick?.(row.original),
+        onClick: () =>
+          onClick?.(
+            isActive
+              ? undefined
+              : (getRowKey?.(row.original, row.index) ?? row.original)
+          ),
         sx: {
           ...(onClick && { cursor: "pointer" }),
           " & .MuiTableCell-root.MuiTableCell-body": {
@@ -258,13 +265,20 @@ export interface ITableProvider {
    */
   filters?: unknown;
   /**
+   * Function used to identify a table row.
+   * @param {Object} row - A table row
+   * @param {number} index - The table row index
+   * @returns The key of the given row
+   */
+  getRowKey?: (row: MRT_RowData, index: number) => unknown;
+  /**
    * If `true`, the table is rendered in loading state.
    */
   isLoading?: boolean;
   /**
    * Callback triggered when the user clicks on a row.
    */
-  onClick?: (row: MRT_RowData) => void;
+  onClick?: (row?: MRT_RowData) => void;
   /**
    * Callback triggered when the user changes the order of any column.
    */
