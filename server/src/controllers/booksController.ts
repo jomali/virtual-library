@@ -30,11 +30,7 @@ const readBook = async (req: Request, res: Response) => {
 const readBooks = async (req: Request, res: Response) => {
   try {
     const data = await Books.readAll();
-
-    res.status(200).json({
-      data,
-      message: "Success",
-    });
+    res.status(200).json(data);
   } catch (error) {
     res.status(400).json({
       error: error instanceof Error ? error.message : String(error),

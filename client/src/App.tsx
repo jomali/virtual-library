@@ -4,14 +4,13 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import ThemeProvider from "./components/ThemeProvider";
 import QueryClientProvider from "./components/QueryClientProvider";
 import { messages, routes } from "./screens";
-import ApiProvider from "./components/ApiProvider";
 import IntlProvider from "./components/IntlProvider";
+import Div100vh from "react-div-100vh";
+import NotificationProvider from "./components/NotificationProvider";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-import Div100vh from "react-div-100vh";
-import NotificationProvider from "./components/NotificationProvider";
 
 function App() {
   return (
@@ -20,17 +19,15 @@ function App() {
         <CssBaseline />
         <Div100vh>
           <NotificationProvider>
-            <ApiProvider host="http://192.168.1.25:3000">
-              <QueryClientProvider>
-                <BrowserRouter>
-                  <Routes>
-                    {routes.map(({ component: Component, path }) => (
-                      <Route key={path} element={<Component />} path={path} />
-                    ))}
-                  </Routes>
-                </BrowserRouter>
-              </QueryClientProvider>
-            </ApiProvider>
+            <QueryClientProvider>
+              <BrowserRouter>
+                <Routes>
+                  {routes.map(({ component: Component, path }) => (
+                    <Route key={path} element={<Component />} path={path} />
+                  ))}
+                </Routes>
+              </BrowserRouter>
+            </QueryClientProvider>
           </NotificationProvider>
         </Div100vh>
       </ThemeProvider>

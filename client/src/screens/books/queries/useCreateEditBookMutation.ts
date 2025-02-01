@@ -3,14 +3,13 @@ import {
   UseMutationOptions,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useApi } from "../../../components/ApiProvider";
 import { bookKeyFactory } from "./bookKeyFactory";
-import { Book, BookDTO } from "../types";
+import { Book } from "../types";
+import { BookDTO, Books } from "../../../service/Books";
 
 const useCreateEditBookMutation = (options: MutationOptions = {}) => {
   const { onSuccess, ...otherOptions } = options;
 
-  const api = useApi();
   const queryClient = useQueryClient();
 
   return useMutation<any, any, any>({
@@ -22,18 +21,18 @@ const useCreateEditBookMutation = (options: MutationOptions = {}) => {
         authors: [data.authors],
         publisher: data.publisher,
         language: data.language,
-        edition: 1,
+        edition: 1, // TODO
         rating: ((data.rating ?? 0) * 10) / 5,
-      };
+      } as BookDTO;
 
       // console.log(`🔔 data`, data);
       // console.log(`🔔 dto`, dto);
       // throw new Error();
 
       if (data.id) {
-        // TODO: EDIT book
+        return Books.update(dto);
       } else {
-        return api.POST("books", dto);
+        return Books.create(dto);
       }
     },
     onSuccess: (data) => {
