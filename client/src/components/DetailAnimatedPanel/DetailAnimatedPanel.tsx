@@ -44,7 +44,6 @@ const DetailAnimatedPanel: React.FC<IDetailAnimatedPanel> = (props) => {
       animate={"active"}
       exit={"exit"}
       initial={"enter"}
-      style={{}}
       transition={{ type: "tween", duration: duration.leaving }}
       variants={variants}
       {...otherProps}

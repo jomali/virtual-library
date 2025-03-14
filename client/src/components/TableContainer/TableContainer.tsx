@@ -9,6 +9,7 @@ const StyledPaper = styled(Paper)(() => ({
   flexDirection: "column",
   flexGrow: 1,
   overflow: "hidden",
+  transition: "width 0.5 easing",
 }));
 
 const TableContainer: React.FC<TableContainerProps> = (props) => {

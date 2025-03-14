@@ -5,14 +5,16 @@ import MuiTextField, {
 } from "@mui/material/TextField";
 
 const StyledTextField = styled(MuiTextField, {
-  shouldForwardProp: (prop) => prop !== "readOnly",
-})<TextFieldProps>(({ readOnly, size, theme }) => ({
+  shouldForwardProp: (propName: string) =>
+    !["dirty", "readOnly"].includes(propName),
+})<TextFieldProps>(({ dirty, readOnly, size, theme }) => ({
   "& svg": {
     color: alpha(theme.palette.action.active, 0.7),
   },
   "& .MuiOutlinedInput-root": {
     // variant: outlined
     "& input": {
+      fontWeight: dirty ? theme.typography.fontWeightBold : "inherit",
       transition: `${theme.transitions.create("padding", {
         easing: theme.transitions.easing.easeOut,
         duration: theme.transitions.duration.standard,
@@ -52,6 +54,7 @@ const StyledTextField = styled(MuiTextField, {
  *
  * - Adds new `readOnly` prop and adjust styles and behaviour when it's _true_
  * so that the component is not rendered as an interactive input field.
+ * - Adds new `dirty` prop and adjust styles when it's _true_.
  */
 const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
   (props, ref) => {
@@ -83,6 +86,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
 );
 
 export type TextFieldProps = MuiTextFieldProps & {
+  dirty?: boolean;
   readOnly?: boolean;
 };
 

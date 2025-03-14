@@ -1,5 +1,6 @@
 import React from "react";
 import MuiAutocomplete, {
+  AutocompleteInputChangeReason,
   AutocompleteProps as MuiAutocompleteProps,
   AutocompleteRenderInputParams as MuiAutocompleteRenderInputParams,
 } from "@mui/material/Autocomplete";
@@ -50,12 +51,16 @@ const StyledAutocomplete = styled(MuiAutocomplete)<any>(
  * `readOnly`. It can be overriden.
  * - Adjust styles and behaviour when `readOnly` is _true_ so that the
  * component is not rendered as an interactive input field.
-
+ * - Adds new `dirty` prop and passes it to the custom `TextField` component
+ * used in default `renderInput`.
  */
 const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps>(
   (props, ref) => {
     const {
+      error,
+      helperText,
       clearOnBlur,
+      dirty,
       freeSolo,
       handleHomeEndKeys,
       label,
@@ -76,11 +81,17 @@ const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps>(
           handleHomeEndKeys !== undefined ? handleHomeEndKeys : freeSolo
         }
         onChange={onChange}
-        onInputChange={(event: React.SyntheticEvent, newInputValue: string) =>
-          freeSolo
-            ? onChange?.(event, newInputValue, "createOption")
-            : onInputChange
-        }
+        onInputChange={(
+          event: React.SyntheticEvent,
+          newInputValue: string,
+          reason: AutocompleteInputChangeReason
+        ) => {
+          if (event) {
+            return freeSolo
+              ? onChange?.(event, newInputValue, "createOption")
+              : onInputChange?.(event, newInputValue, reason);
+          }
+        }}
         readOnly={readOnly}
         renderInput={({
           InputLabelProps,
@@ -90,6 +101,9 @@ const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps>(
         }: any) => (
           <TextField
             {...otherParams}
+            dirty={dirty}
+            error={error}
+            helperText={helperText}
             label={label}
             readOnly={readOnly}
             required={required}
@@ -111,6 +125,9 @@ export type AutocompleteProps = Omit<
   MuiAutocompleteProps<any, any, any, any>,
   "renderInput"
 > & {
+  error?: boolean;
+  helperText?: string;
+  dirty?: boolean;
   label?: string;
   renderInput?: (
     params: Omit<

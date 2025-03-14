@@ -9,7 +9,6 @@ import EditOffRoundedIcon from "@mui/icons-material/EditOffRounded";
 import { styled } from "@mui/material/styles";
 import Gap from "../Gap";
 import IconButton from "@mui/material/IconButton";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { ConditionalTooltip } from "../MuiExtensions";
 import { AnimatePresence, motion } from "motion/react";
@@ -26,23 +25,12 @@ const Toolbar = styled(MuiToolbar)(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
   gap: theme.spacing(1),
-  "@media (min-width:0px)": {
-    "@media (orientation: landscape)": {
-      paddingLeft: theme.spacing(6),
-      paddingRight: theme.spacing(6),
-    },
-  },
-  [theme.breakpoints.up("sm")]: {
-    paddingLeft: theme.spacing(6),
-    paddingRight: theme.spacing(6),
-  },
 }));
 
 const DetailFooter: React.FC<DetailFooterProps> = (props) => {
   const { editMode, onDelete, onToggleEditMode, toggable } = props;
 
   const intl = useIntl();
-  const wideScreen = useMediaQuery((theme) => theme.breakpoints.up("sm"));
 
   const variants = React.useMemo(
     () => ({
@@ -66,7 +54,7 @@ const DetailFooter: React.FC<DetailFooterProps> = (props) => {
             </ConditionalTooltip>
 
             <AnimatePresence mode="wait">
-              {editMode && !wideScreen ? (
+              {editMode ? (
                 <motion.span
                   key={`delete-icon-button`}
                   animate="active"
@@ -88,28 +76,6 @@ const DetailFooter: React.FC<DetailFooterProps> = (props) => {
         ) : null}
 
         <Gap />
-
-        {toggable ? (
-          <AnimatePresence mode="wait">
-            {editMode && wideScreen ? (
-              <motion.span
-                key={`delete-button`}
-                animate="active"
-                exit="exit"
-                initial="enter"
-                variants={variants}
-              >
-                <Button
-                  color="error"
-                  onClick={onDelete}
-                  startIcon={<DeleteRoundedIcon />}
-                >
-                  {intl.formatMessage({ id: "delete" })}
-                </Button>
-              </motion.span>
-            ) : null}
-          </AnimatePresence>
-        ) : null}
 
         <AnimatePresence mode="wait">
           {editMode ? (

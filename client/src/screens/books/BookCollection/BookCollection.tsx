@@ -78,7 +78,7 @@ const BookCollection = () => {
   return (
     <Collection
       open={Boolean(urlParams.id)}
-      sideContent={() => (
+      slotSide={() => (
         <BookDetails
           key={Date.now()}
           id={urlParams.id === "new" ? undefined : urlParams.id}
@@ -94,16 +94,16 @@ const BookCollection = () => {
         rows={books.data ?? []}
         {...table}
       >
-        <TableToolbar
-          addTool={{
-            onClick: () => {
-              navigate("/books/new");
-            },
-            visible: true,
-          }}
-          title={intl.formatMessage({ id: "books.books" })}
-        />
         <TableContainer>
+          <TableToolbar
+            addTool={{
+              onClick: () => {
+                navigate("/books/new");
+              },
+              visible: true,
+            }}
+            title={intl.formatMessage({ id: "books.books" })}
+          />
           <TableContents />
         </TableContainer>
       </TableProvider>

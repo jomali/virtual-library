@@ -1,8 +1,6 @@
 import React from "react";
-import { Control, Controller, FieldErrors } from "react-hook-form";
 import Grid from "@mui/material/Grid2";
 import { useIntl } from "react-intl";
-import { Book } from "../../../types";
 import {
   Autocomplete,
   TextField,
@@ -10,9 +8,10 @@ import {
 import useBookPublishersQuery from "../../../queries/useBookPublishersQuery";
 import useBookAuthorsQuery from "../../../queries/useBookAuthorsQuery";
 import useBookSeriesQuery from "../../../queries/useBookSeriesQuery";
+import FormField from "../../../../../components/FormField";
 
 const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
-  const { control, readOnly } = props;
+  const { readOnly } = props;
 
   const bookAuthorsQuery = useBookAuthorsQuery();
   const bookPublishersQuery = useBookPublishersQuery();
@@ -22,26 +21,23 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
   return (
     <Grid container spacing={2}>
       <Grid size={12}>
-        <Controller
-          control={control}
+        <FormField
           name="title"
-          render={({ field }) => (
+          renderInput={({ field }) => (
             <TextField
-              autoFocus
+              {...field}
               label={intl.formatMessage({ id: "books.title" })}
               readOnly={readOnly}
-              required
-              {...field}
+              // required
             />
           )}
         />
       </Grid>
 
       <Grid size={12}>
-        <Controller
-          control={control}
+        <FormField
           name="authors"
-          render={({ field }) => (
+          renderInput={({ field }) => (
             <Autocomplete
               {...field}
               freeSolo
@@ -54,17 +50,73 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
               }}
               options={bookAuthorsQuery.data}
               readOnly={readOnly}
-              required
+              // required
             />
           )}
         />
       </Grid>
 
       <Grid size={12}>
-        <Controller
-          control={control}
+        <FormField
+          name="publisher"
+          renderInput={({ field }) => (
+            <Autocomplete
+              {...field}
+              freeSolo
+              getOptionLabel={(option) => option.name}
+              label={intl.formatMessage({ id: "books.publisher" })}
+              onChange={(_event: React.SyntheticEvent, value) => {
+                field.onChange(
+                  typeof value === "string" ? { id: null, name: value } : value
+                );
+              }}
+              options={bookPublishersQuery.data}
+              readOnly={readOnly}
+              // required
+            />
+          )}
+        />
+      </Grid>
+
+      <Grid size={12}>
+        <FormField
+          name="language"
+          renderInput={({ field }) => (
+            <Autocomplete
+              {...field}
+              getOptionLabel={(option) => {
+                return option === "en" ? "Inglés" : "Español";
+              }}
+              label={intl.formatMessage({ id: "books.language" })}
+              onChange={(_event: React.SyntheticEvent, value) => {
+                field.onChange(value);
+              }}
+              options={["en", "es"]}
+              readOnly={readOnly}
+              // required
+            />
+          )}
+        />
+      </Grid>
+
+      <Grid size={12}>
+        <FormField
+          name="releaseDate"
+          renderInput={({ field }) => (
+            <TextField
+              {...field}
+              label={intl.formatMessage({ id: "books.releaseDate" })}
+              readOnly={readOnly}
+              // required
+            />
+          )}
+        />
+      </Grid>
+
+      <Grid size={9}>
+        <FormField
           name="series"
-          render={({ field }) => (
+          renderInput={({ field }) => (
             <Autocomplete
               {...field}
               freeSolo
@@ -82,11 +134,10 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
         />
       </Grid>
 
-      <Grid size={12}>
-        <Controller
-          control={control}
+      <Grid size={3}>
+        <FormField
           name="seriesNumber"
-          render={({ field }) => (
+          renderInput={({ field }) => (
             <TextField
               {...field}
               label={intl.formatMessage({ id: "books.seriesNumber" })}
@@ -97,116 +148,30 @@ const BibliographicalNotes: React.FC<BibliographicalNotesProps> = (props) => {
       </Grid>
 
       <Grid size={12}>
-        <Controller
-          control={control}
-          name="publisher"
-          render={({ field }) => (
+        <FormField
+          name="tags"
+          renderInput={({ field }) => (
             <Autocomplete
               {...field}
               freeSolo
               getOptionLabel={(option) => option.name}
-              label={intl.formatMessage({ id: "books.publisher" })}
+              label={intl.formatMessage({ id: "books.tags" })}
               onChange={(_event: React.SyntheticEvent, value) => {
                 field.onChange(
                   typeof value === "string" ? { id: null, name: value } : value
                 );
               }}
-              options={bookPublishersQuery.data}
+              options={bookAuthorsQuery.data}
               readOnly={readOnly}
-              required
             />
           )}
         />
       </Grid>
-
-      <Grid size={12}>
-        <Controller
-          control={control}
-          name="language"
-          render={({ field }) => (
-            <Autocomplete
-              {...field}
-              getOptionLabel={(option) => {
-                return option === "en" ? "Inglés" : "Español";
-              }}
-              label={intl.formatMessage({ id: "books.language" })}
-              onChange={(_event: React.SyntheticEvent, value) => {
-                field.onChange(value);
-              }}
-              options={["en", "es"]}
-              readOnly={readOnly}
-              required
-            />
-          )}
-        />
-      </Grid>
-
-      <Grid size={12}>
-        <Controller
-          control={control}
-          name="releaseDate"
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label={intl.formatMessage({ id: "books.releaseDate" })}
-              readOnly={readOnly}
-              required
-            />
-          )}
-        />
-      </Grid>
-
-      {/* <Grid size={12}>
-        <Controller
-          control={control}
-          name="edition"
-          render={({ field }) => (
-            <TextField
-              fullWidth
-              label={intl.formatMessage({ id: "books.edition" })}
-              variant="outlined"
-              {...field}
-            />
-          )}
-        />
-      </Grid> */}
-
-      {/* <Grid size={12}>
-        <Controller
-          control={control}
-          name="originalTitle"
-          render={({ field }) => (
-            <TextField
-              fullWidth
-              label={intl.formatMessage({ id: "books.originalTitle" })}
-              variant="outlined"
-              {...field}
-            />
-          )}
-        />
-      </Grid> */}
-
-      {/* <Grid size={12}>
-        <Controller
-          control={control}
-          name="translators"
-          render={({ field }) => (
-            <TextField
-              fullWidth
-              label={intl.formatMessage({ id: "books.translators" })}
-              variant="outlined"
-              {...field}
-            />
-          )}
-        />
-      </Grid> */}
     </Grid>
   );
 };
 
 export type BibliographicalNotesProps = {
-  control: Control<Book, unknown>;
-  errors?: FieldErrors<Book>;
   readOnly?: boolean;
 };
 

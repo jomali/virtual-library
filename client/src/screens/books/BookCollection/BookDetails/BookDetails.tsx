@@ -8,7 +8,7 @@ import BookProfile from "./BibliographicalNotes";
 // import ForumRoundedIcon from "@mui/icons-material/ForumRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import ViewListRoundedIcon from "@mui/icons-material/ViewListRounded";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { FormProvider, useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import DetailAnimatedPanel from "../../../../components/DetailAnimatedPanel";
@@ -38,22 +38,6 @@ const StyledImage = styled("img", {
   minHeight: height,
   objectFit: "contain",
 }));
-
-const schema = yup.object({
-  // Required fields:
-  authors: yup.mixed(), //.required(),
-  language: yup.string().required(),
-  publisher: yup.mixed(), //.required(),
-  releaseDate: yup.string().required(),
-  title: yup.string().required(),
-  // Optional fields:
-  edition: yup.string(),
-  originalTitle: yup.string(),
-  rating: yup.number(),
-  series: yup.mixed(),
-  seriesNumber: yup.string(),
-  translators: yup.string(),
-});
 
 const BookDetails: React.FC<BookDetailsProps> = (props) => {
   const { id } = props;
@@ -92,18 +76,52 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
     },
   });
 
+  const validationSchema = React.useMemo(
+    () =>
+      yup.object({
+        // Required fields:
+        authors: yup
+          .mixed()
+          .required(intl.formatMessage({ id: "validation.required" })),
+        language: yup
+          .string()
+          .required(intl.formatMessage({ id: "validation.required" })),
+        publisher: yup
+          .mixed()
+          .required(intl.formatMessage({ id: "validation.required" })),
+        releaseDate: yup
+          .string()
+          .required(intl.formatMessage({ id: "validation.required" })),
+        title: yup
+          .string()
+          .required(intl.formatMessage({ id: "validation.required" })),
+        // Optional fields:
+        edition: yup.string(),
+        originalTitle: yup.string(),
+        rating: yup.number(),
+        series: yup.mixed().nullable(),
+        seriesNumber: yup.string(),
+        translators: yup.string(),
+      }),
+    [intl]
+  );
+
   const onClose = () => {
     navigate("/books");
   };
 
   const onSubmit: SubmitHandler<Book> = (data) => {
+    console.log(`🔔 SUBMIT`, data);
+    console.log(` `);
+
     createEditBookMutation.mutate({
       ...data,
       id,
     });
   };
 
-  const { control, formState, handleSubmit, reset } = useForm<Book>({
+  const form = useForm<Book>({
+    shouldFocusError: true,
     defaultValues: {
       authors: null,
       edition: "",
@@ -117,7 +135,7 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
       title: "",
       translators: "",
     },
-    resolver: yupResolver(schema),
+    resolver: yupResolver(validationSchema),
   });
 
   const detailTitle = React.useMemo(
@@ -130,9 +148,18 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
 
   React.useEffect(() => {
     if (bookQuery.data) {
-      reset(bookQuery.data);
+      console.log(`🔔 book`, bookQuery.data);
+      form.reset(bookQuery.data);
     }
-  }, [bookQuery.data, reset]);
+  }, [bookQuery.data, form.reset]);
+
+  // Callback version of watch.  It's your responsibility to unsubscribe when done.
+  React.useEffect(() => {
+    const subscription = form.watch((value, { name, type }) =>
+      console.log(`🔔 ${name}, ${type}:`, value)
+    );
+    return () => subscription.unsubscribe();
+  }, [form.watch]);
 
   return (
     <>
@@ -162,41 +189,35 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
         value={tab.current}
       />
 
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <AnimatePresence custom={tab.direction} initial={false} mode="wait">
-          {tab.current === 0 ? (
-            <DetailAnimatedPanel key={`tab-0`} custom={tab.direction}>
-              <BookProfile
-                control={control}
-                errors={formState.errors}
-                readOnly={!editMode}
-              />
-            </DetailAnimatedPanel>
-          ) : null}
-          {tab.current === 1 ? (
-            <DetailAnimatedPanel key={`tab-1`} custom={tab.direction}>
-              <PersonalNotes
-                control={control}
-                errors={formState.errors}
-                readOnly={!editMode}
-              />
-            </DetailAnimatedPanel>
-          ) : null}
-          {tab.current === 2 ? (
-            <DetailAnimatedPanel key={`tab-2`} custom={tab.direction}>
-              <Typography>
-                {intl.formatMessage({ id: "books.reception" })}
-              </Typography>
-            </DetailAnimatedPanel>
-          ) : null}
-        </AnimatePresence>
-        <DetailFooter
-          editMode={editMode}
-          onDelete={() => setDeleteConfirmation(true)}
-          onToggleEditMode={() => setEditMode(!editMode)}
-          toggable={Boolean(id)}
-        />
-      </Form>
+      <FormProvider {...form}>
+        <Form onSubmit={form.handleSubmit(onSubmit)}>
+          <AnimatePresence custom={tab.direction} initial={false} mode="wait">
+            {tab.current === 0 ? (
+              <DetailAnimatedPanel key={`tab-0`} custom={tab.direction}>
+                <BookProfile readOnly={!editMode} />
+              </DetailAnimatedPanel>
+            ) : null}
+            {tab.current === 1 ? (
+              <DetailAnimatedPanel key={`tab-1`} custom={tab.direction}>
+                <PersonalNotes readOnly={!editMode} />
+              </DetailAnimatedPanel>
+            ) : null}
+            {tab.current === 2 ? (
+              <DetailAnimatedPanel key={`tab-2`} custom={tab.direction}>
+                <Typography>
+                  {intl.formatMessage({ id: "books.reception" })}
+                </Typography>
+              </DetailAnimatedPanel>
+            ) : null}
+          </AnimatePresence>
+          <DetailFooter
+            editMode={editMode}
+            onDelete={() => setDeleteConfirmation(true)}
+            onToggleEditMode={() => setEditMode(!editMode)}
+            toggable={Boolean(id)}
+          />
+        </Form>
+      </FormProvider>
 
       <ConfirmDialog
         messages={{

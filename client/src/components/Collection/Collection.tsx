@@ -4,6 +4,9 @@ import Dialog from "@mui/material/Dialog";
 import Paper from "@mui/material/Paper";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { AnimatePresence, motion } from "motion/react";
+import { Box } from "@mui/material";
+
+const SIDE_PANEL_WIDTH = 500; // px
 
 const Container = styled("div")(({ theme }) => ({
   display: "flex",
@@ -19,40 +22,59 @@ const MainContent = styled("main")(() => ({
   overflow: "hidden",
 }));
 
-const MotionDiv = styled(motion.div)(() => ({
-  display: "flex",
-}));
-
 const SideContent = styled(Paper)(() => ({
   display: "flex",
   flexDirection: "column",
   flexGrow: 1,
   overflow: "hidden",
-  width: "500px",
 }));
 
+const MotionDiv = styled(motion.div)(() => ({
+  display: "flex",
+  flexDirection: "column",
+  flexGrow: 1,
+}));
+
+const variants = {
+  collapsed: () => ({
+    maxWidth: 0,
+    width: 0,
+    minWidth: 0,
+  }),
+  expanded: () => ({
+    maxWidth: `${SIDE_PANEL_WIDTH}px`,
+    minWidth: `${SIDE_PANEL_WIDTH}px`,
+    width: `${SIDE_PANEL_WIDTH}px`,
+  }),
+};
+
 const Collection: React.FC<CollectionProps> = (props) => {
-  const { children, open = false, sideContent } = props;
+  const { children, open = false, slotMenu, slotSide } = props;
 
   const wideScreen = useMediaQuery((theme) => theme.breakpoints.up("md"));
   const theme = useTheme();
 
   return (
     <Container>
+      {slotMenu ? (
+        <Box>{slotMenu instanceof Function ? slotMenu() : slotMenu}</Box>
+      ) : null}
       <MainContent>{children}</MainContent>
       <AnimatePresence mode="wait">
         {wideScreen && open ? (
           <MotionDiv
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            initial={{ opacity: 0 }}
+            animate="expanded"
+            exit="collapsed"
+            initial="collapsed"
+            layout
             transition={{
               type: "tween",
               duration: theme.transitions.duration.short / 1000,
             }}
+            variants={variants}
           >
             <SideContent variant="outlined">
-              {sideContent instanceof Function ? sideContent() : sideContent}
+              {slotSide instanceof Function ? slotSide() : slotSide}
             </SideContent>
           </MotionDiv>
         ) : null}
@@ -66,7 +88,7 @@ const Collection: React.FC<CollectionProps> = (props) => {
           paper: { elevation: 0 },
         }}
       >
-        {sideContent instanceof Function ? sideContent() : sideContent}
+        {slotSide instanceof Function ? slotSide() : slotSide}
       </Dialog>
     </Container>
   );
@@ -75,7 +97,8 @@ const Collection: React.FC<CollectionProps> = (props) => {
 export type CollectionProps = {
   children: React.ReactNode;
   open: boolean;
-  sideContent: React.ReactNode | (() => React.ReactNode);
+  slotMenu?: React.ReactNode | (() => React.ReactNode);
+  slotSide: React.ReactNode | (() => React.ReactNode);
 };
 
 export default Collection;
